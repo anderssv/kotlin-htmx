@@ -6,10 +6,15 @@
 Develop full stack, with hot reloading. All you need to see the **full** results of a change is a compile 
 of the back end and a reload.
 
-Used KTor generator to get started
+Used KTor generator to get started.
 
 We load _everything_ via ```<script />``` tags to avoid having any kind of build steps for the front end. Tailwind CSS
 advises against this for production, but the 355K CDN download can usually be ok for many sites as the rest is small.
+
+# Visuals
+
+Tailwind CSS is used, but certain parts are a bit broken. I did not spend much time fixing the visuals for this,
+as the functionality is the main purpose. :)
 
 # Getting to a bigger scale
 
