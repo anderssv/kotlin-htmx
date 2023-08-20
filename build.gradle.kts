@@ -4,7 +4,8 @@ val logback_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    id("io.ktor.plugin") version "2.3.2"
+    id("io.ktor.plugin") version "2.3.3"
+    id("com.github.ben-manes.versions") version "0.47.0"
 }
 
 group = "no.mikill.kotlin-htmx"
@@ -34,18 +35,18 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-caching-headers-jvm:2.3.2")
+    implementation("io.ktor:ktor-server-caching-headers-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder-jvm:$ktor_version")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
 
-    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20")
+    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.156-kotlin-1.5.0")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
