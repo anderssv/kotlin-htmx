@@ -120,8 +120,8 @@ object HtmlElements {
                 }
 
                 // Main content
-                div(classes = "w-full min-h-full p-20 no.mikill.`kotlin-htmx`.getItems-center flex flex-col") {
-                    main(classes = "w-full max-w-screen-2xl flex flex-col no.mikill.`kotlin-htmx`.getItems-center") {
+                div(classes = "w-full min-h-full p-20 items-center flex flex-col") {
+                    main(classes = "w-full max-w-screen-2xl flex flex-col items-center") {
                         id = "mainContent"
                         contentBlock.invoke(this)
                     }
