@@ -17,6 +17,28 @@ It is a big leap from the SPA pages we are used to, but it is worth it. Don't di
 
 Sometimes you should not use it, but I do think starting with HTMX and moving on when needed is a much better approach than the other way around. HTMX has a really fair and balanced article for when to use it here: https://htmx.org/essays/when-to-use-hypermedia/ 
 
+# Notable parts of the code
+- The wrapper method that scaffolds everything with HTML+HEAD+BODY: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmlElements.kt#L66
+- The back end search function that matches and returns HTML response: https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L26
+- The first page full generation: https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L82
+- The base bootstrap for KTor application: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/Application.kt
+
+# Running
+
+## Local environment
+
+Set environment variables directly or in a .env.local file.
+
+See the possible variables in ```.env.default```, you can copy it to .env.local to do local modifications. Or you can set the variables in env.
+
+## Starting
+
+Run the ```fun main()``` in Application.kt in your favourite IDE, or simply run:
+
+    $ ./gradlew run
+
+It is then available on http://localhost:8080 .
+
 # Other notes
 I used KTor generator to get started.
 
@@ -41,26 +63,6 @@ make some kind of framework.
 This is a small example with some examples. Performance wise there is no reason this won't scale, but for some features you will add additional Javascript libraries. Something like AlpineJS seems to go well together with HTMX.
 
 People are doing it in production. See this article and presentations for a real world migration from React to HTMX: https://htmx.org/essays/a-real-world-react-to-htmx-port/
-
-# Running
-
-## Local environment
-
-Set environment variables directly or in a .env.local file.
-
-The example has to have:
-
-    LOOKUP_API_KEY=some_key
-    KTOR_DEVELOPMENT=true
-
-## Starting
-
-Run the ```fun main()``` in Application.kt in your favourite IDE, or simply run:
-
-    $ ./gradlew run
-
-It is then available on http://localhost:8080 .
-
 
 # TODO
 - Set up logging with JSON
