@@ -24,7 +24,7 @@ data class ApplicationConfig(
                 return System.getenv(key) ?: this[key]!!
             }
 
-            val envVars: Map<String, String> = File(".env.local").let { envFile ->
+            val envVars: Map<String, String> = envFile().let { envFile ->
                 if (envFile.exists()) {
                     envFile.readLines()
                         .map { it.split("=") }
@@ -41,10 +41,16 @@ data class ApplicationConfig(
     }
 }
 
+fun envFile(): File {
+    // I don't really recommend having this default env file, but do it now to ease testing of example app
+    // Settings in ENV will override file always
+    return listOf(".env.local", ".env.default").map { File(it) }.first { it.exists() }
+}
+
 fun main() {
     // Have to do this before the rest of the loading of KTor. I guess it's because it does something fancy
     // with the classloader to be able to do hot reload.
-    if (File(".env.local").readText().contains("KTOR_DEVELOPMENT=true")) System.setProperty(
+    if (envFile().readText().contains("KTOR_DEVELOPMENT=true")) System.setProperty(
         "io.ktor.development",
         "true"
     )

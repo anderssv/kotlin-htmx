@@ -11,10 +11,7 @@ plugins {
 group = "no.mikill.kotlin-htmx"
 version = "0.0.1"
 application {
-    mainClass.set("no.mikill.kotlin-htmx.ApplicationKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    mainClass.set("no.mikill.kotlin_htmx.ApplicationKt")
 }
 
 repositories {
