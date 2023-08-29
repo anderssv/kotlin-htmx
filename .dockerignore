@@ -1,0 +1,49 @@
+# flyctl launch added from .gitignore
+**/.env.local
+**/.gradle
+**/build
+!**/gradle/wrapper/gradle-wrapper.jar
+!**/**/src/main/**/build
+!**/**/src/test/**/build
+
+### STS ###
+**/.apt_generated
+**/.classpath
+**/.factorypath
+**/.project
+**/.settings
+**/.springBeans
+**/.sts4-cache
+**/bin
+!**/**/src/main/**/bin
+!**/**/src/test/**/bin
+
+### IntelliJ IDEA ###
+**/.idea
+**/*.iws
+**/*.iml
+**/*.ipr
+**/out
+!**/**/src/main/**/out
+!**/**/src/test/**/out
+
+### NetBeans ###
+nbproject/private
+nbbuild
+dist
+nbdist
+.nb-gradle
+
+### VS Code ###
+**/.vscode
+
+# flyctl launch added from .idea/.gitignore
+# Default ignored files
+.idea/shelf
+.idea/workspace.xml
+# Editor-based HTTP Client requests
+.idea/httpRequests
+# Datasource local storage ignored files
+.idea/dataSources
+.idea/dataSources.local.xml
+fly.toml

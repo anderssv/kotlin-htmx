@@ -6,12 +6,24 @@ plugins {
     kotlin("jvm") version "1.9.0"
     id("io.ktor.plugin") version "2.3.3"
     id("com.github.ben-manes.versions") version "0.47.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "no.mikill.kotlin-htmx"
 version = "0.0.1"
+val mainClassString = "no.mikill.kotlin_htmx.ApplicationKt"
 application {
-    mainClass.set("no.mikill.kotlin_htmx.ApplicationKt")
+    mainClass.set(mainClassString)
+}
+
+tasks {
+    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        manifest {
+            attributes["Main-Class"] = mainClassString
+        }
+        archiveBaseName.set("kotlin-htmx")
+        mergeServiceFiles()
+    }
 }
 
 repositories {

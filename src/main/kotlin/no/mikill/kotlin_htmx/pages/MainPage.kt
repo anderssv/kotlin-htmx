@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
+import kotlinx.css.div
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
@@ -29,23 +30,12 @@ class MainPage(
             val result = when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
                 is LookupResult.Success -> {
                     val item = items.single { it.name == lookupResult.response }
-                    val redirectUrl = item.name
 
-                    if (redirectUrl != null) {
-                        call.response.header("HX-Redirect", item.name)
-                        // Probably won't show but adding content anyway
-                        htmlFragment {
-                            div {
-                                +"Found it! ${item.name}"
-                            }
-                        }
-                    } else {
-                        logger.warn("Could not match $lookupResult")
-                        htmlFragment {
-                            div {
-                                p { +"Sorry, we couldn't identify the correct item." }
-                                p { +"Choose the right one below instead." }
-                            }
+                    call.response.header("HX-Redirect", item.name)
+                    // Probably won't show but adding content anyway
+                    htmlFragment {
+                        div {
+                            +"Found it! ${item.name}"
                         }
                     }
                 }
