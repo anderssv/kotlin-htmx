@@ -7,6 +7,8 @@ A full stack webapp with responsive, interactive pages. It has efficient feedbac
 - HTMX for front end interactivity - https://htmx.org
 - Tailwind CSS for responsive styling - https://tailwindcss.com
 
+You can try the "application" here: https://kotlin-htmx.fly.dev/
+
 # Why?
 
 Separate builds for back end and front end is manageable, but gives a worse feedback loop than actually having it all integrated. It is one of the benefits of frameworks like NextJS. But those frameworks also comes with a lot of complexity in the build pipelines, but also in the runtime.
