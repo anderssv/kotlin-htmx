@@ -21,9 +21,19 @@ Sometimes you should not use it, but I do think starting with HTMX and moving on
 
 # Notable parts of the code
 - The wrapper method that scaffolds everything with HTML+HEAD+BODY: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmlElements.kt#L66
-- The back end search function that matches and returns HTML response: https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L26
-- The first page full generation: https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L82
-- The base bootstrap for KTor application: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/Application.kt
+- The back end search function/endpoint that matches and returns HTML response: https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L26
+- The first page full generation (uses the scaffold above): https://github.com/anderssv/kotlin-htmx/blob/c6b400a86ae0005d99496ec8d655df3a7277d129/src/main/kotlin/no/mikill/kotlin_htmx/pages/MainPage.kt#L82
+- The base bootstrap for the KTor application: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/Application.kt
+
+# Discuss
+
+Let me know what you think!
+
+You can find me here:
+- https://twitter.com/anderssv
+- https://bsky.app/profile/anderssv.bsky.social
+- https://www.linkedin.com/in/anderssv/
+- https://blog.f12.no/wp/
 
 # Running
 
@@ -50,22 +60,22 @@ advises against this for production, but the 355K CDN download can usually be ok
 ## Back end code structure
 
 One of the downsides of this is that there are few "best practices" and recommended structures. But that is
-also the benefit, that you can use any library or structure you like. For Thymeleaf you will probably get some
+also the benefit. You can use any library or structure you like. For Thymeleaf you will probably get some
 recommendations, for others something else.
 
 It is still important to have some kind of defaults for route, controller and pages. YMMV.
 
-This repo contains a kind of naming try at putting pages into objects. I kind of like that as it gives a specific place
-to go for each page, but it does overlap a bit with controllers so you might want to separate those as well.
-They could have a common interface for the main things, but I see little benefit in that unless you're trying to
-make some kind of framework.
+This repo contains a kind of naming try at putting pages into objects. I like that as it gives a specific place
+to go for each page, but it does overlap a bit with controllers, so you might want to separate those as well.
+They could have a common interface for the main things in each page, but I see little benefit in that unless you're 
+trying to make some kind of framework. (You shouldn't)
 
 ## Bigger scale and functionality?
 
-This is a small example with some examples. Performance wise there is no reason this won't scale, but for some features you will add additional Javascript libraries. Something like AlpineJS seems to go well together with HTMX.
+This is a small example with simple functionality. Performance wise there is no reason this won't scale, but for some features you will add additional Javascript libraries. Something like AlpineJS seems to go well together with HTMX.
 
 People are doing it in production. See this article and presentations for a real world migration from React to HTMX: https://htmx.org/essays/a-real-world-react-to-htmx-port/
 
-# TODO
+# Possible TODO
 - Set up logging with JSON
 - Do item repo as example?
