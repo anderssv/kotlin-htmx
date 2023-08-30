@@ -88,7 +88,7 @@ class MainPage(
                 section(classes = "h-48 w-full text-center no.mikill.`kotlin-htmx`.getItems-center justify-center border drop-shadow-lg border-gray-400 rounded-lg bg-white p-2") {
                     div(classes = "htmx-indicator absolute top-0 left-0 w-full h-full flex no.mikill.`kotlin-htmx`.getItems-center justify-center z-10 bg-white rounded-lg") {
                         id = "formLoading"
-                        +"Søker..."
+                        +"Searching..."
                     }
                     div(classes = "h-full flex no.mikill.`kotlin-htmx`.getItems-center justify-center") {
                         form {
@@ -109,6 +109,12 @@ class MainPage(
                                 }
                             }
                             div { +"Input one of the item names below, anything else will generate an not found error" }
+                            div(classes = "m-4") {
+                                +"The source and description of the code for this site: "
+                                a("https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md") {
+                                    +"https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md"
+                                }
+                            }
                         }
                     }
                 }
