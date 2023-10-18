@@ -9,6 +9,11 @@ A full stack webapp with responsive, interactive pages. It has efficient feedbac
 
 You can try the "application" here: https://kotlin-htmx.fly.dev/
 
+# Other stuff
+
+- HTMX references to do all kinds of back-ends (C#, Ruby, Spring Boot, Ocaml +++) - https://htmx.org/server-examples/
+- Quite similar Kotlin example (referenced from HTMX itself) - https://github.com/Rattlyy/htmx-ktor/tree/master
+
 # Why?
 
 Separate builds for back end and front end is manageable, but gives a worse feedback loop than actually having it all integrated. It is one of the benefits of frameworks like NextJS. But those frameworks also comes with a lot of complexity in the build pipelines, but also in the runtime.
