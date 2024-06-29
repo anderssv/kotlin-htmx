@@ -1,11 +1,13 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    id("io.ktor.plugin") version "2.3.3"
-    id("com.github.ben-manes.versions") version "0.47.0"
+    kotlin("jvm") version "2.0.0"
+    id("io.ktor.plugin") version "2.3.12"
+    id("com.github.ben-manes.versions") version "0.51.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -55,9 +57,21 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
 
-    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.assertj:assertj-core:3.26.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                if (candidate.version.contains("-beta", true)) {
+                    reject("Not a release")
+                }
+            }
+        }
+    }
 }
