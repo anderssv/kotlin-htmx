@@ -2,14 +2,13 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
+import kotlinx.html.section
 import no.mikill.kotlin_htmx.items
-import no.mikill.kotlin_htmx.pages.HtmlElements.gridElement
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondFullPage
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectedBox
 
 
-class SelectedPage() {
+class SelectedPage {
     suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
@@ -19,17 +18,19 @@ class SelectedPage() {
                     selected.image,
                     true
                 )
-                gridElement {
-                    selectBox(
-                        name = "Yes",
-                        linkUrl = "Yes",
-                        imageUrl = "https://image.com/something"
-                    )
-                    selectBox(
-                        name = "No",
-                        linkUrl = "No",
-                        imageUrl = "https://image.com/something"
-                    )
+                section {
+        attributes["hx-ext"] = "preload"
+
+        selectBox(
+        name = "Yes",
+        linkUrl = "Yes",
+        imageUrl = "https://image.com/something"
+    )
+ selectBox(
+        name = "No",
+        linkUrl = "No",
+        imageUrl = "https://image.com/something"
+    )
                 }
             }
         }
