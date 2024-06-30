@@ -2,6 +2,7 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
+import kotlinx.html.id
 import kotlinx.html.section
 import no.mikill.kotlin_htmx.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
@@ -19,18 +20,19 @@ class SelectedPage {
                     true
                 )
                 section {
-        attributes["hx-ext"] = "preload"
+                    id = "choices"
+                    attributes["hx-ext"] = "preload"
 
-        selectBox(
-        name = "Yes",
-        linkUrl = "Yes",
-        imageUrl = "https://image.com/something"
-    )
- selectBox(
-        name = "No",
-        linkUrl = "No",
-        imageUrl = "https://image.com/something"
-    )
+                    selectBox(
+                        name = "Yes",
+                        linkUrl = "Yes",
+                        imageUrl = "https://image.com/something"
+                    )
+                    selectBox(
+                        name = "No",
+                        linkUrl = "No",
+                        imageUrl = "https://image.com/something"
+                    )
                 }
             }
         }
