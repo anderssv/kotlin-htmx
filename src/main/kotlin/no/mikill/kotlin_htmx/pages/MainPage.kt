@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
+import kotlinx.coroutines.delay
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
@@ -11,6 +12,7 @@ import no.mikill.kotlin_htmx.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import org.slf4j.LoggerFactory
 import kotlin.collections.set
+import kotlin.time.Duration.Companion.seconds
 
 
 class MainPage(
@@ -27,6 +29,7 @@ class MainPage(
                 is LookupResult.Success -> {
                     val item = items.single { it.name == lookupResult.response }
 
+                    delay(5.seconds)
                     call.response.header("HX-Redirect", item.name)
                     // Probably won't show but adding content anyway
                     htmlFragment {
@@ -84,7 +87,7 @@ class MainPage(
                 section {
                     div(classes = "htmx-indicator") {
                         id = "formLoading"
-                        +"Searching..."
+                        +"Searching... (Intentionally delayed for 5 seconds)"
                     }
                     div {
                         form {
