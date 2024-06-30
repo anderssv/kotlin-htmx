@@ -2,11 +2,9 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
 import io.ktor.util.pipeline.*
-import kotlinx.html.id
-import kotlinx.html.section
+import kotlinx.html.*
 import no.mikill.kotlin_htmx.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
-import no.mikill.kotlin_htmx.pages.HtmlElements.selectedBox
 
 
 class SelectedPage {
@@ -14,11 +12,13 @@ class SelectedPage {
         with(context) {
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
             respondFullPage {
-                selectedBox(
-                    "${selected.name} - Yes and No below has not been implemented and will generate an error",
-                    selected.image,
-                    true
-                )
+                val name = "${selected.name} - Yes and No below has not been implemented and will generate an error"
+                section(classes = "box") {
+                    img(src = selected.image) {
+                        alt = "Chosen ${name}"
+                    }
+                    p { +name }
+                }
                 section {
                     id = "choices"
                     attributes["hx-ext"] = "preload"

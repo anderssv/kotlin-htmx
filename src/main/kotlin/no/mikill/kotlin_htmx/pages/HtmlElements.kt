@@ -9,25 +9,15 @@ import kotlinx.html.stream.createHTML
 import org.intellij.lang.annotations.Language
 
 object HtmlElements {
-    fun HtmlBlockTag.selectedBox(name: String, imageUrl: String, displayName: Boolean = false) {
-        div(classes = "w-full max-w-md border drop-shadow-lg border-gray-400 rounded-lg bg-white p-2") {
-            img(src = imageUrl, classes = "object-cover mx-auto max-h-56") {
-                alt = name
-            }
-            if (displayName) p(classes = "text-center py-2") { +name }
-        }
-    }
 
     fun HtmlBlockTag.selectBox(name: String, linkUrl: String, imageUrl: String) {
-        a(href = linkUrl) {
+        a(href = linkUrl, classes = "box") {
             boostAndPreload()
 
             img(
-                src = imageUrl, alt = name
+                src = imageUrl, alt = "Choose $name"
             )
-            p {
-                +name
-            }
+            p { +name }
         }
     }
 
@@ -99,11 +89,18 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondFullPage(
             
                         a {
                             display: block;
-                            border: 1px solid red;
-                            border-radius: 0.5em;
-                            text-align: center;
-                            padding: 1em;
                         }
+                    }
+                    
+                    .box {
+                        border: 1px solid red;
+                        border-radius: 0.5em;
+                        text-align: center;
+                        padding: 1em;                    
+                    }
+                    
+                    section {
+                        margin-bottom: 2em;
                     }
                 """.trimIndent()
 
