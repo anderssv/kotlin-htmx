@@ -98,17 +98,21 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondFullPage(
                         text-align: center;
                         padding: 1em;                    
                     }
-                    
+                                        
                     section {
                         margin-bottom: 2em;
                     }
                 """.trimIndent()
 
             style {
-                +globalStyle
+                unsafe {
+                    +globalStyle
+                }
             }
             if (localStyle != null) style {
-                +localStyle
+                unsafe {
+                    +localStyle
+                }
             }
         }
         body {
