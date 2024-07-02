@@ -105,14 +105,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondFullPage(
                 """.trimIndent()
 
             style {
-                unsafe {
-                    raw(globalStyle)
-                }
+                +globalStyle
             }
             if (localStyle != null) style {
-                unsafe {
-                    raw(localStyle)
-                }
+                +localStyle
             }
         }
         body {
@@ -125,6 +121,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondFullPage(
                 // Logo
                 header {
                     img(src = "/static/images/logo.png") {
+                        width = "100px"
+                        height = "100px"
                         alt = "Logo"
                     }
                 }
