@@ -36,9 +36,9 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
             }
-            script(src = "https://unpkg.com/htmx.org@1.9.2") { }
+            script(src = "https://unpkg.com/htmx.org@1.9.12") { }
             script(src = "https://unpkg.com/htmx.org/dist/ext/json-enc.js") { }
-            script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") {}
+            script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") { }
 
             @Language("CSS")
             val globalStyle =
@@ -95,6 +95,11 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                 main {
                     id = "mainContent"
                     insert(pageContent)
+                }
+
+                footer {
+                    +"This is the footer. - Made by Anders Sveen. Check out "
+                    a(href = "https://www.mikill.no") { +"https://www.mikill.no" }
                 }
             }
         }

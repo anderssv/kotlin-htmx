@@ -59,9 +59,7 @@ class DemoPage {
                         div {
                             attributes["hx-get"] = "data/todolist.html"
                             style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                            script {
-                                src = "https://unpkg.com/htmx.org@latest"
-                            }
+                            // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                             +"Click me!"
                         }
                     }
