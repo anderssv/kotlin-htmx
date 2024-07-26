@@ -1,6 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
+import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
@@ -70,9 +71,9 @@ class MainPage(
 
     suspend fun renderMainPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
-            respondFullPage(
-                // Using a pop-over here so a bit special handling. Might consider using as default.
-                localStyle = """
+            call.respondHtmlTemplate(
+                MainTemplate(
+                    localStyle = """
                         .htmx-indicator {
                             visibility: hidden;
                         }
@@ -81,52 +82,55 @@ class MainPage(
                         }
                         .htmx-request.htmx-indicator{
                             visibility: visible;
-                        }                        
-                    """.trimIndent()
+                        }                                        
+            """.trimIndent()
+                )
             ) {
-                section {
-                    div(classes = "htmx-indicator") {
-                        id = "formLoading"
-                        +"Searching... (Intentionally delayed for 5 seconds)"
-                    }
-                    div {
-                        form {
-                            attributes["hx-post"] = "/search"
-                            attributes["hx-swap"] = "outerHTML"
-                            attributes["hx-indicator"] = "#formLoading"
+                pageContent {
+                    section {
+                        div(classes = "htmx-indicator") {
+                            id = "formLoading"
+                            +"Searching... (Intentionally delayed for 5 seconds)"
+                        }
+                        div {
+                            form {
+                                attributes["hx-post"] = "/search"
+                                attributes["hx-swap"] = "outerHTML"
+                                attributes["hx-indicator"] = "#formLoading"
 
-                            div {
-                                input {
-                                    type = InputType.text
-                                    name = "lookupValue"
-                                    attributes["aria-label"] = "Value"
-                                    required = true
+                                div {
+                                    input {
+                                        type = InputType.text
+                                        name = "lookupValue"
+                                        attributes["aria-label"] = "Value"
+                                        required = true
+                                    }
+                                    button {
+                                        attributes["aria-label"] = "Check"
+                                        +"Check"
+                                    }
                                 }
-                                button {
-                                    attributes["aria-label"] = "Check"
-                                    +"Check"
-                                }
-                            }
-                            p { +"Input one of the item names below, anything else will generate an not found error" }
-                            p {
-                                +"The source and description of the code for this site: "
-                                a("https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md") {
-                                    +"https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md"
+                                p { +"Input one of the item names below, anything else will generate an not found error" }
+                                p {
+                                    +"The source and description of the code for this site: "
+                                    a("https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md") {
+                                        +"https://github.com/anderssv/kotlin-htmx/blob/main/Readme.md"
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                section {
-                    id = "choices"
-                    attributes["hx-ext"] = "preload"
+                    section {
+                        id = "choices"
+                        attributes["hx-ext"] = "preload"
 
-                    items.forEach { item ->
-                        selectBox(
-                            name = item.name,
-                            linkUrl = item.name,
-                            imageUrl = item.image
-                        )
+                        items.forEach { item ->
+                            selectBox(
+                                name = item.name,
+                                linkUrl = item.name,
+                                imageUrl = item.image
+                            )
+                        }
                     }
                 }
             }
