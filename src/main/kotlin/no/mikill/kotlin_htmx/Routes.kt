@@ -69,6 +69,21 @@ fun Application.configurePageRoutes(
                     ContentType.Application.Json
                 )
             }
+            get("/todolist.html") {
+                call.respondText("""
+                    <h1>Todo List</h1>
+                    <ul id="todo-list">
+                        <li>Buy milk</li>
+                        <li>Buy bread</li>
+                        <li>Buy eggs</li>
+                        <li>Buy butter</li>
+                    </ul>
+                    <p>It is now <span id="htmx-date"></span></p>
+                    <script>
+                        document.getElementById('htmx-date').innerHTML = new Date().toLocaleString();
+                    </script>
+                """.trimIndent())
+            }
         }
     }
 }

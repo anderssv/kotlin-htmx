@@ -52,6 +52,17 @@ class DemoPage {
                             unsafe { raw("<my-element></my-element>") } // TODO: How is this done without unsafe?
                         }
                     }
+                    section {
+                        h1 { +"HTMX Element" }
+                        div {
+                            attributes["hx-get"] = "data/todolist.html"
+                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                            script {
+                                src = "https://unpkg.com/htmx.org@latest"
+                            }
+                            + "Click me!"
+                        }
+                    }
                 }
             }
         }
