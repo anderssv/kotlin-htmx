@@ -60,7 +60,23 @@ class DemoPage {
                             script {
                                 src = "https://unpkg.com/htmx.org@latest"
                             }
-                            + "Click me!"
+                            +"Click me!"
+                        }
+                    }
+                    section {
+                        h1 { +"React Element" }
+                        div {
+                            id = "react-content"
+                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                            script {
+                                src = "https://unpkg.com/@babel/standalone/babel.min.js"
+                            }
+                            script {
+                                src = "script/react-script.js"
+                                type = "text/babel"
+                                attributes["data-type"] = "module"
+                            }
+                            +"React not loaded"
                         }
                     }
                 }
