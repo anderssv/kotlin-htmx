@@ -9,6 +9,7 @@ import org.intellij.lang.annotations.Language
  */
 class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Template<HTML> {
     val pageContent = Placeholder<FlowContent>()
+    val headerContent = Placeholder<FlowContent>()
 
     override fun HTML.apply() {
         lang = "en"
@@ -88,6 +89,9 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                         width = "100px"
                         height = "100px"
                         alt = "Logo"
+                    }
+                    div {
+                        insert(headerContent)
                     }
                 }
 

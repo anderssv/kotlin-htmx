@@ -18,5 +18,6 @@ fun Application.configureRouting() {
     }
     routing {
         staticResources("/static", "static")
+        staticResources("/script", "script")
     }
 }

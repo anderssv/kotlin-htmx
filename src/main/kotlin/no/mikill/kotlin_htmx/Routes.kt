@@ -1,6 +1,7 @@
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import no.mikill.kotlin_htmx.pages.DemoPage
 import no.mikill.kotlin_htmx.pages.MainPage
 import no.mikill.kotlin_htmx.pages.SelectedPage
 
@@ -31,6 +32,10 @@ fun Application.configurePageRoutes(
             get {
                 selectedPage.renderPage(this)
             }
+        }
+
+        get("/demo") {
+            DemoPage().renderPage(this)
         }
     }
 }
