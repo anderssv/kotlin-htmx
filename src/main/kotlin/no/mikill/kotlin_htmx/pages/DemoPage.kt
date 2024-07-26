@@ -41,6 +41,17 @@ class DemoPage {
                             +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();"
                         }
                     }
+                    section {
+                        h1 { +"Lit Element" }
+                        div {
+                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                            script {
+                                src = "/script/lit-script.js"
+                                type = "module"
+                            }
+                            unsafe { raw("<my-element></my-element>") } // TODO: How is this done without unsafe?
+                        }
+                    }
                 }
             }
         }

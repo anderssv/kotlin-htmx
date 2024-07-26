@@ -1,3 +1,4 @@
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -36,6 +37,38 @@ fun Application.configurePageRoutes(
 
         get("/demo") {
             DemoPage().renderPage(this)
+        }
+
+        route("/data") {
+            get("/todolist.json") {
+                call.respondText(
+                    """
+                        [
+                          {
+                            "id": 1,
+                            "title": "Buy milk",
+                            "completed": false
+                          },
+                          {
+                            "id": 2,
+                            "title": "Buy bread",
+                            "completed": false
+                          },
+                          {
+                            "id": 3,
+                            "title": "Buy eggs",
+                            "completed": false
+                          },
+                          {
+                            "id": 4,
+                            "title": "Buy butter",
+                            "completed": false
+                          }
+                        ]
+                    """.trimIndent(),
+                    ContentType.Application.Json
+                )
+            }
         }
     }
 }
