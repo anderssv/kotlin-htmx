@@ -9,12 +9,14 @@ class DemoPage {
     suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate()) {
-                val sourceUrl = "https://github.com/anderssv/web-playground/tree/main/combined"
                 headerContent {
                     p {
-                        +"This is a small test. You can see the source at "
-                        a(href = sourceUrl) { +sourceUrl }
-                        +" or just hit view source. 😃"
+                        +"This is a small test. You can see the source at: "
+                        ul {
+                            li { a(href = "https://github.com/anderssv/web-playground/tree/main/combined") { +"Pure HTML source (same as view source)" } }
+                            li { a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/DemoPage.kt") { +"Kotlin + KTor source" } }
+                        }
+                        +"Or just hit view source. 😃"
                     }
                     p { +"Loading below is staggered on purpose to show steps. Just a crude wait." }
                 }

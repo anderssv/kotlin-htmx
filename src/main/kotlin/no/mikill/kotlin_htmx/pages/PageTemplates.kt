@@ -85,11 +85,7 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
 
                 // Logo
                 header {
-                    img(src = "/static/images/logo.png") {
-                        width = "100px"
-                        height = "100px"
-                        alt = "Logo"
-                    }
+                    h1 { +"Kotlin + KTor front end demos" }
                     div {
                         insert(headerContent)
                     }
