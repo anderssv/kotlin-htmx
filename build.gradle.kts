@@ -59,7 +59,7 @@ dependencies {
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
 
-    testImplementation("org.assertj:assertj-core:3.26.0")
+    testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
