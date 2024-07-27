@@ -5,7 +5,7 @@ A full stack webapp with responsive, interactive pages. It has efficient feedbac
 - KTor as a web server - https://ktor.io
 - Kotlin typesafe HTML DSL - https://kotlinlang.org/docs/typesafe-html-dsl.html
 - HTMX for front end interactivity - https://htmx.org
-- Tailwind CSS for responsive styling - https://tailwindcss.com
+- Pico CSS for responsive styling and semantic defaults - https://picocss.com
 
 You can try the "application" here: https://kotlin-htmx.fly.dev/
 
@@ -36,9 +36,9 @@ Let me know what you think!
 
 You can find me here:
 - https://twitter.com/anderssv
-- https://bsky.app/profile/anderssv.bsky.social
 - https://www.linkedin.com/in/anderssv/
 - https://blog.f12.no/wp/
+- https://www.mikill.no
 
 # Running
 
