@@ -75,15 +75,15 @@ class MainPage(
                 templateContent {
                     selectionContent {
                         section {
-                            div(classes = "htmx-indicator") {
-                                id = "formLoading"
-                                +"Searching... (Intentionally delayed for 5 seconds)"
-                            }
                             div {
                                 form {
                                     attributes["hx-post"] = "/search"
                                     attributes["hx-swap"] = "outerHTML"
-                                    attributes["hx-indicator"] = "#formLoading"
+
+                                    div(classes = "htmx-indicator") {
+                                        id = "formLoading"
+                                        +"Searching... (Intentionally delayed for 5 seconds)"
+                                    }
 
                                     div {
                                         input {

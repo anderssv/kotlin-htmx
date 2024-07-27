@@ -55,6 +55,14 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                         }
                     }
                     
+                    .htmx-indicator {
+                        visibility: hidden;
+                    }
+                                        
+                    .htmx-request .htmx-indicator {
+                        visibility: visible;
+                    }
+                                        
                     .box {
                         border: 1px solid red;
                         border-radius: 0.5em;
@@ -64,14 +72,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                                         
                     section {
                         margin-bottom: 2em;
-                    }
-                    
-                    .htmx-indicator {
-                        visibility: hidden;
-                    }
-                    .htmx-request.htmx-indicator {
-                        visibility: visible;
-                    }
+                    }                    
                 """.trimIndent()
 
             style {

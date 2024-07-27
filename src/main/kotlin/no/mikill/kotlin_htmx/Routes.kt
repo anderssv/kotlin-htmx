@@ -2,9 +2,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.pages.DemoPage
 import no.mikill.kotlin_htmx.pages.MainPage
 import no.mikill.kotlin_htmx.pages.SelectedPage
+import kotlin.time.Duration.Companion.seconds
 
 fun Application.configurePageRoutes(
     mainPage: MainPage,
@@ -70,6 +72,7 @@ fun Application.configurePageRoutes(
                 )
             }
             get("/todolist.html") {
+                delay(5.seconds)
                 call.respondText("""
                     <h1>Todo List</h1>
                     <ul id="todo-list">

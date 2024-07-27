@@ -62,6 +62,9 @@ class DemoPage {
                                 style = "border: 1px solid red; padding: 10px; margin: 10px;"
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
+                                div(classes = "htmx-indicator") {
+                                    +"Loading..."
+                                }
                             }
                         }
                         section {
