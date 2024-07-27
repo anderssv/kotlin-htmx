@@ -119,6 +119,11 @@ class MainPage(
                                 )
                             }
                         }
+                        section {
+                            +"You can see a different demo "
+                            a(href = "/demo") { +"here" }
+                            +" that showcases some use of React and Lit too"
+                        }
                     }
                 }
             }

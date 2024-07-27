@@ -63,7 +63,7 @@ class DemoPage {
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
                                 div(classes = "htmx-indicator") {
-                                    +"Loading..."
+                                    +"Loading... (Intentionally delayed for 5 seconds)"
                                 }
                             }
                         }
