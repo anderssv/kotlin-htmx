@@ -8,7 +8,7 @@ import kotlinx.html.*
 class DemoPage {
     suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
-            call.respondHtmlTemplate(MainTemplate()) {
+            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
                     p {
                         +"This is a small test. You can see the source at: "
@@ -20,63 +20,65 @@ class DemoPage {
                     }
                     p { +"Loading below is staggered on purpose to show steps. Just a crude wait." }
                 }
-                pageContent {
-                    section {
-                        h1 { +"HTML Element" }
-                        div {
-                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                            h1 { +"Todo List" }
-                            ul {
-                                id = "todo-list"
-                                li { +"Buy milk" }
-                                li { +"Buy bread" }
-                                li { +"Buy eggs" }
-                                li { +"Buy butter" }
-                            }
-                            p {
-                                span {
-                                    id = "html-date"
+                templateContent {
+                    demoContent {
+                        section {
+                            h1 { +"HTML Element" }
+                            div {
+                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                h1 { +"Todo List" }
+                                ul {
+                                    id = "todo-list"
+                                    li { +"Buy milk" }
+                                    li { +"Buy bread" }
+                                    li { +"Buy eggs" }
+                                    li { +"Buy butter" }
+                                }
+                                p {
+                                    span {
+                                        id = "html-date"
+                                    }
                                 }
                             }
-                        }
-                        script {
-                            +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();"
-                        }
-                    }
-                    section {
-                        h1 { +"Lit Element" }
-                        div {
-                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
                             script {
-                                src = "/script/lit-script.js"
-                                type = "module"
+                                +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();"
                             }
-                            unsafe { raw("<my-element></my-element>") } // TODO: How is this done without unsafe?
                         }
-                    }
-                    section {
-                        h1 { +"HTMX Element" }
-                        div {
-                            attributes["hx-get"] = "data/todolist.html"
-                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                            // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
-                            +"Click me!"
+                        section {
+                            h1 { +"Lit Element" }
+                            div {
+                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                script {
+                                    src = "/script/lit-script.js"
+                                    type = "module"
+                                }
+                                unsafe { raw("<my-element></my-element>") } // TODO: How is this done without unsafe?
+                            }
                         }
-                    }
-                    section {
-                        h1 { +"React Element" }
-                        div {
-                            id = "react-content"
-                            style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                            script {
-                                src = "https://unpkg.com/@babel/standalone/babel.min.js"
+                        section {
+                            h1 { +"HTMX Element" }
+                            div {
+                                attributes["hx-get"] = "data/todolist.html"
+                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
+                                +"Click me!"
                             }
-                            script {
-                                src = "script/react-script.js"
-                                type = "text/babel"
-                                attributes["data-type"] = "module"
+                        }
+                        section {
+                            h1 { +"React Element" }
+                            div {
+                                id = "react-content"
+                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                script {
+                                    src = "https://unpkg.com/@babel/standalone/babel.min.js"
+                                }
+                                script {
+                                    src = "script/react-script.js"
+                                    type = "text/babel"
+                                    attributes["data-type"] = "module"
+                                }
+                                +"React not loaded"
                             }
-                            +"React not loaded"
                         }
                     }
                 }

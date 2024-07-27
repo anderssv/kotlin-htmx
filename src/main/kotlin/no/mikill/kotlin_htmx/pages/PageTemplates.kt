@@ -7,8 +7,9 @@ import org.intellij.lang.annotations.Language
 /**
  * See https://ktor.io/docs/server-html-dsl.html#templates for more information
  */
-class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Template<HTML> {
-    val pageContent = Placeholder<FlowContent>()
+class MainTemplate<T : Template<FlowContent>>(private val template: T) : Template<HTML> {
+
+    val templateContent = TemplatePlaceholder<T>()
     val headerContent = Placeholder<FlowContent>()
 
     override fun HTML.apply() {
@@ -40,7 +41,7 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
             script(src = "https://unpkg.com/htmx.org/dist/ext/json-enc.js") { }
             script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") { }
 
-            @Language("CSS")
+            @Language("CSS") // Separated to variable to make IDEA syntax highlighting work
             val globalStyle =
                 """
                     #choices {
@@ -64,16 +65,18 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                     section {
                         margin-bottom: 2em;
                     }
+                    
+                    .htmx-indicator {
+                        visibility: hidden;
+                    }
+                    .htmx-request.htmx-indicator {
+                        visibility: visible;
+                    }
                 """.trimIndent()
 
             style {
                 unsafe {
                     +globalStyle
-                }
-            }
-            if (localStyle != null) style {
-                unsafe {
-                    +localStyle
                 }
             }
         }
@@ -94,7 +97,7 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                 // Main content
                 main {
                     id = "mainContent"
-                    insert(pageContent)
+                    insert(template, templateContent)
                 }
 
                 footer {
@@ -103,5 +106,22 @@ class MainTemplate(@Language("CSS") private val localStyle: String? = null) : Te
                 }
             }
         }
+    }
+}
+
+
+class SelectionTemplate : Template<FlowContent> {
+    val selectionContent = Placeholder<FlowContent>()
+
+    override fun FlowContent.apply() {
+        insert(selectionContent)
+    }
+}
+
+class DemoTemplate : Template<FlowContent> {
+    val demoContent = Placeholder<FlowContent>()
+
+    override fun FlowContent.apply() {
+        insert(demoContent)
     }
 }
