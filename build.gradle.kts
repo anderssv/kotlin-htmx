@@ -49,6 +49,9 @@ dependencies {
     implementation("io.ktor:ktor-server-caching-headers-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder-jvm:$ktor_version")
 
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    implementation("org.glassfish.expressly:expressly:5.0.0")
+
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")

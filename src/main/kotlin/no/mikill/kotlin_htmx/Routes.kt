@@ -37,8 +37,16 @@ fun Application.configurePageRoutes(
             }
         }
 
-        get("/demo") {
-            DemoPage().renderPage(this)
+        route("/demo") {
+            get("/multi") {
+                DemoPage().renderPage(this)
+            }
+            get("/form") {
+                DemoPage().renderForm(this)
+            }
+            post("/form") {
+                DemoPage().saveForm(this)
+            }
         }
 
         route("/data") {
@@ -73,7 +81,8 @@ fun Application.configurePageRoutes(
             }
             get("/todolist.html") {
                 delay(5.seconds)
-                call.respondText("""
+                call.respondText(
+                    """
                     <h1>Todo List</h1>
                     <ul id="todo-list">
                         <li>Buy milk</li>
@@ -85,7 +94,8 @@ fun Application.configurePageRoutes(
                     <script>
                         document.getElementById('htmx-date').innerHTML = new Date().toLocaleString();
                     </script>
-                """.trimIndent())
+                """.trimIndent()
+                )
             }
         }
     }

@@ -2,6 +2,7 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.request.*
 import io.ktor.util.pipeline.*
 import kotlinx.html.*
 
@@ -81,6 +82,63 @@ class DemoPage {
                                     attributes["data-type"] = "module"
                                 }
                                 +"React not loaded"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun renderForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+        with(pipelineContext) {
+            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
+                headerContent {
+                    span { +"Form demo" }
+                }
+                templateContent {
+                    demoContent {
+                        script { src = "https://cdn.jsdelivr.net/gh/anderssv/formjson/src/formjson.js" }
+                        form {
+                            attributes["formjson"] = "true"
+                            method = FormMethod.post
+                            input {
+                                name = "person.firstName"
+                                minLength = "3"
+                                required = true
+                            }
+                            input {
+                                name = "person.lastName"
+                                minLength = "3"
+                                required = true
+                            }
+                            input {
+                                name = "ok"
+                                type = InputType.submit
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun saveForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+        with(pipelineContext) {
+            val form = call.receiveParameters()
+            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
+                templateContent {
+                    demoContent {
+                        section {
+                            h1 { +"Form save" }
+                            div {
+                                +"Form saved"
+                            }
+                            div {
+                                +"Form data: "
+                                pre {
+                                    +form.toString()
+                                }
                             }
                         }
                     }
