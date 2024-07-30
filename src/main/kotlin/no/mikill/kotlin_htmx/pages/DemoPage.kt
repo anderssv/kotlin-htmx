@@ -1,5 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -144,6 +146,10 @@ class DemoPage {
     suspend fun saveForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
         with(pipelineContext) {
             val form = call.receiveParameters()
+            val application = Application(Person("", ""), "") // This would typically be fetched from a DB based on a ID, but don't have that right now
+            val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+            val updatedApplication: Application = mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
+
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 templateContent {
                     demoContent {
@@ -151,6 +157,17 @@ class DemoPage {
                             h1 { +"Form save" }
                             div {
                                 +"Form saved"
+                            }
+                            div {
+                                +"Application object data: "
+                                dl {
+                                    dt { + "First name"}
+                                    dd { +updatedApplication.person.firstName }
+                                    dt { + "Last name"}
+                                    dd { +updatedApplication.person.lastName }
+                                    dt { + "Comments"}
+                                    dd { +updatedApplication.comments }
+                                }
                             }
                             div {
                                 +"Form data: "

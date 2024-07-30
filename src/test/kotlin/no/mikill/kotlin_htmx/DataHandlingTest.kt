@@ -40,7 +40,6 @@ class DataHandlingTest {
         }
         val application = ObjectMapper().registerModule(KotlinModule.Builder().build())
             .readValue(applicationJson, Application::class.java)
-        println(application)
         assertThat(application.person.firstName).isEqualTo("Ola")
     }
 
@@ -54,19 +53,28 @@ class DataHandlingTest {
     }
 
     @Test
-    fun shouldGetPropetyAndValue() {
+    fun shouldGetPropertyAndValue() {
         val application = Application.valid()
 
         resolveProperty<String>(application, "person.firstName").let { propertyAndValue ->
             assertThat(propertyAndValue.value).isEqualTo("Ola")
-            println(propertyAndValue.property.javaField?.annotations?.map { it.annotationClass })
             assertThat(propertyAndValue.property.javaField?.annotations?.map { it.annotationClass }).contains(NotEmpty::class)
         }
     }
 
+    @Test
+    fun shouldUpdatePropertyOnObject() {
+        val application = Application.valid()
+
+        val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+        val newApplication: Application =
+            mapper.readerForUpdating(application).readValue("""{"person":{"firstName":"Kari"}}""")
+        assertThat(newApplication.person.firstName).isEqualTo("Kari")
+        assertThat(newApplication.person.lastName).isEqualTo("Nordmann")
+        assertThat(newApplication.comments).isEqualTo("Comment")
+    }
 }
 
-
 private fun Application.Companion.valid(): Application {
-    return Application(Person("Ola", "Nordmann"), "")
+    return Application(Person("Ola", "Nordmann"), "Comment")
 }
