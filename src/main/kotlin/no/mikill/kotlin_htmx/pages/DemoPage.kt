@@ -4,7 +4,12 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.util.pipeline.*
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Size
 import kotlinx.html.*
+import no.mikill.kotlin_htmx.application.Application
+import no.mikill.kotlin_htmx.application.Person
+import no.mikill.kotlin_htmx.resolveProperty
 
 class DemoPage {
     suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
@@ -92,6 +97,8 @@ class DemoPage {
 
     suspend fun renderForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
         with(pipelineContext) {
+            val existingApplication = Application(Person("", ""), "")
+
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
                     span { +"Form demo" }
@@ -102,10 +109,21 @@ class DemoPage {
                         form {
                             attributes["formjson"] = "true"
                             method = FormMethod.post
+                            val firstNamePropertyAndValue =
+                                resolveProperty<String>(existingApplication, "person.firstName")
                             input {
                                 name = "person.firstName"
                                 minLength = "3"
-                                required = true
+                                firstNamePropertyAndValue.getJavaFieldAnnotations()?.forEach { annotation ->
+                                    println(annotation)
+                                    when (annotation) {
+                                        is NotEmpty -> required = true
+                                        is Size -> {
+                                            minLength = annotation.min.toString()
+                                            maxLength = annotation.max.toString()
+                                        }
+                                    }
+                                }
                             }
                             input {
                                 name = "person.lastName"

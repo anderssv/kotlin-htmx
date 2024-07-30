@@ -16,5 +16,7 @@ data class Person(
     @field:NotEmpty
     @field:Size(min = 3)
     val firstName: String,
+    @field:NotEmpty
+    @field:Size(min = 3)
     val lastName: String
 )
