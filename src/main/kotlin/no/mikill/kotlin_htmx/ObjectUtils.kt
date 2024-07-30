@@ -14,6 +14,7 @@ data class PropertyAndValue<T>(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <reified T> resolveProperty(
     instance: Any,
     propertyName: String,
