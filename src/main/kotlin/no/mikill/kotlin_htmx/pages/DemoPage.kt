@@ -1,16 +1,12 @@
 package no.mikill.kotlin_htmx.pages
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.request.*
 import io.ktor.util.pipeline.*
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.resolveProperty
 
 class DemoPage {
@@ -97,10 +93,11 @@ class DemoPage {
         }
     }
 
-    suspend fun renderForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun renderInputForm(
+        pipelineContext: PipelineContext<Unit, ApplicationCall>,
+        existingApplication: Application
+    ) {
         with(pipelineContext) {
-            val existingApplication = Application(Person("", ""), "")
-
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
                     span { +"Form demo" }
@@ -115,7 +112,6 @@ class DemoPage {
                                 resolveProperty<String>(existingApplication, "person.firstName")
                             input {
                                 name = "person.firstName"
-                                minLength = "3"
                                 firstNamePropertyAndValue.getJavaFieldAnnotations()?.forEach { annotation ->
                                     println(annotation)
                                     when (annotation) {
@@ -126,6 +122,7 @@ class DemoPage {
                                         }
                                     }
                                 }
+                                value = firstNamePropertyAndValue.value ?: ""
                             }
                             input {
                                 name = "person.lastName"
@@ -143,13 +140,11 @@ class DemoPage {
         }
     }
 
-    suspend fun saveForm(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun renderFormSaved(
+        pipelineContext: PipelineContext<Unit, ApplicationCall>,
+        existingApplication: Application
+    ) {
         with(pipelineContext) {
-            val form = call.receiveParameters()
-            val application = Application(Person("", ""), "") // This would typically be fetched from a DB based on a ID, but don't have that right now
-            val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
-            val updatedApplication: Application = mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
-
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 templateContent {
                     demoContent {
@@ -161,18 +156,12 @@ class DemoPage {
                             div {
                                 +"Application object data: "
                                 dl {
-                                    dt { + "First name"}
-                                    dd { +updatedApplication.person.firstName }
-                                    dt { + "Last name"}
-                                    dd { +updatedApplication.person.lastName }
-                                    dt { + "Comments"}
-                                    dd { +updatedApplication.comments }
-                                }
-                            }
-                            div {
-                                +"Form data: "
-                                pre {
-                                    +form.toString()
+                                    dt { +"First name" }
+                                    dd { +existingApplication.person.firstName }
+                                    dt { +"Last name" }
+                                    dd { +existingApplication.person.lastName }
+                                    dt { +"Comments" }
+                                    dd { +existingApplication.comments }
                                 }
                             }
                         }

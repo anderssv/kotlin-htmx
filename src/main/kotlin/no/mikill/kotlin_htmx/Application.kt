@@ -4,6 +4,7 @@ import configurePageRoutes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.MainPage
 import no.mikill.kotlin_htmx.pages.SelectedPage
@@ -71,5 +72,5 @@ fun Application.module() {
     val selectedPage = SelectedPage()
 
     // Load pages
-    configurePageRoutes(mainPage, selectedPage)
+    configurePageRoutes(mainPage, selectedPage, ApplicationRepository())
 }

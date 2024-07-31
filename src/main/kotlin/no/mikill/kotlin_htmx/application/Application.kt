@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonMerge
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
+import java.util.*
 
 data class Application(
+    val id: UUID,
     @field:JsonMerge
     @field:Valid
     val person: Person,

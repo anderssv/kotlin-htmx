@@ -8,6 +8,7 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.application.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.util.*
 import kotlin.reflect.jvm.javaField
 
 class DataHandlingTest {
@@ -76,5 +77,5 @@ class DataHandlingTest {
 }
 
 private fun Application.Companion.valid(): Application {
-    return Application(Person("Ola", "Nordmann"), "Comment")
+    return Application(UUID.randomUUID(),Person("Ola", "Nordmann"), "Comment")
 }
