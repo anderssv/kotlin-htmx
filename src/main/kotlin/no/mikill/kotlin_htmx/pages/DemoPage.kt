@@ -3,6 +3,7 @@ package no.mikill.kotlin_htmx.pages
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.util.pipeline.*
+import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.*
@@ -95,7 +96,8 @@ class DemoPage {
 
     suspend fun renderInputForm(
         pipelineContext: PipelineContext<Unit, ApplicationCall>,
-        existingApplication: Application
+        existingApplication: Application,
+        errors: Set<ConstraintViolation<Application>>
     ) {
         with(pipelineContext) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {

@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import jakarta.validation.Validation
 import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
@@ -55,11 +56,12 @@ fun Application.configurePageRoutes(
             get("/form") {
                 val existingApplication =
                     no.mikill.kotlin_htmx.application.Application(UUID.randomUUID(), Person("", ""), "")
-                DemoPage().renderInputForm(this, existingApplication)
+                DemoPage().renderInputForm(this, existingApplication, emptySet())
             }
             post("/form") {
                 val form = call.receiveParameters()
                 logger.info("Received form data: $form")
+
                 val application = no.mikill.kotlin_htmx.application.Application(
                     UUID.randomUUID(),
                     Person("", ""),
@@ -70,7 +72,13 @@ fun Application.configurePageRoutes(
                     mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
                 applicationRepository.addApplication(updatedApplication)
 
-                call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+                val validator = Validation.buildDefaultValidatorFactory().validator
+                val errors = validator.validate(updatedApplication)
+                if (errors.isNotEmpty()) {
+                    DemoPage().renderInputForm(this, updatedApplication, errors)
+                } else {
+                    call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+                }
             }
             get("/form/{id}/saved") {
                 val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
