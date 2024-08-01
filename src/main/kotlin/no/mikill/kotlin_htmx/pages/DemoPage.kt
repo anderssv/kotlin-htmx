@@ -61,18 +61,6 @@ class DemoPage {
                             }
                         }
                         section {
-                            h1 { +"HTMX Element" }
-                            div {
-                                attributes["hx-get"] = "/data/todolist.html"
-                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
-                                +"Click me!"
-                                div(classes = "htmx-indicator") {
-                                    +"Loading... (Intentionally delayed for 5 seconds)"
-                                }
-                            }
-                        }
-                        section {
                             h1 { +"React Element" }
                             div {
                                 id = "react-content"
@@ -86,6 +74,18 @@ class DemoPage {
                                     attributes["data-type"] = "module"
                                 }
                                 +"React not loaded"
+                            }
+                        }
+                        section {
+                            h1 { +"HTMX Element" }
+                            div {
+                                attributes["hx-get"] = "/data/todolist.html"
+                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
+                                +"Click me!"
+                                div(classes = "htmx-indicator") {
+                                    +"Loading... (Intentionally delayed for 5 seconds)"
+                                }
                             }
                         }
                     }
