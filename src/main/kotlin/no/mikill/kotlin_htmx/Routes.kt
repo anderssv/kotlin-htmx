@@ -51,7 +51,7 @@ fun Application.configurePageRoutes(
 
         route("/demo") {
             get("/multi") {
-                DemoPage().renderPage(this)
+                DemoPage().renderMultiJsPage(this)
             }
             get("/form") {
                 val existingApplication =

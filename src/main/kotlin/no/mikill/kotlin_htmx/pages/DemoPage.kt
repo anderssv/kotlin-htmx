@@ -11,7 +11,7 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.resolveProperty
 
 class DemoPage {
-    suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
@@ -63,7 +63,7 @@ class DemoPage {
                         section {
                             h1 { +"HTMX Element" }
                             div {
-                                attributes["hx-get"] = "data/todolist.html"
+                                attributes["hx-get"] = "/data/todolist.html"
                                 style = "border: 1px solid red; padding: 10px; margin: 10px;"
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
@@ -81,7 +81,7 @@ class DemoPage {
                                     src = "https://unpkg.com/@babel/standalone/babel.min.js"
                                 }
                                 script {
-                                    src = "script/react-script.js"
+                                    src = "/script/react-script.js"
                                     type = "text/babel"
                                     attributes["data-type"] = "module"
                                 }

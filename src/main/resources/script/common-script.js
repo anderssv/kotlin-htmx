@@ -9,7 +9,7 @@ export function wait(ms) {
 }
 
 export function getTodoList() {
-    return fetch('data/todolist.json')
+    return fetch('/data/todolist.json')
         .then(response => response.text())
         .then(text => JSON.parse(text))
         .then(todoList => {
