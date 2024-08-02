@@ -24,6 +24,7 @@ fun Application.configurePageRoutes(
     applicationRepository: ApplicationRepository
 ) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
+    val validator = Validation.buildDefaultValidatorFactory().validator
 
     routing {
         get("/robots.txt") {
@@ -72,9 +73,8 @@ fun Application.configurePageRoutes(
                     mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
                 applicationRepository.addApplication(updatedApplication)
 
-                val validator = Validation.buildDefaultValidatorFactory().validator
                 val errors = validator.validate(updatedApplication)
-                if (errors.isNotEmpty()) {
+                if (errors.isNotEmpty()) { // Back to same page with errors
                     DemoPage().renderInputForm(this, updatedApplication, errors)
                 } else {
                     call.respondRedirect("/demo/form/${updatedApplication.id}/saved")

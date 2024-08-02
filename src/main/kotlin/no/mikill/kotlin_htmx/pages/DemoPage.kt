@@ -106,35 +106,57 @@ class DemoPage {
                 }
                 templateContent {
                     demoContent {
+                        // This is a custom script that I have written. It should be packaged as a library and published
+                        // to NPM instead of just using a direct link to Github. Let me know if you want to use it and
+                        // I will add it to the project.
                         script { src = "https://cdn.jsdelivr.net/gh/anderssv/formjson/src/formjson.js" }
                         form {
                             attributes["formjson"] = "true"
                             method = FormMethod.post
-                            val firstNamePropertyAndValue =
-                                resolveProperty<String>(existingApplication, "person.firstName")
-                            input {
-                                name = "person.firstName"
-                                firstNamePropertyAndValue.getJavaFieldAnnotations()?.forEach { annotation ->
-                                    println(annotation)
-                                    when (annotation) {
-                                        is NotEmpty -> required = true
-                                        is Size -> {
-                                            minLength = annotation.min.toString()
-                                            maxLength = annotation.max.toString()
-                                        }
-                                    }
-                                }
-                                value = firstNamePropertyAndValue.value ?: ""
-                            }
-                            input {
-                                name = "person.lastName"
-                                minLength = "3"
-                                required = true
-                            }
-                            input {
-                                name = "ok"
-                                type = InputType.submit
-                            }
+
+                            inputFieldWithValidationAndErrors(
+                                existingApplication,
+                                "person.firstName",
+                                "First name",
+                                errors
+                            )
+                            inputFieldWithValidationAndErrors(existingApplication, "person.lastName", "Last name", errors)
+                            submitInput { name = "ok" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun FORM.inputFieldWithValidationAndErrors(
+        existingApplication: Any,
+        property: String,
+        text: String,
+        errors: Set<ConstraintViolation<Application>>
+    ) {
+        val propertyAndValue = resolveProperty<String>(existingApplication, property)
+        label {
+            +"$text: "
+            input {
+                name = property
+                propertyAndValue.getJavaFieldAnnotations()?.forEach { annotation ->
+                    when (annotation) {
+                        is NotEmpty -> required = true
+                        is Size -> {
+                            minLength = annotation.min.toString()
+                            maxLength = annotation.max.toString()
+                        }
+                        // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
+                    }
+                }
+                value = propertyAndValue.value ?: ""
+            }
+            errors.filter { it.propertyPath.toString() == property }.let {
+                if (it.isNotEmpty()) {
+                    ul(classes = "form-error") {
+                        it.map { it.message }.forEach { message ->
+                            li { +message }
                         }
                     }
                 }

@@ -72,7 +72,11 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                                         
                     section {
                         margin-bottom: 2em;
-                    }                    
+                    }
+                                        
+                    .form-error {
+                        color: red;
+                    }
                 """.trimIndent()
 
             style {
