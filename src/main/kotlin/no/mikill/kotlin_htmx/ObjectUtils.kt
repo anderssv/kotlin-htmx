@@ -3,47 +3,43 @@ package no.mikill.kotlin_htmx
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.javaField
 
-data class PropertyAndValue<T>(
-    val property: KProperty1<Any, T>,
-    val value: T?
-) {
-    fun getJavaFieldAnnotations(): Array<Annotation>? {
-        return property.javaField?.annotations
+fun getValueFromPath(obj: Any?, path: String): Any? {
+    if (obj == null) return null
+
+    val pathParts = path.split(".")
+    var currentObj: Any? = obj
+
+    for (part in pathParts) {
+        val arrayMatch = Regex("""(\w+)\[(\d+)]""").matchEntire(part)
+        currentObj = if (arrayMatch != null) {
+            val propName = arrayMatch.groupValues[1]
+            val index = arrayMatch.groupValues[2].toInt()
+            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == propName }
+            val list = currentObj?.let { property?.get(it) } as? List<*>
+            list?.get(index)
+        } else {
+            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == part }
+            if (currentObj != null) {
+                property?.get(currentObj)
+            } else null
+        }
     }
+
+    return currentObj
 }
 
-@Suppress("UNCHECKED_CAST")
-inline fun <reified T> resolveProperty(
-    instance: Any,
-    propertyName: String,
-): PropertyAndValue<T> {
-    var currentInstance: Any? = instance
-    var currentProperty: KProperty1<Any, Any>? = null
+inline fun <reified T : Any> getProperty(fieldPath: String): KProperty1<out Any, *> {
+    val fieldParts = fieldPath.split(".")
+    var currentClass: KClass<*> = T::class
 
-    propertyName.split(".").forEach { currentPropertyName ->
-        val (listIndexMatchResult, propertyNameNoIndex) = Regex("""\\[(\\d+)\\]""").let {
-            it.find(currentPropertyName) to it.replace(currentPropertyName, "")
-        }
-
-        val currentPropertyClass =
-            if (currentProperty == null) currentInstance!!::class else currentProperty!!.returnType.classifier as KClass<*>
-
-        currentProperty =
-            currentPropertyClass.memberProperties.find { it.name == propertyNameNoIndex } as KProperty1<Any, Any>?
-        currentInstance = if (currentInstance != null) currentProperty?.get(currentInstance!!) else null
-
-        // Will have to go deeper if it is a list
-        if (currentInstance is List<*> && listIndexMatchResult != null) {
-            currentInstance = (currentInstance as List<*>)[listIndexMatchResult.groupValues[1].toInt()]!!
-            currentProperty =
-                currentInstance!!::class.memberProperties.find { it.name == propertyNameNoIndex } as KProperty1<Any, Any>?
-        }
+    for (i in 0 until fieldParts.size - 1) {
+        val property = currentClass.memberProperties.firstOrNull { it.name == fieldParts[i] }
+            ?: throw IllegalArgumentException("No property named '${fieldParts[i]}' found in class ${currentClass.simpleName}")
+        currentClass = property.returnType.classifier as? KClass<*>
+            ?: throw IllegalArgumentException("Property '${fieldParts[i]}' is not a class in ${currentClass.simpleName}")
     }
 
-    return PropertyAndValue(
-        currentProperty as KProperty1<Any, T>,
-        if (T::class == String::class) currentInstance.toString() as T else currentInstance as T
-    )
+    return currentClass.memberProperties.firstOrNull { it.name == fieldParts.last() }
+        ?: throw IllegalArgumentException("No property named '${fieldParts.last()}' found in class ${currentClass.simpleName}")
 }

@@ -22,7 +22,7 @@ class SelectedPage {
                             "${selected.name} - Yes and No below has not been implemented and will generate an error"
                         section(classes = "box") {
                             img(src = selected.image) {
-                                alt = "Chosen ${name}"
+                                alt = "Chosen $name"
                             }
                             p { +name }
                         }

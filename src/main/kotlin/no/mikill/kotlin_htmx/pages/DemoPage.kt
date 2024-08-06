@@ -8,7 +8,8 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.resolveProperty
+import no.mikill.kotlin_htmx.getProperty
+import no.mikill.kotlin_htmx.getValueFromPath
 
 class DemoPage {
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
@@ -46,7 +47,7 @@ class DemoPage {
                                 }
                             }
                             script {
-                                +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();"
+                                unsafe { +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();" }
                             }
                         }
                         section {
@@ -120,7 +121,12 @@ class DemoPage {
                                 "First name",
                                 errors
                             )
-                            inputFieldWithValidationAndErrors(existingApplication, "person.lastName", "Last name", errors)
+                            inputFieldWithValidationAndErrors(
+                                existingApplication,
+                                "person.lastName",
+                                "Last name",
+                                errors
+                            )
                             submitInput { name = "ok" }
                         }
                     }
@@ -130,32 +136,24 @@ class DemoPage {
     }
 
     private fun FORM.inputFieldWithValidationAndErrors(
-        existingApplication: Any,
-        property: String,
+        existingObject: Any,
+        propertyPath: String,
         text: String,
         errors: Set<ConstraintViolation<Application>>
     ) {
-        val propertyAndValue = resolveProperty<String>(existingApplication, property)
+        val objectProperty = getProperty<Application>(propertyPath)
+        val objectValue = getValueFromPath(existingObject, propertyPath)
         label {
             +"$text: "
             input {
-                name = property
-                propertyAndValue.getJavaFieldAnnotations()?.forEach { annotation ->
-                    when (annotation) {
-                        is NotEmpty -> required = true
-                        is Size -> {
-                            minLength = annotation.min.toString()
-                            maxLength = annotation.max.toString()
-                        }
-                        // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
-                    }
-                }
-                value = propertyAndValue.value ?: ""
+                name = objectProperty.name
+                value = objectValue?.toString() ?: ""
+                setConstraints(objectProperty.annotations)
             }
-            errors.filter { it.propertyPath.toString() == property }.let {
+            errors.filter { it.propertyPath.toString() == objectProperty.name }.let {
                 if (it.isNotEmpty()) {
                     ul(classes = "form-error") {
-                        it.map { it.message }.forEach { message ->
+                        it.map { constraintViolation -> constraintViolation.message }.forEach { message ->
                             li { +message }
                         }
                     }
@@ -192,6 +190,19 @@ class DemoPage {
                     }
                 }
             }
+        }
+    }
+}
+
+private fun INPUT.setConstraints(annotations: List<Annotation>) {
+    annotations.forEach { annotation ->
+        when (annotation) {
+            is NotEmpty -> required = true
+            is Size -> {
+                minLength = annotation.min.toString()
+                maxLength = annotation.max.toString()
+            }
+            // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
         }
     }
 }

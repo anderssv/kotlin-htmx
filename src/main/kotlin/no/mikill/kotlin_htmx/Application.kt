@@ -1,6 +1,5 @@
 package no.mikill.kotlin_htmx
 
-import configurePageRoutes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*

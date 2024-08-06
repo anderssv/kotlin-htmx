@@ -1,3 +1,5 @@
+package no.mikill.kotlin_htmx
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.*
