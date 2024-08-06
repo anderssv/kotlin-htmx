@@ -33,6 +33,7 @@ class DataHandlingTest {
         val applicationJson = Application.valid().let {
             """
                 {
+                    "id": "${UUID.randomUUID()}",
                     "person": {
                         "firstName": "${it.person.firstName}",
                         "lastName": "${it.person.lastName}"
@@ -53,7 +54,7 @@ class DataHandlingTest {
         val applicationJson =
             ObjectMapper().registerModule(KotlinModule.Builder().build()).writeValueAsString(application)
         println(applicationJson)
-        assertThat(applicationJson).isEqualTo("""{"person":{"firstName":"Ola","lastName":"Nordmann"},"comments":""}""")
+        assertThat(applicationJson).isEqualTo("""{"id":"${application.id}","person":{"firstName":"Ola","lastName":"Nordmann"},"comments":"Comment"}""")
     }
 
     @Test
@@ -70,7 +71,12 @@ class DataHandlingTest {
     fun shouldGetFieldAndValue() {
         val annotations = getField<Application>("person.firstName").javaField?.annotations
         assertThat(annotations?.map { it.annotationClass }).contains(NotEmpty::class)
+
+        val application = Application.valid()
+        val value = getValueFromPath(application, "person.firstName")
+        assertThat(value).isEqualTo("Ola")
     }
+
 
     @Test
     fun shouldUpdatePropertyOnObject() {
@@ -83,6 +89,31 @@ class DataHandlingTest {
         assertThat(newApplication.person.lastName).isEqualTo("Nordmann")
         assertThat(newApplication.comments).isEqualTo("Comment")
     }
+}
+
+fun getValueFromPath(obj: Any?, path: String): Any? {
+    if (obj == null) return null
+
+    val pathParts = path.split(".")
+    var currentObj: Any? = obj
+
+    for (part in pathParts) {
+        val arrayMatch = Regex("""(\w+)\[(\d+)]""").matchEntire(part)
+        currentObj = if (arrayMatch != null) {
+            val propName = arrayMatch.groupValues[1]
+            val index = arrayMatch.groupValues[2].toInt()
+            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == propName }
+            val list = currentObj?.let { property?.get(it) } as? List<*>
+            list?.get(index)
+        } else {
+            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == part }
+            if (currentObj != null) {
+                property?.get(currentObj)
+            } else null
+        }
+    }
+
+    return currentObj
 }
 
 inline fun <reified T : Any> getField(fieldPath: String): KProperty1<out Any, *> {
