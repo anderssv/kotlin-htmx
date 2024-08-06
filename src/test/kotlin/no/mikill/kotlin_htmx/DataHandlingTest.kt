@@ -9,6 +9,9 @@ import no.mikill.kotlin_htmx.application.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
 class DataHandlingTest {
@@ -64,6 +67,12 @@ class DataHandlingTest {
     }
 
     @Test
+    fun shouldGetFieldAndValue() {
+        val annotations = getField<Application>("person.firstName").javaField?.annotations
+        assertThat(annotations?.map { it.annotationClass }).contains(NotEmpty::class)
+    }
+
+    @Test
     fun shouldUpdatePropertyOnObject() {
         val application = Application.valid()
 
@@ -76,6 +85,21 @@ class DataHandlingTest {
     }
 }
 
+inline fun <reified T : Any> getField(fieldPath: String): KProperty1<out Any, *> {
+    val fieldParts = fieldPath.split(".")
+    var currentClass: KClass<*> = T::class
+
+    for (i in 0 until fieldParts.size - 1) {
+        val property = currentClass.memberProperties.firstOrNull { it.name == fieldParts[i] }
+            ?: throw IllegalArgumentException("No property named '${fieldParts[i]}' found in class ${currentClass.simpleName}")
+        currentClass = property.returnType.classifier as? KClass<*>
+            ?: throw IllegalArgumentException("Property '${fieldParts[i]}' is not a class in ${currentClass.simpleName}")
+    }
+
+    return currentClass.memberProperties.firstOrNull { it.name == fieldParts.last() }
+        ?: throw IllegalArgumentException("No property named '${fieldParts.last()}' found in class ${currentClass.simpleName}")
+}
+
 private fun Application.Companion.valid(): Application {
-    return Application(UUID.randomUUID(),Person("Ola", "Nordmann"), "Comment")
+    return Application(UUID.randomUUID(), Person("Ola", "Nordmann"), "Comment")
 }
