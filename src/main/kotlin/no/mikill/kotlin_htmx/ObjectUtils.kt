@@ -4,25 +4,21 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-fun getValueFromPath(obj: Any?, path: String): Any? {
-    if (obj == null) return null
-
+fun getValueFromPath(obj: Any, path: String): Any? {
     val pathParts = path.split(".")
-    var currentObj: Any? = obj
+    var currentObj: Any = obj
 
     for (part in pathParts) {
         val arrayMatch = Regex("""(\w+)\[(\d+)]""").matchEntire(part)
         currentObj = if (arrayMatch != null) {
             val propName = arrayMatch.groupValues[1]
             val index = arrayMatch.groupValues[2].toInt()
-            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == propName }
-            val list = currentObj?.let { property?.get(it) } as? List<*>
-            list?.get(index)
+            val property = currentObj.javaClass.kotlin.memberProperties.find { it.name == propName }
+            val list = property?.get(currentObj) as? List<*>
+            list?.get(index) ?: return null
         } else {
-            val property = currentObj?.javaClass?.kotlin?.memberProperties?.find { it.name == part }
-            if (currentObj != null) {
-                property?.get(currentObj)
-            } else null
+            val property = currentObj.javaClass.kotlin.memberProperties.find { it.name == part }
+            property?.get(currentObj) ?: return null
         }
     }
 

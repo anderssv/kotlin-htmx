@@ -26,6 +26,7 @@ fun Application.configurePageRoutes(
     applicationRepository: ApplicationRepository
 ) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
+    val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
 
     routing {
@@ -57,9 +58,7 @@ fun Application.configurePageRoutes(
                 DemoPage().renderMultiJsPage(this)
             }
             get("/form") {
-                val existingApplication =
-                    no.mikill.kotlin_htmx.application.Application(UUID.randomUUID(), Person("", ""), "")
-                DemoPage().renderInputForm(this, existingApplication, emptySet())
+                DemoPage().renderInputForm(this, null, emptySet())
             }
             post("/form") {
                 val form = call.receiveParameters()
@@ -70,10 +69,9 @@ fun Application.configurePageRoutes(
                     Person("", ""),
                     ""
                 ) // This would typically be fetched from a DB based on a ID, but don't have that right now
-                val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
                 val updatedApplication: no.mikill.kotlin_htmx.application.Application =
                     mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
-                applicationRepository.addApplication(updatedApplication)
+                applicationRepository.addApplication(updatedApplication) // And then of course this would be an update, not an add
 
                 val errors = validator.validate(updatedApplication)
                 if (errors.isNotEmpty()) { // Back to same page with errors

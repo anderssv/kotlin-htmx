@@ -97,7 +97,7 @@ class DemoPage {
 
     suspend fun renderInputForm(
         pipelineContext: PipelineContext<Unit, ApplicationCall>,
-        existingApplication: Application,
+        existingApplication: Application?,
         errors: Set<ConstraintViolation<Application>>
     ) {
         with(pipelineContext) {
@@ -136,13 +136,13 @@ class DemoPage {
     }
 
     private fun FORM.inputFieldWithValidationAndErrors(
-        existingObject: Any,
+        existingObject: Any?,
         propertyPath: String,
         text: String,
         errors: Set<ConstraintViolation<Application>>
     ) {
         val objectProperty = getProperty<Application>(propertyPath)
-        val objectValue = getValueFromPath(existingObject, propertyPath)
+        val objectValue = existingObject?.let { getValueFromPath(it, propertyPath) }
         label {
             +"$text: "
             input {

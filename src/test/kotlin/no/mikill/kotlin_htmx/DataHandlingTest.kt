@@ -12,11 +12,12 @@ import java.util.*
 import kotlin.reflect.jvm.javaField
 
 class DataHandlingTest {
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+    private val validator = Validation.buildDefaultValidatorFactory().validator
 
     @Test
     fun shouldValidateObject() {
         val badPerson = Application.valid().let { it.copy(person = it.person.copy(firstName = "")) }
-        val validator = Validation.buildDefaultValidatorFactory().validator
         val errors = validator.validate(badPerson)
         assertThat(errors).isNotEmpty
         errors.filter { it.propertyPath.toString() == "person.firstName" }.let { filteredViolationsList ->
@@ -40,17 +41,14 @@ class DataHandlingTest {
             """.trimIndent()
 
         }
-        val application = ObjectMapper().registerModule(KotlinModule.Builder().build())
-            .readValue(applicationJson, Application::class.java)
+        val application = objectMapper.readValue(applicationJson, Application::class.java)
         assertThat(application.person.firstName).isEqualTo("Ola")
     }
 
     @Test
     fun shouldGenerateJson() {
         val application = Application.valid()
-        val applicationJson =
-            ObjectMapper().registerModule(KotlinModule.Builder().build()).writeValueAsString(application)
-        println(applicationJson)
+        val applicationJson = objectMapper.writeValueAsString(application)
         assertThat(applicationJson).isEqualTo("""{"id":"${application.id}","person":{"firstName":"Ola","lastName":"Nordmann"},"comments":"Comment"}""")
     }
 
@@ -69,9 +67,8 @@ class DataHandlingTest {
     fun shouldUpdatePropertyOnObject() {
         val application = Application.valid()
 
-        val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
         val newApplication: Application =
-            mapper.readerForUpdating(application).readValue("""{"person":{"firstName":"Kari"}}""")
+            objectMapper.readerForUpdating(application).readValue("""{"person":{"firstName":"Kari"}}""")
         assertThat(newApplication.person.firstName).isEqualTo("Kari")
         assertThat(newApplication.person.lastName).isEqualTo("Nordmann")
         assertThat(newApplication.comments).isEqualTo("Comment")
