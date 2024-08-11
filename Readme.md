@@ -9,6 +9,10 @@ A full stack webapp with responsive, interactive pages. It has efficient feedbac
 
 You can try the "application" here: https://kotlin-htmx.fly.dev/
 
+There are also some other sub pages that I use to demo stuff:
+- https://kotlin-htmx.fly.dev/demo/form - Shows off form handling with validatoin
+- https://kotlin-htmx.fly.dev/demo/multi - Shows off HTMX but also how to integrate other tehcnologies like React and Lit without a full separate project and build.
+
 # Other stuff
 
 - HTMX references to do all kinds of back-ends (C#, Ruby, Spring Boot, Ocaml +++) - https://htmx.org/server-examples/
