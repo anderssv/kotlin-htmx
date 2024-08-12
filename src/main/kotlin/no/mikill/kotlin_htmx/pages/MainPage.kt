@@ -72,8 +72,8 @@ class MainPage(
     suspend fun renderMainPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
-                templateContent {
-                    selectionContent {
+                mainTemplateContent {
+                    selectionPagesContent {
                         section {
                             div {
                                 form {

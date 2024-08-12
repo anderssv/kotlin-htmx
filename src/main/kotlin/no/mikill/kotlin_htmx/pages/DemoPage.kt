@@ -26,8 +26,8 @@ class DemoPage {
                     }
                     p { +"Loading below is staggered on purpose to show steps. Just a crude wait." }
                 }
-                templateContent {
-                    demoContent {
+                mainTemplateContent {
+                    demoPagesContent {
                         section {
                             h1 { +"HTML Element" }
                             div {
@@ -105,8 +105,8 @@ class DemoPage {
                 headerContent {
                     span { +"Form demo" }
                 }
-                templateContent {
-                    demoContent {
+                mainTemplateContent {
+                    demoPagesContent {
                         // This is a custom script that I have written. It should be packaged as a library and published
                         // to NPM instead of just using a direct link to Github. Let me know if you want to use it and
                         // I will add it to the project.
@@ -168,8 +168,8 @@ class DemoPage {
     ) {
         with(pipelineContext) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
-                templateContent {
-                    demoContent {
+                mainTemplateContent {
+                    demoPagesContent {
                         section {
                             h1 { +"Form save" }
                             div {

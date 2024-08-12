@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
  */
 class MainTemplate<T : Template<FlowContent>>(private val template: T) : Template<HTML> {
 
-    val templateContent = TemplatePlaceholder<T>()
+    val mainTemplateContent = TemplatePlaceholder<T>()
     val headerContent = Placeholder<FlowContent>()
 
     override fun HTML.apply() {
@@ -102,7 +102,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                 // Main content
                 main {
                     id = "mainContent"
-                    insert(template, templateContent)
+                    insert(template, mainTemplateContent)
                 }
 
                 footer {
@@ -116,17 +116,17 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
 
 
 class SelectionTemplate : Template<FlowContent> {
-    val selectionContent = Placeholder<FlowContent>()
+    val selectionPagesContent = Placeholder<FlowContent>()
 
     override fun FlowContent.apply() {
-        insert(selectionContent)
+        insert(selectionPagesContent)
     }
 }
 
 class DemoTemplate : Template<FlowContent> {
-    val demoContent = Placeholder<FlowContent>()
+    val demoPagesContent = Placeholder<FlowContent>()
 
     override fun FlowContent.apply() {
-        insert(demoContent)
+        insert(demoPagesContent)
     }
 }
