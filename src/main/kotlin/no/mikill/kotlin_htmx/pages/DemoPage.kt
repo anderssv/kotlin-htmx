@@ -10,6 +10,7 @@ import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
+import kotlin.reflect.jvm.javaField
 
 class DemoPage {
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
@@ -148,7 +149,7 @@ class DemoPage {
             input {
                 name = propertyPath
                 value = objectValue?.toString() ?: ""
-                setConstraints(objectProperty.annotations)
+                setConstraints(objectProperty.javaField!!.annotations)
             }
             errors.filter { it.propertyPath.toString() == propertyPath }.let {
                 if (it.isNotEmpty()) {
@@ -194,7 +195,7 @@ class DemoPage {
     }
 }
 
-private fun INPUT.setConstraints(annotations: List<Annotation>) {
+private fun INPUT.setConstraints(annotations: Array<Annotation>) {
     annotations.forEach { annotation ->
         when (annotation) {
             is NotEmpty -> required = true
