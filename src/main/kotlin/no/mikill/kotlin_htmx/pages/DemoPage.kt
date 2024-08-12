@@ -146,11 +146,11 @@ class DemoPage {
         label {
             +"$text: "
             input {
-                name = objectProperty.name
+                name = propertyPath
                 value = objectValue?.toString() ?: ""
                 setConstraints(objectProperty.annotations)
             }
-            errors.filter { it.propertyPath.toString() == objectProperty.name }.let {
+            errors.filter { it.propertyPath.toString() == propertyPath }.let {
                 if (it.isNotEmpty()) {
                     ul(classes = "form-error") {
                         it.map { constraintViolation -> constraintViolation.message }.forEach { message ->
