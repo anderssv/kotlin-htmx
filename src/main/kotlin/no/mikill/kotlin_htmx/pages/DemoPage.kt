@@ -2,6 +2,7 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
@@ -233,6 +234,18 @@ class DemoPage {
                     }
                 }
             }
+        }
+    }
+
+    suspend fun renderItemResponse(pipelineContext: PipelineContext<Unit, ApplicationCall>, itemId: Int) {
+        with(pipelineContext) {
+            call.respond(
+                htmlFragment {
+                    div {
+                        +"Item $itemId"
+                    }
+                }
+            )
         }
     }
 }

@@ -87,6 +87,11 @@ fun Application.configurePageRoutes(
             get("/admin") {
                 DemoPage().renderAdminPage(this)
             }
+
+            get("/item/{itemId}") {
+                val itemId = call.parameters["itemId"]!!.toInt()
+                DemoPage().renderItemResponse(this, itemId)
+            }
         }
 
         route("/data") {
