@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size
 import kotlinx.html.*
 import kotlinx.html.consumers.filter
 import kotlinx.html.stream.appendHTML
-import kotlinx.html.stream.createHTML
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
@@ -41,7 +40,7 @@ object HtmlElements {
         attributes["hx-swap"] = "outerHTML"
     }
 
-    public fun INPUT.setConstraints(annotations: Array<Annotation>) {
+    fun INPUT.setConstraints(annotations: Array<Annotation>) {
         annotations.forEach { annotation ->
             when (annotation) {
                 is NotEmpty -> required = true
@@ -54,7 +53,7 @@ object HtmlElements {
         }
     }
 
-    public fun FORM.inputFieldWithValidationAndErrors(
+    fun FORM.inputFieldWithValidationAndErrors(
         existingObject: Any?,
         propertyPath: String,
         text: String,

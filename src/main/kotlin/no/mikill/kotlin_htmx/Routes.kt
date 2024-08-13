@@ -27,7 +27,7 @@ fun Application.configurePageRoutes(
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
 
-    val demoPage = DemoPage()
+    val multiDemoPage = MultiDemoPage()
     val adminPage = AdminPage()
     val formPage = FormPage()
 
@@ -57,7 +57,7 @@ fun Application.configurePageRoutes(
 
         route("/demo") {
             get("/multi") {
-                demoPage.renderMultiJsPage(this)
+                multiDemoPage.renderMultiJsPage(this)
             }
             get("/form") {
                 formPage.renderInputForm(this, null, emptySet())

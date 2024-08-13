@@ -6,11 +6,7 @@ import io.ktor.util.pipeline.*
 import jakarta.validation.ConstraintViolation
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.getProperty
-import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.HtmlElements.inputFieldWithValidationAndErrors
-import no.mikill.kotlin_htmx.pages.HtmlElements.setConstraints
-import kotlin.reflect.jvm.javaField
 
 class FormPage {
     suspend fun renderInputForm(

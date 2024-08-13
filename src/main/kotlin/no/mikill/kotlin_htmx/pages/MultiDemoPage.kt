@@ -3,22 +3,10 @@ package no.mikill.kotlin_htmx.pages
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.util.pipeline.*
-import jakarta.validation.ConstraintViolation
 import kotlinx.html.*
-import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.getProperty
-import no.mikill.kotlin_htmx.getValueFromPath
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
-import no.mikill.kotlin_htmx.pages.HtmlElements.setConstraints
-import kotlin.collections.Set
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
 import kotlin.collections.set
-import kotlin.reflect.jvm.javaField
 
-class DemoPage {
+class MultiDemoPage {
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
         val boxStyle = "border: 1px solid red; padding: 10px; margin: 10px;"
         with(context) {
