@@ -4,12 +4,17 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.*
 import kotlinx.html.consumers.filter
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.stream.createHTML
+import no.mikill.kotlin_htmx.application.Application
+import no.mikill.kotlin_htmx.getProperty
+import no.mikill.kotlin_htmx.getValueFromPath
+import kotlin.reflect.jvm.javaField
 
 object HtmlElements {
 
@@ -49,6 +54,32 @@ object HtmlElements {
         }
     }
 
+    public fun FORM.inputFieldWithValidationAndErrors(
+        existingObject: Any?,
+        propertyPath: String,
+        text: String,
+        errors: Set<ConstraintViolation<Application>>
+    ) {
+        val objectProperty = getProperty<Application>(propertyPath)
+        val objectValue = existingObject?.let { getValueFromPath(it, propertyPath) }
+        label {
+            +"$text: "
+            input {
+                name = propertyPath
+                value = objectValue?.toString() ?: ""
+                setConstraints(objectProperty.javaField!!.annotations)
+            }
+            errors.filter { it.propertyPath.toString() == propertyPath }.let {
+                if (it.isNotEmpty()) {
+                    ul(classes = "form-error") {
+                        it.map { constraintViolation -> constraintViolation.message }.forEach { message ->
+                            li { +message }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     suspend fun ApplicationCall.respondHtmlFragment(
         status: HttpStatusCode = HttpStatusCode.OK,

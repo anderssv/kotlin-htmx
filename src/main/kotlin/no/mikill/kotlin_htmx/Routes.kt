@@ -11,9 +11,7 @@ import jakarta.validation.Validation
 import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
-import no.mikill.kotlin_htmx.pages.DemoPage
-import no.mikill.kotlin_htmx.pages.MainPage
-import no.mikill.kotlin_htmx.pages.SelectedPage
+import no.mikill.kotlin_htmx.pages.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -28,6 +26,10 @@ fun Application.configurePageRoutes(
     val logger: Logger = LoggerFactory.getLogger(javaClass)
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
+
+    val demoPage = DemoPage()
+    val adminPage = AdminPage()
+    val formPage = FormPage()
 
     routing {
         get("/robots.txt") {
@@ -55,10 +57,10 @@ fun Application.configurePageRoutes(
 
         route("/demo") {
             get("/multi") {
-                DemoPage().renderMultiJsPage(this)
+                demoPage.renderMultiJsPage(this)
             }
             get("/form") {
-                DemoPage().renderInputForm(this, null, emptySet())
+                formPage.renderInputForm(this, null, emptySet())
             }
             post("/form") {
                 val form = call.receiveParameters()
@@ -75,22 +77,23 @@ fun Application.configurePageRoutes(
 
                 val errors = validator.validate(updatedApplication)
                 if (errors.isNotEmpty()) { // Back to same page with errors
-                    DemoPage().renderInputForm(this, updatedApplication, errors)
+                    formPage.renderInputForm(this, updatedApplication, errors)
                 } else {
                     call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
                 }
             }
             get("/form/{id}/saved") {
                 val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
-                DemoPage().renderFormSaved(this, application)
+                formPage.renderFormSaved(this, application)
             }
+
             get("/admin") {
-                DemoPage().renderAdminPage(this)
+                adminPage.renderAdminPage(this)
             }
 
             get("/item/{itemId}") {
                 val itemId = call.parameters["itemId"]!!.toInt()
-                DemoPage().renderItemResponse(this, itemId)
+                adminPage.renderItemResponse(this, itemId)
             }
         }
 
