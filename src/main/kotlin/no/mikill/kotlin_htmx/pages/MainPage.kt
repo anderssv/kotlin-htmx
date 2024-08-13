@@ -30,7 +30,7 @@ class MainPage(
                 is LookupResult.Success -> {
                     val item = items.single { it.name == lookupResult.response }
 
-                    delay(5.seconds)
+                    delay(1.seconds)
                     call.response.header("HX-Redirect", item.name)
                     // Probably won't show but adding content anyway
                     htmlFragment {
@@ -82,7 +82,7 @@ class MainPage(
 
                                     div(classes = "htmx-indicator") {
                                         id = "formLoading"
-                                        +"Searching... (Intentionally delayed for 5 seconds)"
+                                        +"Searching... (Intentionally delayed for 1 seconds)"
                                     }
 
                                     div {

@@ -1,12 +1,4 @@
-export const viewDelay = 500;
-
-export function wait(ms) {
-    const start = new Date().getTime();
-    let end = start;
-    while (end < start + ms) {
-        end = new Date().getTime();
-    }
-}
+export const viewDelay = 1000;
 
 export function getTodoList() {
     return fetch('/data/todolist.json')

@@ -14,6 +14,7 @@ import kotlin.reflect.jvm.javaField
 
 class DemoPage {
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
+        val boxStyle = "border: 1px solid red; padding: 10px; margin: 10px;"
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
@@ -32,7 +33,7 @@ class DemoPage {
                         section {
                             h1 { +"HTML Element" }
                             div {
-                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                style = boxStyle
                                 h1 { +"Todo List" }
                                 ul {
                                     id = "todo-list"
@@ -52,9 +53,23 @@ class DemoPage {
                             }
                         }
                         section {
+                            script { src = "https://unpkg.com/hyperscript.org@0.9.12" }
+                            h1 { +"HTMX Element" }
+                            div {
+                                attributes["hx-get"] = "/data/todolist.html"
+                                attributes["_"] = "on load trigger click on me"
+                                style = boxStyle
+                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
+                                +"Click me!"
+                                div(classes = "htmx-indicator") {
+                                    +"Loading... (Intentionally delayed for 1 seconds)"
+                                }
+                            }
+                        }
+                        section {
                             h1 { +"Lit Element" }
                             div {
-                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                style = boxStyle
                                 script {
                                     src = "/script/lit-script.js"
                                     type = "module"
@@ -66,7 +81,7 @@ class DemoPage {
                             h1 { +"React Element" }
                             div {
                                 id = "react-content"
-                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
+                                style = boxStyle
                                 script {
                                     src = "https://unpkg.com/@babel/standalone/babel.min.js"
                                 }
@@ -76,18 +91,6 @@ class DemoPage {
                                     attributes["data-type"] = "module"
                                 }
                                 +"React not loaded"
-                            }
-                        }
-                        section {
-                            h1 { +"HTMX Element" }
-                            div {
-                                attributes["hx-get"] = "/data/todolist.html"
-                                style = "border: 1px solid red; padding: 10px; margin: 10px;"
-                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
-                                +"Click me!"
-                                div(classes = "htmx-indicator") {
-                                    +"Loading... (Intentionally delayed for 5 seconds)"
-                                }
                             }
                         }
                     }

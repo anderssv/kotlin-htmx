@@ -117,7 +117,7 @@ fun Application.configurePageRoutes(
                 )
             }
             get("/todolist.html") {
-                delay(5.seconds)
+                delay(1.seconds)
                 call.respondText(
                     """
                     <h1>Todo List</h1>

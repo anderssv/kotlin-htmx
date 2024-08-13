@@ -1,6 +1,6 @@
 import {html, LitElement} from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit-all.min.js';
 import {Task} from 'https://cdn.jsdelivr.net/npm/@lit/task@1.0.1/+esm';
-import {getTodoList, viewDelay, wait} from './common-script.js';
+import {getTodoList, viewDelay} from './common-script.js';
 
 export class MyElement extends LitElement {
     static properties = {
@@ -14,14 +14,15 @@ export class MyElement extends LitElement {
 
     _productList = new Task(this, {
         task: async () => {
-            wait(viewDelay)
+            // Introduce the 1-second delay
+            await new Promise(resolve => setTimeout(resolve, viewDelay));
+
             return await getTodoList();
         },
         args: () => []
-    })
+    });
 
     render() {
-        wait(viewDelay)
         return html`
             <h1>Todo List</h1>
             <ul>
