@@ -29,13 +29,3 @@ object HtmlElements {
         attributes["hx-swap"] = "outerHTML"
     }
 }
-
-fun htmlFragment(fragment: HtmlBlockTag.() -> Unit): String {
-    return createHTML().filter {
-        if (it.tagName in listOf("html", "body")) SKIP else PASS
-    }.html {
-        body {
-            fragment(this)
-        }
-    }
-}

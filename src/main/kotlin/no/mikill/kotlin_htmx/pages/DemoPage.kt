@@ -1,5 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
+import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.response.*
@@ -8,6 +10,8 @@ import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.*
+import kotlinx.html.consumers.filter
+import kotlinx.html.stream.appendHTML
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
@@ -239,13 +243,11 @@ class DemoPage {
 
     suspend fun renderItemResponse(pipelineContext: PipelineContext<Unit, ApplicationCall>, itemId: Int) {
         with(pipelineContext) {
-            call.respond(
-                htmlFragment {
-                    div {
-                        +"Item $itemId"
-                    }
+            call.respondHtmlFragment {
+                div {
+                    +"Item $itemId"
                 }
-            )
+            }
         }
     }
 }
@@ -261,4 +263,20 @@ private fun INPUT.setConstraints(annotations: Array<Annotation>) {
             // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
         }
     }
+}
+
+
+public suspend fun ApplicationCall.respondHtmlFragment(
+    status: HttpStatusCode = HttpStatusCode.OK,
+    block: BODY.() -> Unit
+) {
+    val text = buildString {
+        append("<!DOCTYPE html>\n")
+        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
+            body {
+                block(this)
+            }
+        }
+    }
+    respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
 }

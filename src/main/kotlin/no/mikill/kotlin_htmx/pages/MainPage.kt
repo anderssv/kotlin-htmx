@@ -12,8 +12,10 @@ import no.mikill.kotlin_htmx.integration.LookupResult
 import no.mikill.kotlin_htmx.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import org.slf4j.LoggerFactory
+import java.lang.Thread.sleep
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 
 class MainPage(
@@ -26,46 +28,42 @@ class MainPage(
     suspend fun search(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             val search: Search = call.receive()
-            val result = when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
-                is LookupResult.Success -> {
-                    val item = items.single { it.name == lookupResult.response }
+            call.respondHtmlFragment {
+                when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
+                    is LookupResult.Success -> {
+                        val item = items.single { it.name == lookupResult.response }
 
-                    delay(1.seconds)
-                    call.response.header("HX-Redirect", item.name)
-                    // Probably won't show but adding content anyway
-                    htmlFragment {
+                        sleep(1.seconds.toJavaDuration())
+                        call.response.header("HX-Redirect", item.name)
+                        // Probably won't show but adding content anyway
                         div {
                             +"Found it! ${item.name}"
                         }
                     }
-                }
 
-                is LookupResult.NotFound -> htmlFragment {
-                    div(classes = "text-red-800") {
-                        p { +"Could not locate item with '${search.lookupValue}'." }
-                        a(href = "/") { +"Try again" }
-                    }
-                }
+                    is LookupResult.NotFound ->
+                        div(classes = "text-red-800") {
+                            p { +"Could not locate item with '${search.lookupValue}'." }
+                            a(href = "/") { +"Try again" }
+                        }
 
-                is LookupResult.InvalidInput -> htmlFragment {
-                    div(classes = "text-red-800") {
-                        p { +lookupResult.message }
-                        a(href = "/") { +"Try again" }
-                    }
-                }
 
-                is LookupResult.Failure -> {
-                    logger.error("Lookup failed. Reason: ${lookupResult.reason}")
-                    htmlFragment {
+                    is LookupResult.InvalidInput ->
+                        div(classes = "text-red-800") {
+                            p { +lookupResult.message }
+                            a(href = "/") { +"Try again" }
+                        }
+
+
+                    is LookupResult.Failure -> {
+                        logger.error("Lookup failed. Reason: ${lookupResult.reason}")
                         div(classes = "text-red-800") {
                             p { +"We're sorry. Something went wrong. We'll fix it ASAP." }
                             a(href = "/") { +"Try again" }
                         }
                     }
                 }
-
             }
-            call.respond(result)
         }
     }
 
