@@ -84,6 +84,9 @@ fun Application.configurePageRoutes(
                 val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
                 DemoPage().renderFormSaved(this, application)
             }
+            get("/admin") {
+                DemoPage().renderAdminPage(this)
+            }
         }
 
         route("/data") {

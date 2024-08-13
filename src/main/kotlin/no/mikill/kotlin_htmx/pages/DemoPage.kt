@@ -195,6 +195,46 @@ class DemoPage {
             }
         }
     }
+
+    suspend fun renderAdminPage(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+        with(pipelineContext) {
+            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
+                mainTemplateContent {
+                    demoPagesContent {
+                        h1 { +"Admin page" }
+                        div(classes = "grid") {
+                            style = "grid-template-columns: 30% 1fr;"
+                            style {
+                                +"""
+                                .grid {
+                                    div {
+                                        border: 1px solid red;
+                                        padding: 1em;
+                                    }                                
+                                }
+                            """.trimIndent()
+                            }
+                            div {
+                                (0..10).forEach { item ->
+                                    p {
+                                        a(href = "item/$item") {
+                                            attributes["hx-get"] = "item/$item"
+                                            attributes["hx-target"] = "#itemPanel"
+                                            +"Item $item"
+                                        }
+                                    }
+                                }
+                            }
+                            div {
+                                id = "itemPanel"
+                                +"Choose on left"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 private fun INPUT.setConstraints(annotations: Array<Annotation>) {
