@@ -53,11 +53,10 @@ class DemoPage {
                             }
                         }
                         section {
-                            script { src = "https://unpkg.com/hyperscript.org@0.9.12" }
                             h1 { +"HTMX Element" }
                             div {
                                 attributes["hx-get"] = "/data/todolist.html"
-                                attributes["_"] = "on load trigger click on me"
+                                attributes["hx-trigger"] = "load"
                                 style = boxStyle
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
