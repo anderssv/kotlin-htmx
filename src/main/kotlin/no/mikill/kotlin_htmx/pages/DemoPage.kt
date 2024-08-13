@@ -1,20 +1,21 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import jakarta.validation.ConstraintViolation
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.Size
 import kotlinx.html.*
-import kotlinx.html.consumers.filter
-import kotlinx.html.stream.appendHTML
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
+import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.HtmlElements.setConstraints
+import kotlin.collections.Set
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.set
 import kotlin.reflect.jvm.javaField
 
 class DemoPage {
@@ -252,31 +253,3 @@ class DemoPage {
     }
 }
 
-private fun INPUT.setConstraints(annotations: Array<Annotation>) {
-    annotations.forEach { annotation ->
-        when (annotation) {
-            is NotEmpty -> required = true
-            is Size -> {
-                minLength = annotation.min.toString()
-                maxLength = annotation.max.toString()
-            }
-            // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
-        }
-    }
-}
-
-
-public suspend fun ApplicationCall.respondHtmlFragment(
-    status: HttpStatusCode = HttpStatusCode.OK,
-    block: BODY.() -> Unit
-) {
-    val text = buildString {
-        append("<!DOCTYPE html>\n")
-        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
-            body {
-                block(this)
-            }
-        }
-    }
-    respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
-}

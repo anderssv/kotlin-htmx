@@ -5,11 +5,11 @@ import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
-import kotlinx.coroutines.delay
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
 import no.mikill.kotlin_htmx.items
+import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
