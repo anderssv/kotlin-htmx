@@ -55,14 +55,17 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                         }
                     }
                     
-                    .htmx-indicator {
-                        visibility: hidden;
+                    .htmx-indicator{
+                        opacity:0;
+                        transition: opacity 500ms ease-in;
                     }
-                                        
-                    .htmx-request .htmx-indicator {
-                        visibility: visible;
+                    .htmx-request .htmx-indicator{
+                        opacity:1
                     }
-                                        
+                    .htmx-request.htmx-indicator{
+                        opacity:1
+                    }                                        
+                    
                     .box {
                         border: 1px solid red;
                         border-radius: 0.5em;
@@ -114,7 +117,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
     }
 }
 
-
+// The two below is mainly to cater for two different sub-templates
 class SelectionTemplate : Template<FlowContent> {
     val selectionPagesContent = Placeholder<FlowContent>()
 
