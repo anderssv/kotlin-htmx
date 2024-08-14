@@ -5,7 +5,9 @@ import io.ktor.server.html.*
 import io.ktor.util.pipeline.*
 import kotlinx.coroutines.delay
 import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import org.intellij.lang.annotations.Language
 import kotlin.time.Duration.Companion.seconds
 
 class AdminPage {
@@ -19,18 +21,18 @@ class AdminPage {
                             id = "loader"
                             +"Loading..."
                         }
-                        div(classes = "grid") {
-                            style = "grid-template-columns: 30% 1fr;"
-                            style {
-                                +"""
-                                .grid {
-                                    div {
+                        style {
+                            rawCss(
+                                """
+                                    .grid > div {
                                         border: 1px solid red;
                                         padding: 1em;
                                     }                                
-                                }
-                            """.trimIndent()
-                            }
+                                """.trimIndent()
+                            )
+                        }
+                        div(classes = "grid") {
+                            style = "grid-template-columns: 30% 1fr;"
                             div {
                                 (0..10).forEach { item ->
                                     p {

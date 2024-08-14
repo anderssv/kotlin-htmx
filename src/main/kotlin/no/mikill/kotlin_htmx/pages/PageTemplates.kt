@@ -2,7 +2,7 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.*
 import kotlinx.html.*
-import org.intellij.lang.annotations.Language
+import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
 /**
  * See https://ktor.io/docs/server-html-dsl.html#templates for more information
@@ -41,51 +41,47 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
             script(src = "https://unpkg.com/htmx.org/dist/ext/json-enc.js") { }
             script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") { }
 
-            @Language("CSS") // Separated to variable to make IDEA syntax highlighting work
-            val globalStyle =
-                """
-                    #choices {
-                        display: grid; /* Enables grid layout */
-                        grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
-                        /* Key line for responsiveness: */
-                        gap: 20px; /* Adjust the spacing between items */
-            
-                        a {
-                            display: block;
-                        }
-                    }
-                    
-                    .htmx-indicator{
-                        opacity:0;
-                        transition: opacity 500ms ease-in;
-                    }
-                    .htmx-request .htmx-indicator{
-                        opacity:1
-                    }
-                    .htmx-request.htmx-indicator{
-                        opacity:1
-                    }                                        
-                    
-                    .box {
-                        border: 1px solid red;
-                        border-radius: 0.5em;
-                        text-align: center;
-                        padding: 1em;                    
-                    }
-                                        
-                    section {
-                        margin-bottom: 2em;
-                    }
-                                        
-                    .form-error {
-                        color: red;
-                    }
-                """.trimIndent()
-
             style {
-                unsafe {
-                    +globalStyle
-                }
+                rawCss(
+                    """
+                        #choices {
+                            display: grid; /* Enables grid layout */
+                            grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
+                            /* Key line for responsiveness: */
+                            gap: 20px; /* Adjust the spacing between items */
+                
+                            a {
+                                display: block;
+                            }
+                        }
+                        
+                        .htmx-indicator{
+                            opacity:0;
+                            transition: opacity 500ms ease-in;
+                        }
+                        .htmx-request .htmx-indicator{
+                            opacity:1
+                        }
+                        .htmx-request.htmx-indicator{
+                            opacity:1
+                        }                                        
+                        
+                        .box {
+                            border: 1px solid red;
+                            border-radius: 0.5em;
+                            text-align: center;
+                            padding: 1em;                    
+                        }
+                                            
+                        section {
+                            margin-bottom: 2em;
+                        }
+                                            
+                        .form-error {
+                            color: red;
+                        }
+                    """.trimIndent()
+                )
             }
         }
         body {            // This is inherited so means we use JSON as a default for all communication

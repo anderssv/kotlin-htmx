@@ -13,6 +13,7 @@ import kotlinx.html.stream.appendHTML
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
+import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
 
 object HtmlElements {
@@ -93,6 +94,12 @@ object HtmlElements {
             }
         }
         respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
+    }
+
+    fun STYLE.rawCss(@Language("CSS") css: String) {
+        unsafe {
+            raw(css)
+        }
     }
 
 }
