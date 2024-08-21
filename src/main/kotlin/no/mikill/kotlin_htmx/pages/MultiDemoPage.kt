@@ -35,8 +35,8 @@ class MultiDemoPage {
                             h1 { +"HTMX Element" }
                             div {
                                 attributes["hx-get"] = "/data/todolist.html"
-                                attributes["hx-trigger"] = "load delay:1s, click" // Default is click
                                 attributes["hx-swap"] = "innerHTML" // Default is outerHTML
+                                attributes["hx-trigger"] = "load delay:1s, click" // Default is click
                                 style = boxStyle
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
