@@ -64,9 +64,21 @@ fun Application.configurePageRoutes(
                 formPage.renderInputForm(this, null, emptySet())
             }
             post("/form") {
+                // This logic should probably be in a type of controller to make the route setup clearer and isolated
                 val form = call.receiveParameters()
                 logger.info("Received form data: $form")
 
+                /*
+                 * Creating a new application here with some bogous values.
+                 *
+                 * It is a common problem how to handle partially filled forms
+                 * and invalid data, but we won't demonstrate that here.
+                 *
+                 * Things like Sum Types (https://github.com/anderssv/the-example/blob/main/doc/sum-types.md)
+                 * could probably be used here and should be explored.
+                 *
+                 * The other option is of course to set everything to be nullable, but seems like less than ideal option.
+                 */
                 val application = no.mikill.kotlin_htmx.application.Application(
                     UUID.randomUUID(),
                     Person("", ""),
