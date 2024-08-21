@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.pages.*
+import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -129,21 +130,9 @@ fun Application.configurePageRoutes(
             }
             get("/todolist.html") {
                 delay(1.seconds)
-                call.respondText(
-                    """
-                    <h1>Todo List</h1>
-                    <ul id="todo-list">
-                        <li>Buy milk</li>
-                        <li>Buy bread</li>
-                        <li>Buy eggs</li>
-                        <li>Buy butter</li>
-                    </ul>
-                    <p>It is now <span id="htmx-date"></span></p>
-                    <script>
-                        document.getElementById('htmx-date').innerHTML = new Date().toLocaleString();
-                    </script>
-                """.trimIndent()
-                )
+                call.respondHtmlFragment {
+                    todoListHtml("htmx")
+                }
             }
         }
     }

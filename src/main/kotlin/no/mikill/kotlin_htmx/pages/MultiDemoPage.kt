@@ -28,22 +28,7 @@ class MultiDemoPage {
                             h1 { +"HTML Element" }
                             div {
                                 style = boxStyle
-                                h1 { +"Todo List" }
-                                ul {
-                                    id = "todo-list"
-                                    li { +"Buy milk" }
-                                    li { +"Buy bread" }
-                                    li { +"Buy eggs" }
-                                    li { +"Buy butter" }
-                                }
-                                p {
-                                    span {
-                                        id = "html-date"
-                                    }
-                                }
-                            }
-                            script {
-                                unsafe { +"document.getElementById('html-date').innerHTML = new Date().toLocaleString();" }
+                                todoListHtml("html")
                             }
                         }
                         section {
@@ -51,6 +36,7 @@ class MultiDemoPage {
                             div {
                                 attributes["hx-get"] = "/data/todolist.html"
                                 attributes["hx-trigger"] = "load delay:1s"
+                                attributes["hx-swap"] = "innerHTML"
                                 style = boxStyle
                                 // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
                                 +"Click me!"
@@ -92,6 +78,24 @@ class MultiDemoPage {
         }
     }
 
+}
 
+fun HtmlBlockTag.todoListHtml(blockIdPrefix: String) {
+    h1 { +"Todo List" }
+    ul {
+        id = "todo-list"
+        li { +"Buy milk" }
+        li { +"Buy bread" }
+        li { +"Buy eggs" }
+        li { +"Buy butter" }
+    }
+    p {
+        span {
+            id = "$blockIdPrefix-date"
+        }
+    }
+    script {
+        unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
+    }
 }
 
