@@ -11,6 +11,7 @@ import org.intellij.lang.annotations.Language
 import kotlin.time.Duration.Companion.seconds
 
 class AdminPage {
+
     suspend fun renderAdminPage(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
         with(pipelineContext) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {

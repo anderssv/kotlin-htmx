@@ -7,6 +7,7 @@ import kotlinx.html.*
 import kotlin.collections.set
 
 class MultiDemoPage {
+
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
         val boxStyle = "border: 1px solid red; padding: 10px; margin: 10px;"
         with(context) {

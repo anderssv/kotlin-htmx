@@ -9,6 +9,7 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.pages.HtmlElements.inputFieldWithValidationAndErrors
 
 class FormPage {
+
     suspend fun renderInputForm(
         pipelineContext: PipelineContext<Unit, ApplicationCall>,
         existingApplication: Application?,
@@ -79,4 +80,5 @@ class FormPage {
             }
         }
     }
+
 }

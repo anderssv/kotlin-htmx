@@ -25,48 +25,6 @@ class MainPage(
 
     private data class Search(val lookupValue: String)
 
-    suspend fun search(context: PipelineContext<Unit, ApplicationCall>) {
-        with(context) {
-            val search: Search = call.receive()
-            call.respondHtmlFragment {
-                when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
-                    is LookupResult.Success -> {
-                        val item = items.single { it.name == lookupResult.response }
-
-                        sleep(1.seconds.toJavaDuration())
-                        call.response.header("HX-Redirect", item.name)
-                        // Probably won't show but adding content anyway
-                        div {
-                            +"Found it! ${item.name}"
-                        }
-                    }
-
-                    is LookupResult.NotFound ->
-                        div(classes = "text-red-800") {
-                            p { +"Could not locate item with '${search.lookupValue}'." }
-                            a(href = "/") { +"Try again" }
-                        }
-
-
-                    is LookupResult.InvalidInput ->
-                        div(classes = "text-red-800") {
-                            p { +lookupResult.message }
-                            a(href = "/") { +"Try again" }
-                        }
-
-
-                    is LookupResult.Failure -> {
-                        logger.error("Lookup failed. Reason: ${lookupResult.reason}")
-                        div(classes = "text-red-800") {
-                            p { +"We're sorry. Something went wrong. We'll fix it ASAP." }
-                            a(href = "/") { +"Try again" }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     suspend fun renderMainPage(context: PipelineContext<Unit, ApplicationCall>) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
@@ -136,4 +94,47 @@ class MainPage(
             }
         }
     }
+
+    suspend fun search(context: PipelineContext<Unit, ApplicationCall>) {
+        with(context) {
+            val search: Search = call.receive()
+            call.respondHtmlFragment {
+                when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
+                    is LookupResult.Success -> {
+                        val item = items.single { it.name == lookupResult.response }
+
+                        sleep(1.seconds.toJavaDuration())
+                        call.response.header("HX-Redirect", item.name)
+                        // Probably won't show but adding content anyway
+                        div {
+                            +"Found it! ${item.name}"
+                        }
+                    }
+
+                    is LookupResult.NotFound ->
+                        div(classes = "text-red-800") {
+                            p { +"Could not locate item with '${search.lookupValue}'." }
+                            a(href = "/") { +"Try again" }
+                        }
+
+
+                    is LookupResult.InvalidInput ->
+                        div(classes = "text-red-800") {
+                            p { +lookupResult.message }
+                            a(href = "/") { +"Try again" }
+                        }
+
+
+                    is LookupResult.Failure -> {
+                        logger.error("Lookup failed. Reason: ${lookupResult.reason}")
+                        div(classes = "text-red-800") {
+                            p { +"We're sorry. Something went wrong. We'll fix it ASAP." }
+                            a(href = "/") { +"Try again" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
