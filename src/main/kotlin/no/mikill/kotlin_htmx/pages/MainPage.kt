@@ -118,9 +118,18 @@ class MainPage(
                             }
                         }
                         section {
-                            +"You can see a different demo "
-                            a(href = "/demo") { +"here" }
-                            +" that showcases some use of React and Lit too"
+                            +"You can see different demos here: "
+                            ul {
+                                li {
+                                    a(href = "/demo/multi") { +"HTMX component together with others" }
+                                }
+                                li {
+                                    a(href = "/demo/form") { +"Form flow handling with validations" }
+                                }
+                                li {
+                                    a(href = "/demo/admin") { +"Simple admin page operations" }
+                                }
+                            }
                         }
                     }
                 }

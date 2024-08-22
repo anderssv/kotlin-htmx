@@ -24,7 +24,7 @@ object HtmlElements {
 
             img(
                 src = imageUrl, alt = "Choose $name"
-            )
+            ) { width = "100px" }
             p { +name }
         }
     }
