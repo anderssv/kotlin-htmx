@@ -30,6 +30,7 @@ fun Application.configurePageRoutes(
     val validator = Validation.buildDefaultValidatorFactory().validator
 
     val multiDemoPage = MultiDemoPage()
+    val htmxDemoPage = HtmxDemoPage()
     val adminPage = AdminPage()
     val formPage = FormPage()
 
@@ -60,6 +61,9 @@ fun Application.configurePageRoutes(
         route("/demo") {
             get("/multi") {
                 multiDemoPage.renderMultiJsPage(this)
+            }
+            get("/htmx") {
+                htmxDemoPage.renderPage(this)
             }
             get("/form") {
                 formPage.renderInputForm(this, null, emptySet())
@@ -144,7 +148,8 @@ fun Application.configurePageRoutes(
                 )
             }
             get("/todolist.html") {
-                delay(1.seconds)
+                val delaySeconds = call.parameters["delay"]?.toInt() ?: 1
+                delay(delaySeconds.seconds)
                 call.respondHtmlFragment {
                     todoListHtmlContent("htmx")
                 }

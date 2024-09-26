@@ -16,6 +16,8 @@ import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object Styles {
     const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"
@@ -24,18 +26,22 @@ object Styles {
 object HtmlElements {
 
     object DemoContent {
-        fun FlowContent.htmxSectionContent() {
+        fun FlowContent.htmxSectionContent(loadDelay: Duration = 1.seconds, backendDelay: Duration = 0.seconds) {
             section {
                 h1 { +"HTMX Element" }
                 div {
-                    attributes["hx-get"] = "/data/todolist.html"
+                    attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
                     attributes["hx-swap"] = "innerHTML" // Default is outerHTML
-                    attributes["hx-trigger"] = "load delay:1s, click" // Default is click
+                    attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
                     style = BOX_STYLE
-                    // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
-                    +"Click me!"
+                    // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
+                    +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
                     div(classes = "htmx-indicator") {
-                        +"Loading... (Intentionally delayed for 1 seconds)"
+                        img(src = "/static/images/loading.gif") { style = "height: 1em;" }
+                        span {
+                            style = "margin-left: 0.5em;"
+                            +"Loading... (Intentionally delayed ${backendDelay.inWholeSeconds} seconds on the back end)"
+                        }
                     }
                 }
             }
