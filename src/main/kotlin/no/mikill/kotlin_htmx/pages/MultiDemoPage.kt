@@ -4,12 +4,14 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.util.pipeline.*
 import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmlSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import kotlin.collections.set
 
 class MultiDemoPage {
 
     suspend fun renderMultiJsPage(context: PipelineContext<Unit, ApplicationCall>) {
-        val boxStyle = "border: 1px solid red; padding: 10px; margin: 10px;"
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 headerContent {
@@ -25,31 +27,12 @@ class MultiDemoPage {
                 }
                 mainTemplateContent {
                     demoPagesContent {
-                        section {
-                            h1 { +"HTML Element" }
-                            div {
-                                style = boxStyle
-                                todoListHtml("html")
-                            }
-                        }
-                        section {
-                            h1 { +"HTMX Element" }
-                            div {
-                                attributes["hx-get"] = "/data/todolist.html"
-                                attributes["hx-swap"] = "innerHTML" // Default is outerHTML
-                                attributes["hx-trigger"] = "load delay:1s, click" // Default is click
-                                style = boxStyle
-                                // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
-                                +"Click me!"
-                                div(classes = "htmx-indicator") {
-                                    +"Loading... (Intentionally delayed for 1 seconds)"
-                                }
-                            }
-                        }
+                        htmlSectionContent()
+                        htmxSectionContent()
                         section {
                             h1 { +"Lit Element" }
                             div {
-                                style = boxStyle
+                                style = BOX_STYLE
                                 script {
                                     src = "/script/lit-script.js"
                                     type = "module"
@@ -61,7 +44,7 @@ class MultiDemoPage {
                             h1 { +"React Element" }
                             div {
                                 id = "react-content"
-                                style = boxStyle
+                                style = BOX_STYLE
                                 script {
                                     src = "https://unpkg.com/@babel/standalone/babel.min.js"
                                 }
@@ -78,25 +61,4 @@ class MultiDemoPage {
             }
         }
     }
-
 }
-
-fun HtmlBlockTag.todoListHtml(blockIdPrefix: String) {
-    h1 { +"Todo List" }
-    ul {
-        id = "todo-list"
-        li { +"Buy milk" }
-        li { +"Buy bread" }
-        li { +"Buy eggs" }
-        li { +"Buy butter" }
-    }
-    p {
-        span {
-            id = "$blockIdPrefix-date"
-        }
-    }
-    script {
-        unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
-    }
-}
-

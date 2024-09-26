@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.pages.*
+import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -69,7 +70,7 @@ fun Application.configurePageRoutes(
                 logger.info("Received form data: $form")
 
                 /*
-                 * Creating a new application here with some bogous values.
+                 * Creating a new application here with some bogus values.
                  *
                  * It is a common problem how to handle partially filled forms
                  * and invalid data, but we won't demonstrate that here.
@@ -77,7 +78,8 @@ fun Application.configurePageRoutes(
                  * Things like Sum Types (https://github.com/anderssv/the-example/blob/main/doc/sum-types.md)
                  * could probably be used here and should be explored.
                  *
-                 * The other option is of course to set everything to be nullable, but seems like less than ideal option.
+                 * The other option is, of course, to set everything to be nullable,
+                 * but it seems like a less than ideal option.
                  */
                 val application = no.mikill.kotlin_htmx.application.Application(
                     UUID.randomUUID(),
@@ -144,7 +146,7 @@ fun Application.configurePageRoutes(
             get("/todolist.html") {
                 delay(1.seconds)
                 call.respondHtmlFragment {
-                    todoListHtml("htmx")
+                    todoListHtmlContent("htmx")
                 }
             }
         }

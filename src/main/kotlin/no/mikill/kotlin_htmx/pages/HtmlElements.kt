@@ -13,10 +13,63 @@ import kotlinx.html.stream.appendHTML
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
+import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
 
+object Styles {
+    const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"
+}
+
 object HtmlElements {
+
+    object DemoContent {
+        fun FlowContent.htmxSectionContent() {
+            section {
+                h1 { +"HTMX Element" }
+                div {
+                    attributes["hx-get"] = "/data/todolist.html"
+                    attributes["hx-swap"] = "innerHTML" // Default is outerHTML
+                    attributes["hx-trigger"] = "load delay:1s, click" // Default is click
+                    style = BOX_STYLE
+                    // Would have included HTMX script here, but it is already included in head as it is used in other pages as well
+                    +"Click me!"
+                    div(classes = "htmx-indicator") {
+                        +"Loading... (Intentionally delayed for 1 seconds)"
+                    }
+                }
+            }
+        }
+
+        fun FlowContent.htmlSectionContent() {
+            section {
+                h1 { +"HTML Element" }
+                div {
+                    style = BOX_STYLE
+                    todoListHtmlContent("html")
+                }
+            }
+        }
+
+        fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String) {
+            h1 { +"Todo List" }
+            ul {
+                id = "todo-list"
+                li { +"Buy milk" }
+                li { +"Buy bread" }
+                li { +"Buy eggs" }
+                li { +"Buy butter" }
+            }
+            p {
+                span {
+                    id = "$blockIdPrefix-date"
+                }
+            }
+            script {
+                unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
+            }
+        }
+    }
 
     fun HtmlBlockTag.selectBox(name: String, linkUrl: String, imageUrl: String) {
         a(href = linkUrl, classes = "box") {
@@ -103,4 +156,3 @@ object HtmlElements {
     }
 
 }
-
