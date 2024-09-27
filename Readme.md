@@ -103,8 +103,9 @@ This is a small demo that I do for my presentation "Effective development with K
       - Remove HTMX attributes
       - Remove loader class
       - Remove loader
-      - Readd
+      - Re-add
       - Change backend delay to 0
+      - Reload
     - Admin interface
       - Load and click
       - Reload
