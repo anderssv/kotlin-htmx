@@ -93,11 +93,18 @@ This is a small demo that I do for my presentation "Effective development with K
       - Launch http://0.0.0.0:8080/demo/htmx
       - Wait for the loading indicator
       - Wait for the load
+      - Turn on More Tools > Rendering > Paint Flashing
+      - Reload and wait again
+      - View source
       - Open developer tools
+      - Inspect
       - Reload
       - Click the button
-      - Remove automatic loading
-      - Inline the HTML
+      - Remove HTMX attributes
+      - Remove loader class
+      - Remove loader
+      - Readd
+      - Change backend delay to 0
     - Admin interface
       - Load and click
       - Reload
@@ -106,7 +113,6 @@ This is a small demo that I do for my presentation "Effective development with K
     - Selection interface
       - Go to http://0.0.0.0:8080
       - Open developer tools
-      - Turn on More Tools > Rendering > Paint Flashing
       - Reload
       - Mouse over
       - Click
