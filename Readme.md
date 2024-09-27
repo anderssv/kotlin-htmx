@@ -85,6 +85,35 @@ This is a small example with simple functionality. Performance wise there is no 
 
 People are doing it in production. See this article and presentations for a real world migration from React to HTMX: https://htmx.org/essays/a-real-world-react-to-htmx-port/
 
+# Demo steps
+This is a small demo that I do for my presentation "Effective development with Ktor, HTML and HTMX".
+
+- Demo HTMX
+    - Simple interface
+      - Launch http://0.0.0.0:8080/demo/htmx
+      - Wait for the loading indicator
+      - Wait for the load
+      - Open developer tools
+      - Reload
+      - Click the button
+      - Remove automatic loading
+      - Inline the HTML
+    - Admin interface
+      - Load and click
+      - Reload
+      - Go to http://0.0.0.0:8080/demo/item/0
+      - View source
+    - Selection interface
+      - Go to http://0.0.0.0:8080
+      - Open developer tools
+      - Turn on More Tools > Rendering > Paint Flashing
+      - Reload
+      - Mouse over
+      - Click
+      - 
+- Demo KTor and HTMX
+- 
+
 # Possible TODO
 - Set up logging with JSON
 - Do item repo as example?

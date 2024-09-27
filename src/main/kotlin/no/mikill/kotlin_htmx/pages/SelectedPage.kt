@@ -33,12 +33,12 @@ class SelectedPage {
                             selectBox(
                                 name = "Yes",
                                 linkUrl = "Yes",
-                                imageUrl = "https://media.istockphoto.com/id/1452662817/pt/vetorial/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=yStstJjRmFBsBJRELaIXWxv4nH1azEa0O9-Hwtm3718="
+                                imageUrl = "/static/images/influencer.png"
                             )
                             selectBox(
                                 name = "No",
                                 linkUrl = "No",
-                                imageUrl = "https://media.istockphoto.com/id/1452662817/pt/vetorial/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=yStstJjRmFBsBJRELaIXWxv4nH1azEa0O9-Hwtm3718="
+                                imageUrl = "/static/images/influencer.png"
                             )
                         }
                     }

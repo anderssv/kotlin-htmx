@@ -4,9 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.util.pipeline.*
 import kotlinx.html.*
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmlSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class HtmxDemoPage {
@@ -21,7 +19,6 @@ class HtmxDemoPage {
                 }
                 mainTemplateContent {
                     demoPagesContent {
-                        htmlSectionContent()
                         htmxSectionContent(5.seconds, 5.seconds)
                     }
                 }
