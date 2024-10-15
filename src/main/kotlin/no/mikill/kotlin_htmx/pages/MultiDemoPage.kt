@@ -8,6 +8,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmlSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import kotlin.collections.set
+import kotlin.time.Duration.Companion.seconds
 
 class MultiDemoPage {
 
@@ -28,7 +29,7 @@ class MultiDemoPage {
                 mainTemplateContent {
                     demoPagesContent {
                         htmlSectionContent()
-                        htmxSectionContent()
+                        htmxSectionContent(loadDelay = 5.seconds, backendDelay = 0.seconds)
                         section {
                             h1 { +"Lit Element" }
                             div {

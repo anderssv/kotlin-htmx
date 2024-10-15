@@ -26,7 +26,7 @@ object Styles {
 object HtmlElements {
 
     object DemoContent {
-        fun FlowContent.htmxSectionContent(loadDelay: Duration = 1.seconds, backendDelay: Duration = 0.seconds) {
+        fun FlowContent.htmxSectionContent(loadDelay: Duration, backendDelay: Duration) {
             section {
                 h1 { +"HTMX Element" }
                 div {
