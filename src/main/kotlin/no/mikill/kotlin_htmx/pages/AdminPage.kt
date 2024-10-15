@@ -38,7 +38,6 @@ class AdminPage {
                                 (0..10).forEach { item ->
                                     p {
                                         a(href = "item/$item") {
-                                            //attributes["hx-boost"] = true.toString() // Will change to also manipulate the URL
                                             attributes["hx-get"] = "item/$item"
                                             attributes["hx-target"] = "#itemPanel"
                                             attributes["hx-indicator"] = "#loader"

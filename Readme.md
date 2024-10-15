@@ -89,36 +89,35 @@ People are doing it in production. See this article and presentations for a real
 This is a small demo that I do for my presentation "Effective development with Ktor, HTML and HTMX".
 
 - Demo HTMX
-    - Simple interface
+  - Show HTML
+  - Remove TODO List, waiting
+  - Turn on More Tools > Rendering > Paint Flashing
+  - Add hx-get
+  - Add hx-trigger
+  - Add hx-swap, change to outerHTML
+  - Add hx-indicator
+- Demo KTor and HTMX
+  - Simple interface
       - Launch http://0.0.0.0:8080/demo/htmx
-      - Wait for the loading indicator
-      - Wait for the load
-      - Turn on More Tools > Rendering > Paint Flashing
-      - Reload and wait again
-      - View source
       - Open developer tools
-      - Inspect
-      - Reload
-      - Click the button
-      - Remove HTMX attributes
-      - Remove loader class
-      - Remove loader
-      - Re-add
       - Change backend delay to 0
       - Reload
-    - Admin interface
+  - Admin interface
+      - Go to http://0.0.0.0:8080/demo/admin
       - Load and click
-      - Reload
+      - Show response preview
+      - Reload, show how it "resets"
       - Go to http://0.0.0.0:8080/demo/item/0
-      - View source
-    - Selection interface
+      - View source, point out that this is one way to do it
+  - Selection interface
       - Go to http://0.0.0.0:8080
       - Open developer tools
-      - Reload
-      - Mouse over
-      - Click
-- Demo KTor and HTMX
-- 
+      - Search for "Something"
+      - Search for "One"
+      - Go back
+      - Show hx-boost and preload code
+      - Show preload on mouse over
+      - Click on "One"
 
 # Possible TODO
 - Set up logging with JSON
