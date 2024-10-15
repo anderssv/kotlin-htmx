@@ -19,7 +19,10 @@ class HtmxDemoPage {
                 }
                 mainTemplateContent {
                     demoPagesContent {
-                        htmxSectionContent(5.seconds, 5.seconds)
+                        htmxSectionContent(
+                            loadDelay = 5.seconds,
+                            backendDelay = 5.seconds
+                        )
                     }
                 }
             }

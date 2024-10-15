@@ -117,7 +117,6 @@ This is a small demo that I do for my presentation "Effective development with K
       - Reload
       - Mouse over
       - Click
-      - 
 - Demo KTor and HTMX
 - 
 
