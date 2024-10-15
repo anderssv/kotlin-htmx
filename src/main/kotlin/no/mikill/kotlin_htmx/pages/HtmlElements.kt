@@ -31,8 +31,8 @@ object HtmlElements {
                 h1 { +"HTMX Element" }
                 div {
                     attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
-                    attributes["hx-swap"] = "innerHTML" // Default is outerHTML
                     attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                    attributes["hx-swap"] = "innerHTML" // Default is outerHTML
                     style = BOX_STYLE
                     // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
                     +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
@@ -95,8 +95,8 @@ object HtmlElements {
 
         // Boosting
         attributes["hx-boost"] = true.toString()
-        attributes["hx-target"] = "#mainContent"
         attributes["hx-select"] = "#mainContent"
+        attributes["hx-target"] = "#mainContent"
         attributes["hx-swap"] = "outerHTML"
     }
 
