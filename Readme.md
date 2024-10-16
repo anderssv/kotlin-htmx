@@ -118,6 +118,10 @@ This is a small demo that I do for my presentation "Effective development with K
       - Show hx-boost and preload code
       - Show preload on mouse over
       - Click on "One"
+  - Form interface
+    - Go to http://0.0.0.0:8080/demo/form
+    - Enter and show enter and tab
+    - Enter and show validation
 
 # Possible TODO
 - Set up logging with JSON
