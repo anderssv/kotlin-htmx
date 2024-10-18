@@ -1,6 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.*
+import kotlinx.css.script
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
@@ -37,9 +38,23 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
             }
+            script(type="importmap") {
+                unsafe {
+                    raw(
+                        """
+                        {
+                            "imports": {
+                                "postcss": "https://esm.sh/postcss@8.4.47?dev"
+                            }
+                        }
+                    """.trimIndent()
+                    )
+                }
+            }
             script(src = "https://unpkg.com/htmx.org@1.9.12") { }
             script(src = "https://unpkg.com/htmx.org/dist/ext/json-enc.js") { }
             script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") { }
+            script(src = "/script/postcss.js", type = "module") {}
 
             style {
                 rawCss(
