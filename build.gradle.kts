@@ -5,7 +5,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.21"
     id("io.ktor.plugin") version "2.3.12"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -60,7 +60,7 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0")
 
     testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
@@ -71,7 +71,9 @@ tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
         componentSelection {
             all {
-                if (candidate.version.contains("-beta", true)) {
+                if (candidate.version.contains("beta", true)
+                    || candidate.version.contains("-rc", true)
+                    || candidate.version.endsWith("-M1")) {
                     reject("Not a release")
                 }
             }
