@@ -1,10 +1,9 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
@@ -25,8 +24,8 @@ class MainPage(
 
     private data class Search(val lookupValue: String)
 
-    suspend fun renderMainPage(context: PipelineContext<Unit, ApplicationCall>) {
-        with(context) {
+    suspend fun renderMainPage(routingHandler: RoutingContext) {
+        with(routingHandler) {
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
                 mainTemplateContent {
                     selectionPagesContent {
@@ -95,7 +94,7 @@ class MainPage(
         }
     }
 
-    suspend fun search(context: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun search(context: RoutingContext) {
         with(context) {
             val search: Search = call.receive()
             call.respondHtmlFragment {

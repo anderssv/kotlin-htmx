@@ -1,8 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.p
@@ -12,7 +11,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 
 
 class SelectedPage {
-    suspend fun renderPage(context: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun renderPage(context: RoutingContext) {
         with(context) {
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {

@@ -1,8 +1,7 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.RoutingContext
 import jakarta.validation.ConstraintViolation
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
@@ -11,7 +10,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.inputFieldWithValidationAndError
 class FormPage {
 
     suspend fun renderInputForm(
-        pipelineContext: PipelineContext<Unit, ApplicationCall>,
+        pipelineContext: RoutingContext,
         existingApplication: Application?,
         errors: Set<ConstraintViolation<Application>>
     ) {
@@ -51,7 +50,7 @@ class FormPage {
     }
 
     suspend fun renderFormSaved(
-        pipelineContext: PipelineContext<Unit, ApplicationCall>,
+        pipelineContext: RoutingContext,
         existingApplication: Application
     ) {
         with(pipelineContext) {

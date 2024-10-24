@@ -3,7 +3,7 @@ package no.mikill.kotlin_htmx
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.server.testing.testApplication
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals

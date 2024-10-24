@@ -1,18 +1,16 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.RoutingContext
 import kotlinx.coroutines.delay
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
-import org.intellij.lang.annotations.Language
 import kotlin.time.Duration.Companion.seconds
 
 class AdminPage {
 
-    suspend fun renderAdminPage(pipelineContext: PipelineContext<Unit, ApplicationCall>) {
+    suspend fun renderAdminPage(pipelineContext: RoutingContext) {
         with(pipelineContext) {
             call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
                 mainTemplateContent {
@@ -57,7 +55,7 @@ class AdminPage {
         }
     }
 
-    suspend fun renderItemResponse(pipelineContext: PipelineContext<Unit, ApplicationCall>, itemId: Int) {
+    suspend fun renderItemResponse(pipelineContext: RoutingContext, itemId: Int) {
         delay(5.seconds)
         with(pipelineContext) {
             call.respondHtmlFragment {
