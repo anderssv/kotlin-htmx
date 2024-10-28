@@ -85,9 +85,9 @@ fun Application.configurePageRoutes(
                         htmxDemoPage.toggle(this)
                     }
                     sse("events") {
-                        repeat(100) {
+                        while(true) {
                             send("data", "checkbox")
-                            delay(10.seconds)
+                            delay(1.seconds)
                         }
                     }
                 }
