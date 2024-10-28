@@ -2,22 +2,28 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.*
 import io.ktor.server.http.toHttpDateString
-import io.ktor.server.response.header
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
+import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
+import java.util.Collections
 import kotlin.text.toInt
 import kotlin.time.Duration.Companion.seconds
 
 class HtmxDemoPage {
-    private val xDimension = 20
-    private val yDimension = 50
+    private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
+
+    private val xDimension = 30
+    private val yDimension = 100
 
     // Initialize a map from x and y dimension with false as the default state
-    val lookup: Array<BooleanArray> = Array(xDimension) { BooleanArray(yDimension) { false } }
+    private val lookup: Array<BooleanArray> = Array(xDimension) { BooleanArray(yDimension) { false } }
+
+    private var notify: MutableList<(suspend () -> Unit)> = Collections.synchronizedList(mutableListOf())
 
     suspend fun renderPage(context: RoutingContext) {
         with(context) {
@@ -44,7 +50,15 @@ class HtmxDemoPage {
         val y = context.call.pathParameters["y"]!!.toInt()
         lookup[x][y] = !lookup[x][y]
 
-        context.call.response.header("HX-Redirect", "/demo/htmx/checkboxes")
+        notify.forEachIndexed { index, it ->
+            try {
+                it.invoke()
+            } catch (e: IOException) {
+                logger.info("Removing failed connection", e)
+                notify.removeAt(index)
+            }
+        }
+
         context.call.respondText("Ok")
     }
 
@@ -58,12 +72,18 @@ class HtmxDemoPage {
         }
     }
 
+    suspend fun onCheckboxUpdate(function: suspend () -> Unit) {
+        this.notify.add(function)
+    }
+
     suspend fun renderCheckboxesPage(context: RoutingContext) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        +"Page header!"
+                        p { +"Showing: ${xDimension * yDimension} checkboxes" }
+                        p { +"State is only kept in memory, so a restart of the server will blank the matrix." }
+                        p { +"Update event is sent with SSE. Whole section with checkboxes is updated every time a checkbox is updated." }
                     }
                 }
                 mainSectionTemplate {

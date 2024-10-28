@@ -18,6 +18,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -85,9 +86,12 @@ fun Application.configurePageRoutes(
                         htmxDemoPage.toggle(this)
                     }
                     sse("events") {
+                        htmxDemoPage.onCheckboxUpdate {
+                            sse@this.send("data", "checkbox")
+                        }
                         while(true) {
-                            send("data", "checkbox")
-                            delay(1.seconds)
+                            send("ping", "connection")
+                            delay(60.seconds)
                         }
                     }
                 }
