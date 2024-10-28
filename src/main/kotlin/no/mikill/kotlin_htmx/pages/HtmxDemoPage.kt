@@ -1,7 +1,6 @@
 package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.*
-import io.ktor.server.http.toHttpDateString
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
@@ -83,9 +82,18 @@ class HtmxDemoPage {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        p { +"Showing: ${xDimension * yDimension} checkboxes" }
-                        p { +"State is only kept in memory, so a restart of the server will blank the matrix." }
-                        p { +"Update event is sent with SSE. Whole section with checkboxes is updated every time a checkbox is updated." }
+                        p { +"Showing: ${xDimension * yDimension} checkboxes. Open an additional browser to see updates across." }
+                        p {
+                            +"Update event is sent with "
+                            a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
+                            +" (see events endpoint in developer console). Whole section with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for events and trigges an update of the HTML."
+                        }
+                        p { +"State is only kept in memory, so a restart of the server will wipe the matrix." }
+                        p {
+                            +"You can view most of the code needed for this "
+                            a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
+                            +"."
+                        }
                     }
                 }
                 mainSectionTemplate {

@@ -107,7 +107,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
 
                 // Logo
                 header {
-                    h1 { +"Kotlin + KTor front end demos" }
+                    h1 { +"Kotlin, KTor and HTMX front end demos" }
                     div {
                         insert(headerContent)
                     }
