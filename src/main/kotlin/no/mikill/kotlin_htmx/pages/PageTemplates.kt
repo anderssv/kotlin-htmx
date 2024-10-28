@@ -37,9 +37,10 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
             }
-            script(src = "https://unpkg.com/htmx.org@1.9.12") { }
-            script(src = "https://unpkg.com/htmx.org/dist/ext/json-enc.js") { }
-            script(src = "https://unpkg.com/htmx.org/dist/ext/preload.js") { }
+            script(src = "https://unpkg.com/htmx.org@1.9.12") {}
+            script(src = "https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js") {}
+            script(src = "https://unpkg.com/htmx.org@1.9.12/dist/ext/preload.js") {}
+            script(src = "https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js") {}
 
             style {
                 rawCss(

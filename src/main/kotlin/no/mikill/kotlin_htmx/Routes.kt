@@ -7,6 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sse.sse
 import jakarta.validation.Validation
 import kotlinx.coroutines.delay
 import no.mikill.kotlin_htmx.application.ApplicationRepository
@@ -77,8 +78,17 @@ fun Application.configurePageRoutes(
                     get {
                         htmxDemoPage.renderCheckboxesPage(this)
                     }
+                    get("/update") {
+                        htmxDemoPage.boxes(this)
+                    }
                     put("{x}/{y}") {
                         htmxDemoPage.toggle(this)
+                    }
+                    sse("events") {
+                        repeat(100) {
+                            send("data", "checkbox")
+                            delay(10.seconds)
+                        }
                     }
                 }
             }
