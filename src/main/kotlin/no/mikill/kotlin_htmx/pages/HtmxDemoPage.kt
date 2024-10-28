@@ -50,12 +50,13 @@ class HtmxDemoPage {
         val y = context.call.pathParameters["y"]!!.toInt()
         lookup[x][y] = !lookup[x][y]
 
-        notify.forEachIndexed { index, it ->
+        val iterator = notify.iterator()
+        while (iterator.hasNext()) {
             try {
-                it.invoke()
+                iterator.next().invoke()
             } catch (e: IOException) {
                 logger.info("Removing failed connection", e)
-                notify.removeAt(index)
+                iterator.remove()
             }
         }
 
