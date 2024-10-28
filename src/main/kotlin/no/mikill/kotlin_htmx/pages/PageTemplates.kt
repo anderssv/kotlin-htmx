@@ -9,7 +9,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
  */
 class MainTemplate<T : Template<FlowContent>>(private val template: T) : Template<HTML> {
 
-    val mainTemplateContent = TemplatePlaceholder<T>()
+    val mainSectionTemplate = TemplatePlaceholder<T>()
     val headerContent = Placeholder<FlowContent>()
 
     override fun HTML.apply() {
@@ -101,7 +101,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                 // Main content
                 main {
                     id = "mainContent"
-                    insert(template, mainTemplateContent)
+                    insert(template, mainSectionTemplate)
                 }
 
                 footer {
@@ -122,10 +122,15 @@ class SelectionTemplate : Template<FlowContent> {
     }
 }
 
-class DemoTemplate : Template<FlowContent> {
-    val demoPagesContent = Placeholder<FlowContent>()
+/**
+ * This is an empty template to allow us to enforce specifying something
+ *
+ * There is probably a better way to do this
+ */
+class EmptyTemplate : Template<FlowContent> {
+    val emptyContentWrapper = Placeholder<FlowContent>()
 
     override fun FlowContent.apply() {
-        insert(demoPagesContent)
+        insert(emptyContentWrapper)
     }
 }

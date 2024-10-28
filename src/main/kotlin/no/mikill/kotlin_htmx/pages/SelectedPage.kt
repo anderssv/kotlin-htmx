@@ -15,7 +15,7 @@ class SelectedPage {
         with(context) {
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
-                mainTemplateContent {
+                mainSectionTemplate {
                     selectionPagesContent {
                         val name =
                             "${selected.name} - Yes and No below has not been implemented and will generate an error"

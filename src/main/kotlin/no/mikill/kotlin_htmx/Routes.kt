@@ -59,60 +59,76 @@ fun Application.configurePageRoutes(
         }
 
         route("/demo") {
+            get("/item/{itemId}") {
+                val itemId = call.parameters["itemId"]!!.toInt()
+                adminPage.renderItemResponse(this, itemId)
+            }
+
             get("/multi") {
                 multiDemoPage.renderMultiJsPage(this)
             }
-            get("/htmx") {
-                htmxDemoPage.renderPage(this)
-            }
-            get("/form") {
-                formPage.renderInputForm(this, null, emptySet())
-            }
-            post("/form") {
-                // This logic should probably be in a type of controller to make the route setup clearer and isolated
-                val form = call.receiveParameters()
-                logger.info("Received form data: $form")
 
-                /*
-                 * Creating a new application here with some bogus values.
-                 *
-                 * It is a common problem how to handle partially filled forms
-                 * and invalid data, but we won't demonstrate that here.
-                 *
-                 * Things like Sum Types (https://github.com/anderssv/the-example/blob/main/doc/sum-types.md)
-                 * could probably be used here and should be explored.
-                 *
-                 * The other option is, of course, to set everything to be nullable,
-                 * but it seems like a less than ideal option.
-                 */
-                val application = no.mikill.kotlin_htmx.application.Application(
-                    UUID.randomUUID(),
-                    Person("", ""),
-                    ""
-                ) // This would typically be fetched from a DB based on a ID, but don't have that right now
-                val updatedApplication: no.mikill.kotlin_htmx.application.Application =
-                    mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
-                applicationRepository.addApplication(updatedApplication) // And then of course this would be an update, not an add
-
-                val errors = validator.validate(updatedApplication)
-                if (errors.isNotEmpty()) { // Back to same page with errors
-                    formPage.renderInputForm(this, updatedApplication, errors)
-                } else {
-                    call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+            route("/htmx") {
+                get {
+                    htmxDemoPage.renderPage(this)
                 }
-            }
-            get("/form/{id}/saved") {
-                val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
-                formPage.renderFormSaved(this, application)
+
+                route("/checkboxes") {
+                    get {
+                        htmxDemoPage.renderCheckboxesPage(this)
+                    }
+                    put("{x}/{y}") {
+                        htmxDemoPage.toggle(this)
+                    }
+                }
             }
 
             get("/admin") {
                 adminPage.renderAdminPage(this)
             }
 
-            get("/item/{itemId}") {
-                val itemId = call.parameters["itemId"]!!.toInt()
-                adminPage.renderItemResponse(this, itemId)
+            route("/form") {
+                get {
+                    formPage.renderInputForm(this, null, emptySet())
+                }
+                post {
+                    // This logic should probably be in a type of controller to make the route setup clearer and isolated
+                    val form = call.receiveParameters()
+                    logger.info("Received form data: $form")
+
+                    /*
+                     * Creating a new application here with some bogus values.
+                     *
+                     * It is a common problem how to handle partially filled forms
+                     * and invalid data, but we won't demonstrate that here.
+                     *
+                     * Things like Sum Types (https://github.com/anderssv/the-example/blob/main/doc/sum-types.md)
+                     * could probably be used here and should be explored.
+                     *
+                     * The other option is, of course, to set everything to be nullable,
+                     * but it seems like a less than ideal option.
+                     */
+                    val application = no.mikill.kotlin_htmx.application.Application(
+                        UUID.randomUUID(),
+                        Person("", ""),
+                        ""
+                    ) // This would typically be fetched from a DB based on a ID, but don't have that right now
+                    val updatedApplication: no.mikill.kotlin_htmx.application.Application =
+                        mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
+                    applicationRepository.addApplication(updatedApplication) // And then of course this would be an update, not an add
+
+                    val errors = validator.validate(updatedApplication)
+                    if (errors.isNotEmpty()) { // Back to same page with errors
+                        formPage.renderInputForm(this, updatedApplication, errors)
+                    } else {
+                        call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+                    }
+                }
+
+                get("/{id}/saved") {
+                    val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
+                    formPage.renderFormSaved(this, application)
+                }
             }
         }
 

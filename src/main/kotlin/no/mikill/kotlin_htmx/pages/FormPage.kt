@@ -15,12 +15,12 @@ class FormPage {
         errors: Set<ConstraintViolation<Application>>
     ) {
         with(pipelineContext) {
-            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     span { +"Form demo" }
                 }
-                mainTemplateContent {
-                    demoPagesContent {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         // This is a custom script that I have written. It should be packaged as a library and published
                         // to NPM instead of just using a direct link to Github. Let me know if you want to use it and
                         // I will add it to the project.
@@ -54,9 +54,9 @@ class FormPage {
         existingApplication: Application
     ) {
         with(pipelineContext) {
-            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
-                mainTemplateContent {
-                    demoPagesContent {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         section {
                             h1 { +"Form save" }
                             div {

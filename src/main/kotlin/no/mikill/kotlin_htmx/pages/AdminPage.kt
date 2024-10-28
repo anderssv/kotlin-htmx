@@ -12,9 +12,9 @@ class AdminPage {
 
     suspend fun renderAdminPage(pipelineContext: RoutingContext) {
         with(pipelineContext) {
-            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
-                mainTemplateContent {
-                    demoPagesContent {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         h1 { +"Admin page" }
                         p(classes = "htmx-indicator") {
                             id = "loader"

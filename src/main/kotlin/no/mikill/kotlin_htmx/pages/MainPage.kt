@@ -27,7 +27,7 @@ class MainPage(
     suspend fun renderMainPage(routingHandler: RoutingContext) {
         with(routingHandler) {
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
-                mainTemplateContent {
+                mainSectionTemplate {
                     selectionPagesContent {
                         section {
                             div {

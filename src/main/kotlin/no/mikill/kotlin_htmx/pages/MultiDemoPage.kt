@@ -13,7 +13,7 @@ class MultiDemoPage {
 
     suspend fun renderMultiJsPage(context: RoutingContext) {
         with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = DemoTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     p {
                         +"This is a small test. You can see the source at: "
@@ -25,8 +25,8 @@ class MultiDemoPage {
                     }
                     p { +"Loading below is staggered on purpose to show steps. Just a crude wait." }
                 }
-                mainTemplateContent {
-                    demoPagesContent {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         htmlSectionContent()
                         htmxSectionContent(loadDelay = 5.seconds, backendDelay = 0.seconds)
                         section {
