@@ -37,6 +37,20 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
             }
+            script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") {}
+            script {
+                unsafe {
+                    raw(
+                        """
+                          window.dataLayer = window.dataLayer || [];
+                          function gtag(){dataLayer.push(arguments);}
+                          gtag('js', new Date());
+
+                          gtag('config', 'G-30QSF4X9PW');
+                        """.trimIndent()
+                    )
+                }
+            }
             script(src = "https://unpkg.com/htmx.org@1.9.12") {}
             script(src = "https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js") {}
             script(src = "https://unpkg.com/htmx.org@1.9.12/dist/ext/preload.js") {}
