@@ -10,6 +10,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Collections
 import kotlin.text.toInt
 import kotlin.time.Duration.Companion.seconds
@@ -106,7 +107,7 @@ class HtmxDemoPage {
     }
 
     private fun DIV.justBoxes() {
-        div { +ZonedDateTime.now().toHttpDateString() }
+        div { +"Updated: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         (0..yDimension - 1).forEach { rowCtr ->
             div {
                 (0..xDimension - 1).forEach { columnCtr ->
