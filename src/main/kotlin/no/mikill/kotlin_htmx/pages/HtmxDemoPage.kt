@@ -92,12 +92,17 @@ class HtmxDemoPage {
                         p {
                             +"Update event is sent with "
                             a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
-                            +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML."
-                        }
-                        p {
+                            +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML. "
                             +"You can view most of the code needed for this "
                             a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
                             +"."
+                        }
+                        p {
+                            +"This is inspired by "
+                            a(href ="https://hamy.xyz/labs/1000-checkboxes") {
+                                +"Hamilton Greene's 1000-checkboxes"
+                            }
+                            +". I wanted to see how it fared with SSE and how instant updates felt. He also has another solution that handles a million checkboxes which requires a partial switch. The front-end (partially because of the HTMX script) gets overloaded with that amount of elements."
                         }
                     }
                 }
