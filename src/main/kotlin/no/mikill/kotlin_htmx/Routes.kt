@@ -90,6 +90,7 @@ fun Application.configurePageRoutes(
                             sse@this.send("data", "checkbox")
                         }
                         while(true) {
+                            // This will fail once the connection is closes, should probably have some handling
                             send("ping", "connection")
                             delay(60.seconds)
                         }

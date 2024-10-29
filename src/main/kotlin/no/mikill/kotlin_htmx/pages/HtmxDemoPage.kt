@@ -50,6 +50,11 @@ class HtmxDemoPage {
         val y = context.call.pathParameters["y"]!!.toInt()
         lookup[x][y] = !lookup[x][y]
 
+        /**
+         * These are registered, but there doesn't seem to be a hook
+         * for closing connections. So we handle that when we iterate
+         * through the list, and remove the broken ones.
+         */
         val iterator = notify.iterator()
         while (iterator.hasNext()) {
             try {
@@ -73,7 +78,7 @@ class HtmxDemoPage {
         }
     }
 
-    suspend fun onCheckboxUpdate(function: suspend () -> Unit) {
+    fun onCheckboxUpdate(function: suspend () -> Unit) {
         this.notify.add(function)
     }
 
@@ -82,13 +87,13 @@ class HtmxDemoPage {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        p { +"Showing: ${xDimension * yDimension} checkboxes. Open an additional browser to see updates across." }
+                        p { +"Showing: ${xDimension * yDimension} checkboxes." }
+                        p { +"Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
                         p {
                             +"Update event is sent with "
                             a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
-                            +" (see events endpoint in developer console). Whole section with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for events and trigges an update of the HTML."
+                            +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML."
                         }
-                        p { +"State is only kept in memory, so a restart of the server will wipe the matrix." }
                         p {
                             +"You can view most of the code needed for this "
                             a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
