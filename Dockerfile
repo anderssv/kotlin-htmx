@@ -10,4 +10,5 @@ COPY --from=build /tmp/build/build/libs/kotlin-htmx-all.jar .
 COPY .env.default .
 
 EXPOSE 8080
+ENV TZ="Europe/Oslo"
 CMD ["java", "-jar", "kotlin-htmx-all.jar"]
