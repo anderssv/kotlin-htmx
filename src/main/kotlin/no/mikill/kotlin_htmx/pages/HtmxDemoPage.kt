@@ -6,6 +6,7 @@ import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -17,13 +18,12 @@ import kotlin.time.Duration.Companion.seconds
 class HtmxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
 
-    private val columns = 30
-    private val rows = 100
+    private val numberOfBoxes = 3000
 
     // Initialize a map from x and y dimension with false as the default state
-    private val lookup: Array<BooleanArray> = Array(rows) { BooleanArray(columns) { false } }
+    private val checkboxGrid = BooleanArray(numberOfBoxes) { false }
 
-    private var notify: MutableList<(suspend (row: Int, col: Int, checkedState: Boolean) -> Unit)> =
+    private var connectedListeners: MutableList<(suspend (boxNum: Int, checkedState: Boolean) -> Unit)> =
         Collections.synchronizedList(mutableListOf())
 
     suspend fun renderPage(context: RoutingContext) {
@@ -47,19 +47,18 @@ class HtmxDemoPage {
     }
 
     suspend fun toggle(context: RoutingContext) {
-        val row = context.call.pathParameters["row"]!!.toInt()
-        val column = context.call.pathParameters["column"]!!.toInt()
-        lookup[row][column] = !lookup[row][column]
+        val boxNum = context.call.pathParameters["boxNum"]!!.toInt()
+        checkboxGrid[boxNum] = !checkboxGrid[boxNum]
 
         /**
          * These are registered, but there doesn't seem to be a hook
          * for closing connections. So we handle that when we iterate
          * through the list, and remove the broken ones.
          */
-        val iterator = notify.iterator()
+        val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
-                iterator.next().invoke(row, column, lookup[row][column])
+                iterator.next().invoke(boxNum, checkboxGrid[boxNum])
             } catch (e: IOException) {
                 logger.info("Removing failed connection", e)
                 iterator.remove()
@@ -72,13 +71,15 @@ class HtmxDemoPage {
     suspend fun boxGridFragment(context: RoutingContext) {
         with(context) {
             call.respondHtmlFragment {
-                boxGridHtml()
+                div {
+                    boxGridHtml()
+                }
             }
         }
     }
 
-    fun onCheckboxUpdate(function: suspend (row: Int, col: Int, checkedState: Boolean) -> Unit) {
-        this.notify.add(function)
+    fun onCheckboxUpdate(function: suspend (boxNum: Int, checkedState: Boolean) -> Unit) {
+        this.connectedListeners.add(function)
     }
 
     suspend fun renderCheckboxesPage(context: RoutingContext) {
@@ -86,9 +87,10 @@ class HtmxDemoPage {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        p { +"Showing: ${columns * rows} checkboxes." }
+                        p { +"Showing: ${numberOfBoxes} checkboxes." }
                         p { +"This page shows how you can do a event driven synchronization between browsers with HTMX and SSE. Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
-                        p{ +"Some notes:"
+                        p {
+                            +"Some notes:"
                             ul {
                                 li {
                                     +"Updates are partial per checkbox. This creates a blind spot if you loose or have intermittent connections. When the page reconnects to the SSE endpoint, the whole checkbox matrix will be reloaded, which can be slow. One possible fix could be to split the matrix into parts."
@@ -136,28 +138,24 @@ class HtmxDemoPage {
         }
     }
 
-    private fun HtmlBlockTag.boxGridHtml() {
+    private fun DIV.boxGridHtml() {
+        div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
-            div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
-            (0..rows - 1).forEach { row ->
-                div {
-                    (0..columns - 1).forEach { column ->
-                        checkbox(row, column, lookup[row][column])
-                    }
-                }
+            (0..numberOfBoxes - 1).forEach { boxNum ->
+                checkbox(boxNum, checkboxGrid[boxNum])
             }
         }
     }
 
 }
 
-fun HtmlBlockTag.checkbox(row: Int, col: Int, checkedState: Boolean) {
+fun HtmlBlockTag.checkbox(boxNum: Int, checkedState: Boolean) {
     span {
-        attributes["hx-sse"] = "swap:update-${row}-${col}" // Takes the HTML from the message and inserts
+        attributes["hx-sse"] = "swap:update-${boxNum}" // Takes the HTML from the message and inserts
         input(type = InputType.checkBox) {
-            attributes["hx-put"] = "checkboxes/$row/$col"
+            attributes["hx-put"] = "checkboxes/$boxNum"
             checked = checkedState
-            id = "${row}-${col}"
+            id = "$boxNum"
         }
     }
 }
