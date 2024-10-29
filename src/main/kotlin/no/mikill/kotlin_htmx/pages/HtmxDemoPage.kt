@@ -17,13 +17,14 @@ import kotlin.time.Duration.Companion.seconds
 class HtmxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
 
-    private val xDimension = 30
-    private val yDimension = 100
+    private val columns = 30
+    private val rows = 100
 
     // Initialize a map from x and y dimension with false as the default state
-    private val lookup: Array<BooleanArray> = Array(xDimension) { BooleanArray(yDimension) { false } }
+    private val lookup: Array<BooleanArray> = Array(rows) { BooleanArray(columns) { false } }
 
-    private var notify: MutableList<(suspend () -> Unit)> = Collections.synchronizedList(mutableListOf())
+    private var notify: MutableList<(suspend (row: Int, col: Int, checkedState: Boolean) -> Unit)> =
+        Collections.synchronizedList(mutableListOf())
 
     suspend fun renderPage(context: RoutingContext) {
         with(context) {
@@ -46,9 +47,9 @@ class HtmxDemoPage {
     }
 
     suspend fun toggle(context: RoutingContext) {
-        val x = context.call.pathParameters["x"]!!.toInt()
-        val y = context.call.pathParameters["y"]!!.toInt()
-        lookup[x][y] = !lookup[x][y]
+        val row = context.call.pathParameters["row"]!!.toInt()
+        val column = context.call.pathParameters["column"]!!.toInt()
+        lookup[row][column] = !lookup[row][column]
 
         /**
          * These are registered, but there doesn't seem to be a hook
@@ -58,7 +59,7 @@ class HtmxDemoPage {
         val iterator = notify.iterator()
         while (iterator.hasNext()) {
             try {
-                iterator.next().invoke()
+                iterator.next().invoke(row, column, lookup[row][column])
             } catch (e: IOException) {
                 logger.info("Removing failed connection", e)
                 iterator.remove()
@@ -68,17 +69,15 @@ class HtmxDemoPage {
         context.call.respondText("Ok")
     }
 
-    suspend fun boxes(context: RoutingContext) {
+    suspend fun boxGridFragment(context: RoutingContext) {
         with(context) {
             call.respondHtmlFragment {
-                div {
-                    justBoxes()
-                }
+                boxGridHtml()
             }
         }
     }
 
-    fun onCheckboxUpdate(function: suspend () -> Unit) {
+    fun onCheckboxUpdate(function: suspend (row: Int, col: Int, checkedState: Boolean) -> Unit) {
         this.notify.add(function)
     }
 
@@ -87,22 +86,35 @@ class HtmxDemoPage {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        p { +"Showing: ${xDimension * yDimension} checkboxes." }
-                        p { +"Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
-                        p {
-                            +"Update event is sent with "
-                            a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
-                            +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML. "
-                            +"You can view most of the code needed for this "
-                            a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
-                            +"."
+                        p { +"Showing: ${columns * rows} checkboxes." }
+                        p { +"This page shows how you can do a event driven synchronization between browsers with HTMX and SSE. Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
+                        p{ +"Some notes:"
+                            ul {
+                                li {
+                                    +"Updates are partial per checkbox. This creates a blind spot if you loose or have intermittent connections. When the page reconnects to the SSE endpoint, the whole checkbox matrix will be reloaded, which can be slow. One possible fix could be to split the matrix into parts."
+                                }
+                                li {
+                                    +"There is no proper error handling, but the SSE stream will be re-connected, possibly overwriting changes you have done locally."
+                                }
+                                li {
+                                    +"When the number of checkboxes becomes large rendering gets slow, but also the processing (HTMX scans for things to do)."
+                                }
+                                li {
+                                    +"Update event is sent with "
+                                    a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
+                                    +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML. "
+                                    +"You can view most of the code needed for this "
+                                    a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
+                                    +"."
+                                }
+                            }
                         }
                         p {
                             +"This is inspired by "
-                            a(href ="https://hamy.xyz/labs/1000-checkboxes") {
+                            a(href = "https://hamy.xyz/labs/1000-checkboxes") {
                                 +"Hamilton Greene's 1000-checkboxes"
                             }
-                            +". I wanted to see how it fared with SSE and how instant updates felt. He also has another solution that handles a million checkboxes which requires a partial switch. The front-end (partially because of the HTMX script) gets overloaded with that amount of elements."
+                            +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
                         }
                     }
                 }
@@ -113,9 +125,9 @@ class HtmxDemoPage {
                             attributes["sse-connect"] = "checkboxes/events"
                             div {
                                 attributes["hx-get"] = "checkboxes/update"
-                                attributes["hx-trigger"] = "sse:checkbox"
+                                attributes["hx-trigger"] = "sse:update-all"
 
-                                justBoxes()
+                                boxGridHtml()
                             }
                         }
                     }
@@ -124,18 +136,28 @@ class HtmxDemoPage {
         }
     }
 
-    private fun DIV.justBoxes() {
-        div { +"Updated: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
-        (0..yDimension - 1).forEach { rowCtr ->
-            div {
-                (0..xDimension - 1).forEach { columnCtr ->
-                    input(type = InputType.checkBox) {
-                        attributes["hx-put"] = "checkboxes/$columnCtr/$rowCtr"
-                        checked = lookup[columnCtr][rowCtr]
-                        id = "${rowCtr}-${columnCtr}"
+    private fun HtmlBlockTag.boxGridHtml() {
+        div {
+            div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
+            (0..rows - 1).forEach { row ->
+                div {
+                    (0..columns - 1).forEach { column ->
+                        checkbox(row, column, lookup[row][column])
                     }
                 }
             }
+        }
+    }
+
+}
+
+fun HtmlBlockTag.checkbox(row: Int, col: Int, checkedState: Boolean) {
+    span {
+        attributes["hx-sse"] = "swap:update-${row}-${col}" // Takes the HTML from the message and inserts
+        input(type = InputType.checkBox) {
+            attributes["hx-put"] = "checkboxes/$row/$col"
+            checked = checkedState
+            id = "${row}-${col}"
         }
     }
 }

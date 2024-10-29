@@ -144,15 +144,17 @@ object HtmlElements {
         status: HttpStatusCode = HttpStatusCode.OK,
         block: BODY.() -> Unit
     ) {
-        val text = buildString {
-            append("<!DOCTYPE html>\n")
-            appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
-                body {
-                    block(this)
-                }
+        val text = partialHtml(block)
+        respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
+    }
+
+    fun partialHtml(block: BODY.() -> Unit): String = buildString {
+        append("<!DOCTYPE html>\n")
+        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
+            body {
+                block(this)
             }
         }
-        respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {

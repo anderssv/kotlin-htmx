@@ -18,7 +18,6 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -80,16 +79,23 @@ fun Application.configurePageRoutes(
                         htmxDemoPage.renderCheckboxesPage(this)
                     }
                     get("/update") {
-                        htmxDemoPage.boxes(this)
+                        htmxDemoPage.boxGridFragment(this)
                     }
-                    put("{x}/{y}") {
+                    put("{row}/{column}") {
                         htmxDemoPage.toggle(this)
                     }
                     sse("events") {
-                        htmxDemoPage.onCheckboxUpdate {
-                            sse@this.send("data", "checkbox")
+                        this.send(
+                            "",
+                            "update-all"
+                        ) // Fetches on reconnect. Shouldn't really trigger on first connect, but don't know a way to detect re-connects
+                        htmxDemoPage.onCheckboxUpdate { row, col, checkedState ->
+                            sse@ this.send(HtmlElements.partialHtml {
+                                checkbox(row, col, checkedState)
+                            }, "update-$row-$col")
                         }
-                        while(true) {
+                        // It seems it terminates the connection without this.
+                        while (true) {
                             // This will fail once the connection is closes, should probably have some handling
                             send("ping", "connection")
                             delay(60.seconds)
