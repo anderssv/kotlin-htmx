@@ -17,7 +17,6 @@ import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 object Styles {
     const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"

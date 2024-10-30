@@ -68,7 +68,7 @@ class HtmxDemoPage {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
                     div {
-                        p { +"Showing: ${numberOfBoxes} checkboxes." }
+                        p { +"Showing: $numberOfBoxes checkboxes." }
                         p { +"This page shows how you can do a event driven synchronization between browsers with HTMX and SSE. Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
                         renderDetailedNotes()
                     }

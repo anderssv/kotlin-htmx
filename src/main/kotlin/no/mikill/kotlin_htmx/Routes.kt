@@ -17,7 +17,6 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.util.*
-import kotlin.jvm.javaClass
 import kotlin.time.Duration.Companion.seconds
 
 private val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
