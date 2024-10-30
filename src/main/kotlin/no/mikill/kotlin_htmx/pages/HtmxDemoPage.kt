@@ -123,6 +123,7 @@ class HtmxDemoPage {
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
         span {
             attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
+            attributes["hx-swap"] = "outerHTML"
             input(type = InputType.checkBox) {
                 attributes["hx-put"] = "checkboxes/$boxNumber"
                 checked = checkedState
