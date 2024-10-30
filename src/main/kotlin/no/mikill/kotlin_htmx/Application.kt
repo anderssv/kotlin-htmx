@@ -64,7 +64,6 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureRouting()
-    install(SSE)
 
     // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
     val config = ApplicationConfig.load()
