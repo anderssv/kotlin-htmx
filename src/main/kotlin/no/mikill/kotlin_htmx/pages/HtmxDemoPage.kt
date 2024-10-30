@@ -22,26 +22,6 @@ class HtmxDemoPage {
     private val checkboxState = BooleanArray(numberOfBoxes) { false } // This is our "DB"
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
-    suspend fun renderPage(context: RoutingContext) {
-        with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
-                headerContent {
-                    div {
-                        +"Page header"
-                    }
-                }
-                mainSectionTemplate {
-                    emptyContentWrapper {
-                        htmxSectionContent(
-                            loadDelay = 5.seconds,
-                            backendDelay = 5.seconds
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     suspend fun handleCheckboxToggle(context: RoutingContext) {
         val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
         checkboxState[boxNumber] = !checkboxState[boxNumber]
@@ -67,6 +47,10 @@ class HtmxDemoPage {
         }
 
         context.call.respondText("Ok")
+    }
+
+    fun registerOnCheckBoxNotification(session: ServerSSESession) {
+        connectedListeners.add(session)
     }
 
     suspend fun renderBoxGridFragment(context: RoutingContext) {
@@ -107,6 +91,46 @@ class HtmxDemoPage {
         }
     }
 
+    suspend fun renderPage(context: RoutingContext) {
+        with(context) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+                headerContent {
+                    div {
+                        +"Page header"
+                    }
+                }
+                mainSectionTemplate {
+                    emptyContentWrapper {
+                        htmxSectionContent(
+                            loadDelay = 5.seconds,
+                            backendDelay = 5.seconds
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun DIV.renderBoxGridHtml() {
+        div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
+        div {
+            (0..numberOfBoxes - 1).forEach { boxNumber ->
+                renderCheckbox(boxNumber, checkboxState[boxNumber])
+            }
+        }
+    }
+
+    private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
+        span {
+            attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
+            input(type = InputType.checkBox) {
+                attributes["hx-put"] = "checkboxes/$boxNumber"
+                checked = checkedState
+                id = "$boxNumber"
+            }
+        }
+    }
+
     private fun DIV.renderDetailedNotes() {
         p {
             +"Some notes:"
@@ -138,29 +162,4 @@ class HtmxDemoPage {
             +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
         }
     }
-
-    private fun DIV.renderBoxGridHtml() {
-        div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
-        div {
-            (0..numberOfBoxes - 1).forEach { boxNumber ->
-                renderCheckbox(boxNumber, checkboxState[boxNumber])
-            }
-        }
-    }
-
-    fun registerOnCheckBoxNotification(session: ServerSSESession) {
-        connectedListeners.add(session)
-    }
-
-    private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
-        span {
-            attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
-            input(type = InputType.checkBox) {
-                attributes["hx-put"] = "checkboxes/$boxNumber"
-                checked = checkedState
-                id = "$boxNumber"
-            }
-        }
-    }
 }
-
