@@ -81,7 +81,7 @@ fun Application.configurePageRoutes(
                     get("/update") {
                         htmxDemoPage.boxGridFragment(this)
                     }
-                    put("{boxNum}") {
+                    put("{boxNumber}") {
                         htmxDemoPage.toggle(this)
                     }
                     sse("events") {
@@ -89,10 +89,10 @@ fun Application.configurePageRoutes(
                             "",
                             "update-all"
                         ) // Fetches on reconnect. Shouldn't really trigger on first connect, but don't know a way to detect re-connects
-                        htmxDemoPage.onCheckboxUpdate { boxNum, checkedState ->
+                        htmxDemoPage.onCheckboxUpdate { boxNumber, checkedState ->
                             sse@ this.send(HtmlElements.partialHtml {
-                                checkbox(boxNum, checkedState)
-                            }, "update-$boxNum")
+                                checkbox(boxNumber, checkedState)
+                            }, "update-$boxNumber")
                         }
                         // It seems it terminates the connection without this.
                         while (true) {

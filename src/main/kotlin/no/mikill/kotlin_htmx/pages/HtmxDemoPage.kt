@@ -6,7 +6,6 @@ import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
-import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -21,7 +20,7 @@ class HtmxDemoPage {
     private val numberOfBoxes = 3000
 
     // Initialize a map from x and y dimension with false as the default state
-    private val checkboxGrid = BooleanArray(numberOfBoxes) { false }
+    private val checkboxState = BooleanArray(numberOfBoxes) { false }
 
     private var connectedListeners: MutableList<(suspend (boxNum: Int, checkedState: Boolean) -> Unit)> =
         Collections.synchronizedList(mutableListOf())
@@ -47,8 +46,8 @@ class HtmxDemoPage {
     }
 
     suspend fun toggle(context: RoutingContext) {
-        val boxNum = context.call.pathParameters["boxNum"]!!.toInt()
-        checkboxGrid[boxNum] = !checkboxGrid[boxNum]
+        val boxNummber = context.call.pathParameters["boxNumber"]!!.toInt()
+        checkboxState[boxNummber] = !checkboxState[boxNummber]
 
         /**
          * These are registered, but there doesn't seem to be a hook
@@ -58,7 +57,7 @@ class HtmxDemoPage {
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
-                iterator.next().invoke(boxNum, checkboxGrid[boxNum])
+                iterator.next().invoke(boxNummber, checkboxState[boxNummber])
             } catch (e: IOException) {
                 logger.info("Removing failed connection", e)
                 iterator.remove()
@@ -141,21 +140,21 @@ class HtmxDemoPage {
     private fun DIV.boxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
-            (0..numberOfBoxes - 1).forEach { boxNum ->
-                checkbox(boxNum, checkboxGrid[boxNum])
+            (0..numberOfBoxes - 1).forEach { boxNumber ->
+                checkbox(boxNumber, checkboxState[boxNumber])
             }
         }
     }
 
 }
 
-fun HtmlBlockTag.checkbox(boxNum: Int, checkedState: Boolean) {
+fun HtmlBlockTag.checkbox(boxNumber: Int, checkedState: Boolean) {
     span {
-        attributes["hx-sse"] = "swap:update-${boxNum}" // Takes the HTML from the message and inserts
+        attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
         input(type = InputType.checkBox) {
-            attributes["hx-put"] = "checkboxes/$boxNum"
+            attributes["hx-put"] = "checkboxes/$boxNumber"
             checked = checkedState
-            id = "$boxNum"
+            id = "$boxNumber"
         }
     }
 }
