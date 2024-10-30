@@ -1,7 +1,6 @@
 package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.*
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.sse.ServerSSESession
 import kotlinx.html.*
@@ -46,7 +45,9 @@ class HtmxDemoPage {
             }
         }
 
-        context.call.respondText("Ok")
+        context.call.respondHtmlFragment {
+            renderCheckbox(boxNumber, checkboxState[boxNumber])
+        }
     }
 
     fun registerOnCheckBoxNotification(session: ServerSSESession) {
@@ -115,20 +116,26 @@ class HtmxDemoPage {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
             (0..numberOfBoxes - 1).forEach { boxNumber ->
-                renderCheckbox(boxNumber, checkboxState[boxNumber])
+                span {
+                    /*
+                     * There are pros and cons to have SSE and PUT on the same element.
+                     * It basically means that you will get two DOM updates, one for the
+                     * response from the PUT and one from the SSE Event. But it shouldn't
+                     * be noticeable in this case.
+                     */
+                    attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
+                    attributes["hx-put"] = "checkboxes/$boxNumber"
+
+                    renderCheckbox(boxNumber, checkboxState[boxNumber])
+                }
             }
         }
     }
 
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
-        span {
-            attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
-            attributes["hx-swap"] = "outerHTML"
-            input(type = InputType.checkBox) {
-                attributes["hx-put"] = "checkboxes/$boxNumber"
-                checked = checkedState
-                id = "$boxNumber"
-            }
+        input(type = InputType.checkBox) {
+            checked = checkedState
+            id = "$boxNumber"
         }
     }
 
