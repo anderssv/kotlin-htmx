@@ -19,7 +19,7 @@ class HtmxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
 
     private val numberOfBoxes = 3000
-    private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextBoolean() } // This is our "DB"
+    private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8  } // This is our "DB". Initializing 20% filled.
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
     suspend fun handleCheckboxToggle(context: RoutingContext) {
