@@ -6,7 +6,6 @@ import io.ktor.server.sse.ServerSSESession
 import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
-import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -41,7 +40,7 @@ class HtmxDemoPage {
                     "update-$boxNumber"
                 )
             } catch (e: IOException) {
-                logger.info("Removing failed connection", e)
+                logger.info("Dead connection detected, unregistering", e)
                 iterator.remove()
             }
         }
@@ -171,5 +170,9 @@ class HtmxDemoPage {
             }
             +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
         }
+    }
+
+    fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
+        this.connectedListeners.remove(session)
     }
 }

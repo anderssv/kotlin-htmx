@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sse.sse
 import jakarta.validation.Validation
 import kotlinx.coroutines.delay
+import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.pages.*
@@ -113,9 +114,22 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
             sse("events") {
                 this.send(event = "update-all")
                 htmxDemoPage.registerOnCheckBoxNotification(this)
-                while (true) {
-                    send("ping", "connection")
-                    delay(60.seconds)
+
+                /**
+                 * Looping to keep connection alive (so the page can publish).
+                 * Semi frequent pings to detect dead connections, and unregister.
+                 * But it is also handled in the page with the listeners.
+                 */
+                var alive = true
+                while (alive) {
+                    try {
+                        send("ping", "connection")
+                        delay(10.seconds)
+                    } catch (e: IOException) {
+                        alive = false
+                        htmxDemoPage.unregisterOnCheckBoxNotification(this)
+                        logger.debug("Detected dead connection, unregistering", e)
+                    }
                 }
             }
         }
