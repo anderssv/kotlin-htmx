@@ -1,4 +1,4 @@
-package no.mikill.kotlin_htmx.pages.selection
+package no.mikill.kotlin_htmx.selection.pages
 
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -7,7 +7,7 @@ import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
-import no.mikill.kotlin_htmx.items
+import no.mikill.kotlin_htmx.selection.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import no.mikill.kotlin_htmx.pages.MainTemplate

@@ -28,8 +28,8 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
-import no.mikill.kotlin_htmx.pages.selection.SelectMainPage
-import no.mikill.kotlin_htmx.pages.selection.SelectedPage
+import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
+import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.time.Duration.Companion.seconds

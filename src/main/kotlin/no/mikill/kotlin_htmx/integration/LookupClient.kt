@@ -2,7 +2,7 @@ package no.mikill.kotlin_htmx.integration
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import no.mikill.kotlin_htmx.items
+import no.mikill.kotlin_htmx.selection.items
 
 sealed class LookupResult {
     data class Success(val response: String) : LookupResult()

@@ -1,4 +1,4 @@
-package no.mikill.kotlin_htmx
+package no.mikill.kotlin_htmx.selection
 
 val items = listOf(
     SelectionItem("One", "/static/images/groceries.png"),
