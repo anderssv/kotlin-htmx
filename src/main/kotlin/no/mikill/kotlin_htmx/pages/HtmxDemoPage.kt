@@ -6,6 +6,7 @@ import io.ktor.server.sse.ServerSSESession
 import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -77,6 +78,7 @@ class HtmxDemoPage {
                 mainSectionTemplate {
                     emptyContentWrapper {
                         div {
+                            style = "max-width: 40em;"
                             attributes["hx-ext"] = "sse"
                             attributes["sse-connect"] = "checkboxes/events"
                             div {
