@@ -114,13 +114,17 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
             sse("events") {
                 /**
                  * Sending update all event to trigger a full refresh of the page om
-                 * reconnects. Maybe we can detect reconnect based on the Last-Event-ID
-                 * header? It's not supported by KTor SSE but should be sent by the client
+                 * reconnects. It's not supported by KTor SSE but is sent by the client
                  * if the connection is lost.
                  *
                  * Ref: https://html.spec.whatwg.org/multipage/server-sent-events.html#last-event-id
                  */
-                this.send(event = "update-all")
+                if (this.call.request.headers["Last-Event-ID"] != null) {
+                    this.send(data = "true", event = "update-all", id = UUID.randomUUID().toString())
+                    logger.info("SSE Reconnect detected, sending update-all")
+                } else {
+                    logger.info("SSE First connection")
+                }
                 htmxDemoPage.registerOnCheckBoxNotification(this)
 
                 /**
@@ -131,7 +135,7 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
                 var alive = true
                 while (alive) {
                     try {
-                        send("ping", "connection")
+                        send("ping", "connection", UUID.randomUUID().toString())
                         delay(10.seconds)
                     } catch (e: IOException) {
                         alive = false

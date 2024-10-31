@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Collections
+import java.util.UUID
 import kotlin.random.Random
 import kotlin.text.toInt
 import kotlin.time.Duration.Companion.seconds
@@ -38,7 +39,8 @@ class HtmxDemoPage {
                     HtmlElements.partialHtml {
                         renderCheckbox(boxNumber, checkboxState[boxNumber])
                     },
-                    "update-$boxNumber"
+                    "update-$boxNumber",
+                    UUID.randomUUID().toString()
                 )
             } catch (e: IOException) {
                 logger.info("Dead connection detected, unregistering", e)
