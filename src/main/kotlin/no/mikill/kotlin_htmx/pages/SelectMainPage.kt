@@ -17,10 +17,11 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 
-class MainPage(
+class SelectMainPage(
     private val lookupClient: LookupClient,
 ) {
-    private val logger = LoggerFactory.getLogger(MainPage::class.java)
+    private val logger = LoggerFactory.getLogger(SelectMainPage::class.java)
+    private val routePath = "/select"
 
     private data class Search(val lookupValue: String)
 
@@ -32,7 +33,7 @@ class MainPage(
                         section {
                             div {
                                 form {
-                                    attributes["hx-post"] = "/search"
+                                    attributes["hx-post"] = "/select/search"
                                     attributes["hx-swap"] = "outerHTML"
 
                                     div(classes = "htmx-indicator") {
@@ -69,7 +70,7 @@ class MainPage(
                             items.forEach { item ->
                                 selectBox(
                                     name = item.name,
-                                    linkUrl = item.name,
+                                    linkUrl = listOf(routePath, item.name).joinToString("/"),
                                     imageUrl = item.image
                                 )
                             }
@@ -103,7 +104,7 @@ class MainPage(
                         val item = items.single { it.name == lookupResult.response }
 
                         sleep(1.seconds.toJavaDuration())
-                        call.response.header("HX-Redirect", item.name)
+                        call.response.header("HX-Redirect", "/select/" + item.name)
                         // Probably won't show but adding content anyway
                         div {
                             +"Found it! ${item.name}"
@@ -113,14 +114,14 @@ class MainPage(
                     is LookupResult.NotFound ->
                         div(classes = "text-red-800") {
                             p { +"Could not locate item with '${search.lookupValue}'." }
-                            a(href = "/") { +"Try again" }
+                            a(href = routePath) { +"Try again" }
                         }
 
 
                     is LookupResult.InvalidInput ->
                         div(classes = "text-red-800") {
                             p { +lookupResult.message }
-                            a(href = "/") { +"Try again" }
+                            a(href = routePath) { +"Try again" }
                         }
 
 
@@ -128,7 +129,7 @@ class MainPage(
                         logger.error("Lookup failed. Reason: ${lookupResult.reason}")
                         div(classes = "text-red-800") {
                             p { +"We're sorry. Something went wrong. We'll fix it ASAP." }
-                            a(href = "/") { +"Try again" }
+                            a(href = routePath) { +"Try again" }
                         }
                     }
                 }

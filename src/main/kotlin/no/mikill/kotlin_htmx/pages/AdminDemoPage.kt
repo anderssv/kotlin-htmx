@@ -8,7 +8,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import kotlin.time.Duration.Companion.seconds
 
-class AdminPage {
+class AdminDemoPage {
 
     suspend fun renderAdminPage(pipelineContext: RoutingContext) {
         with(pipelineContext) {

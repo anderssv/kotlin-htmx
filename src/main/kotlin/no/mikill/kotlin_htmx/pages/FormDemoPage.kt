@@ -7,7 +7,7 @@ import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.pages.HtmlElements.inputFieldWithValidationAndErrors
 
-class FormPage {
+class FormDemoPage {
 
     suspend fun renderInputForm(
         context: RoutingContext,

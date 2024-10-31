@@ -14,7 +14,7 @@ class ApplicationTest {
         application {
             module()
         }
-        client.get("/").apply {
+        client.get("/select").apply {
             assertEquals(HttpStatusCode.OK, status)
             assertThat(bodyAsText()).contains("Three")
         }

@@ -4,15 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.server.response.respond
 import io.ktor.server.routing.*
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.sse.sse
 import jakarta.validation.Validation
 import kotlinx.coroutines.delay
+import kotlinx.html.a
+import kotlinx.html.div
+import kotlinx.html.li
+import kotlinx.html.ul
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
+import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
@@ -23,77 +32,97 @@ import kotlin.time.Duration.Companion.seconds
 private val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
 
 fun Application.configurePageRoutes(
-    mainPage: MainPage,
-    selectedPage: SelectedPage,
+    lookupClient: LookupClient,
     applicationRepository: ApplicationRepository
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
 
+    val selectMainPage = SelectMainPage(lookupClient)
+    val selectedPage = SelectedPage()
+
     val multiDemoPage = MultiDemoPage()
     val htmxDemoPage = HtmxDemoPage()
-    val adminPage = AdminPage()
-    val formPage = FormPage()
+    val adminDemoPage = AdminDemoPage()
+    val formDemoPage = FormDemoPage()
 
     routing {
-        configureBasicRoutes(mainPage, selectedPage)
-        configureDemoRoutes(
-            multiDemoPage,
-            htmxDemoPage,
-            adminPage,
-            formPage,
-            applicationRepository,
-            mapper,
-            validator
-        )
-        configureDataRoutes()
+        get("/robots.txt") {
+            call.respond(
+                """
+                # Allow all crawlers
+                User-agent: *
+                Allow: /
+                """.trimIndent()
+            )
+        }
+
+        get {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
+                        div { +"Demos:" }
+                        ul {
+                            li { a(href = "/select") { +"Select a thing wizard" } }
+                            li { a(href = "/demo/htmx/checkboxes") { +"HTMX Checkboxes with synchronization across browser windows" } }
+                            li { a(href = "/demo/admin") { +"Simple admin page operations" } }
+                            li { a(href = "/demo/form") { +"Form flow handling with validations" } }
+                            li { a(href = "/demo/multi") { +"HTMX component together with React and Lit in the same page" } }
+                        }
+                    }
+                }
+            }
+        }
+
+        route("/select") {
+            get {
+                selectMainPage.renderMainPage(this)
+            }
+            post("/search") {
+                selectMainPage.search(this)
+            }
+            get("/{itemName}") {
+                selectedPage.renderPage(this)
+            }
+        }
+        route("/demo") {
+            configureDemoRoutes(
+                multiDemoPage,
+                htmxDemoPage,
+                adminDemoPage,
+                formDemoPage,
+                applicationRepository,
+                mapper,
+                validator
+            )
+        }
+        route("/data") {
+            configureDataRoutes()
+        }
     }
 }
 
-private fun Routing.configureBasicRoutes(mainPage: MainPage, selectedPage: SelectedPage) {
-    get("/robots.txt") {
-        call.respond(
-            """
-            # Allow all crawlers
-            User-agent: *
-            Allow: /
-            """.trimIndent()
-        )
-    }
-    get("/") {
-        mainPage.renderMainPage(this)
-    }
-    post("/search") {
-        mainPage.search(this)
-    }
-    get("/{itemName}") {
-        selectedPage.renderPage(this)
-    }
-}
-
-private fun Routing.configureDemoRoutes(
+private fun Route.configureDemoRoutes(
     multiDemoPage: MultiDemoPage,
     htmxDemoPage: HtmxDemoPage,
-    adminPage: AdminPage,
-    formPage: FormPage,
+    adminDemoPage: AdminDemoPage,
+    formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
     validator: jakarta.validation.Validator,
 ) {
-    route("/demo") {
-        get("/item/{itemId}") {
-            val itemId = call.parameters["itemId"]!!.toInt()
-            adminPage.renderItemResponse(this, itemId)
-        }
-        get("/multi") {
-            multiDemoPage.renderMultiJsPage(this)
-        }
-        get("/admin") {
-            adminPage.renderAdminPage(this)
-        }
-        configureHtmxRoutes(htmxDemoPage)
-        configureFormRoutes(formPage, applicationRepository, mapper, validator)
+    get("/item/{itemId}") {
+        val itemId = call.parameters["itemId"]!!.toInt()
+        adminDemoPage.renderItemResponse(this, itemId)
     }
+    get("/multi") {
+        multiDemoPage.renderMultiJsPage(this)
+    }
+    get("/admin") {
+        adminDemoPage.renderAdminPage(this)
+    }
+    configureHtmxRoutes(htmxDemoPage)
+    configureFormRoutes(formDemoPage, applicationRepository, mapper, validator)
 }
 
 private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
@@ -149,27 +178,27 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
 }
 
 private fun Route.configureFormRoutes(
-    formPage: FormPage,
+    formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
     validator: jakarta.validation.Validator
 ) {
     route("/form") {
         get {
-            formPage.renderInputForm(this, null, emptySet())
+            formDemoPage.renderInputForm(this, null, emptySet())
         }
         post {
-            handleFormSubmission(formPage, applicationRepository, mapper, validator)
+            handleFormSubmission(formDemoPage, applicationRepository, mapper, validator)
         }
         get("/{id}/saved") {
             val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
-            formPage.renderFormSaved(this, application)
+            formDemoPage.renderFormSaved(this, application)
         }
     }
 }
 
 private suspend fun RoutingContext.handleFormSubmission(
-    formPage: FormPage,
+    formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
     validator: jakarta.validation.Validator
@@ -189,17 +218,16 @@ private suspend fun RoutingContext.handleFormSubmission(
 
     val errors = validator.validate(updatedApplication)
     if (errors.isNotEmpty()) {
-        formPage.renderInputForm(this, updatedApplication, errors)
+        formDemoPage.renderInputForm(this, updatedApplication, errors)
     } else {
         call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
     }
 }
 
-private fun Routing.configureDataRoutes() {
-    route("/data") {
-        get("/todolist.json") {
-            call.respondText(
-                """
+private fun Route.configureDataRoutes() {
+    get("/todolist.json") {
+        call.respondText(
+            """
                 [
                   {"id": 1, "title": "Buy milk", "completed": false},
                   {"id": 2, "title": "Buy bread", "completed": false},
@@ -207,15 +235,14 @@ private fun Routing.configureDataRoutes() {
                   {"id": 4, "title": "Buy butter", "completed": false}
                 ]
                 """.trimIndent(),
-                ContentType.Application.Json
-            )
-        }
-        get("/todolist.html") {
-            val delaySeconds = call.parameters["delay"]?.toInt() ?: 1
-            delay(delaySeconds.seconds)
-            call.respondHtmlFragment {
-                todoListHtmlContent("htmx")
-            }
+            ContentType.Application.Json
+        )
+    }
+    get("/todolist.html") {
+        val delaySeconds = call.parameters["delay"]?.toInt() ?: 1
+        delay(delaySeconds.seconds)
+        call.respondHtmlFragment {
+            todoListHtmlContent("htmx")
         }
     }
 }

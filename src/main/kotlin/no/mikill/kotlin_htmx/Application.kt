@@ -5,7 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.integration.LookupClient
-import no.mikill.kotlin_htmx.pages.MainPage
+import no.mikill.kotlin_htmx.pages.SelectMainPage
 import no.mikill.kotlin_htmx.pages.SelectedPage
 import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
@@ -67,9 +67,9 @@ fun Application.module() {
     // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
     val config = ApplicationConfig.load()
 
-    val mainPage = MainPage(LookupClient(config.lookupApiKey))
-    val selectedPage = SelectedPage()
-
     // Load pages
-    configurePageRoutes(mainPage, selectedPage, ApplicationRepository())
+    configurePageRoutes(
+        LookupClient(config.lookupApiKey),
+        ApplicationRepository()
+    )
 }
