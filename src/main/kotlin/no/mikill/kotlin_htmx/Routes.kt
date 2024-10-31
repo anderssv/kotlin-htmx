@@ -24,8 +24,8 @@ import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.*
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.HtmlElements.todoListHtmlContent
+import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage

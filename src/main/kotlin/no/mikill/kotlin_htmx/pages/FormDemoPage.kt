@@ -5,7 +5,7 @@ import io.ktor.server.routing.RoutingContext
 import jakarta.validation.ConstraintViolation
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.pages.HtmlElements.inputFieldWithValidationAndErrors
+import no.mikill.kotlin_htmx.pages.FormUtils.inputFieldWithValidationAndErrors
 
 class FormDemoPage {
 

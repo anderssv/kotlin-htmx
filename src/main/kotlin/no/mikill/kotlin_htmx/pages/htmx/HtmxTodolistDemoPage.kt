@@ -4,7 +4,7 @@ import io.ktor.server.html.*
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import kotlin.time.Duration.Companion.seconds
 
@@ -20,7 +20,7 @@ class HtmxTodolistDemoPage {
                 }
                 mainSectionTemplate {
                     emptyContentWrapper {
-                        htmxSectionContent(
+                        htmxTodolistSectionContent(
                             loadDelay = 5.seconds,
                             backendDelay = 5.seconds
                         )

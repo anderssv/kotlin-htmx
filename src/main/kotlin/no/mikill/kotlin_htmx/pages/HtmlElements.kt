@@ -22,83 +22,27 @@ object Styles {
     const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"
 }
 
-object HtmlElements {
+object HtmlRenderUtils {
+    suspend fun ApplicationCall.respondHtmlFragment(
+        status: HttpStatusCode = HttpStatusCode.OK,
+        block: BODY.() -> Unit
+    ) {
+        val text = partialHtml(block)
+        respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
+    }
 
-    object DemoContent {
-        fun FlowContent.htmxSectionContent(loadDelay: Duration, backendDelay: Duration) {
-            section {
-                h1 { +"HTMX Element" }
-                div {
-                    attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
-                    attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
-                    attributes["hx-swap"] = "innerHTML" // Default is outerHTML
-                    style = BOX_STYLE
-                    // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
-                    +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
-                    div(classes = "htmx-indicator") {
-                        img(src = "/static/images/loading.gif") { style = "height: 1em;" }
-                        span {
-                            style = "margin-left: 0.5em;"
-                            +"Loading... (Intentionally delayed ${backendDelay.inWholeSeconds} seconds on the back end)"
-                        }
-                    }
-                }
-            }
-        }
-
-        fun FlowContent.htmlSectionContent() {
-            section {
-                h1 { +"HTML Element" }
-                div {
-                    style = BOX_STYLE
-                    todoListHtmlContent("html")
-                }
-            }
-        }
-
-        fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String) {
-            h1 { +"Todo List" }
-            ul {
-                id = "todo-list"
-                li { +"Buy milk" }
-                li { +"Buy bread" }
-                li { +"Buy eggs" }
-                li { +"Buy butter" }
-            }
-            p {
-                span {
-                    id = "$blockIdPrefix-date"
-                }
-            }
-            script {
-                unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
+    fun partialHtml(block: BODY.() -> Unit): String = buildString {
+        append("<!DOCTYPE html>\n")
+        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
+            body {
+                block(this)
             }
         }
     }
+}
 
-    fun HtmlBlockTag.selectBox(name: String, linkUrl: String, imageUrl: String) {
-        a(href = linkUrl, classes = "box") {
-            boostAndPreload()
 
-            img(
-                src = imageUrl, alt = "Choose $name"
-            ) { width = "100px" }
-            p { +name }
-        }
-    }
-
-    private fun A.boostAndPreload() {
-        // Preloading resources
-        attributes["preload"] = "mouseover"
-        attributes["preload-images"] = true.toString()
-
-        // Boosting
-        attributes["hx-boost"] = true.toString()
-        attributes["hx-select"] = "#mainContent"
-        attributes["hx-target"] = "#mainContent"
-        attributes["hx-swap"] = "outerHTML"
-    }
-
+object FormUtils {
     fun INPUT.setConstraints(annotations: Array<Annotation>) {
         annotations.forEach { annotation ->
             when (annotation) {
@@ -138,22 +82,81 @@ object HtmlElements {
             }
         }
     }
+}
 
-    suspend fun ApplicationCall.respondHtmlFragment(
-        status: HttpStatusCode = HttpStatusCode.OK,
-        block: BODY.() -> Unit
-    ) {
-        val text = partialHtml(block)
-        respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
-    }
+object HtmlElements {
 
-    fun partialHtml(block: BODY.() -> Unit): String = buildString {
-        append("<!DOCTYPE html>\n")
-        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
-            body {
-                block(this)
+    fun FlowContent.htmxTodolistSectionContent(loadDelay: Duration, backendDelay: Duration) {
+        section {
+            h1 { +"HTMX Element" }
+            div {
+                attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
+                attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                attributes["hx-swap"] = "innerHTML" // Default is outerHTML
+                style = BOX_STYLE
+                // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
+                +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
+                div(classes = "htmx-indicator") {
+                    img(src = "/static/images/loading.gif") { style = "height: 1em;" }
+                    span {
+                        style = "margin-left: 0.5em;"
+                        +"Loading... (Intentionally delayed ${backendDelay.inWholeSeconds} seconds on the back end)"
+                    }
+                }
             }
         }
+    }
+
+    fun FlowContent.htmlTodolistSectionContent() {
+        section {
+            h1 { +"HTML Element" }
+            div {
+                style = BOX_STYLE
+                todoListHtmlContent("html")
+            }
+        }
+    }
+
+    fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String) {
+        h1 { +"Todo List" }
+        ul {
+            id = "todo-list"
+            li { +"Buy milk" }
+            li { +"Buy bread" }
+            li { +"Buy eggs" }
+            li { +"Buy butter" }
+        }
+        p {
+            span {
+                id = "$blockIdPrefix-date"
+            }
+        }
+        script {
+            unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
+        }
+    }
+
+    fun HtmlBlockTag.selectBox(name: String, linkUrl: String, imageUrl: String) {
+        a(href = linkUrl, classes = "box") {
+            boostAndPreload()
+
+            img(
+                src = imageUrl, alt = "Choose $name"
+            ) { width = "100px" }
+            p { +name }
+        }
+    }
+
+    private fun A.boostAndPreload() {
+        // Preloading resources
+        attributes["preload"] = "mouseover"
+        attributes["preload-images"] = true.toString()
+
+        // Boosting
+        attributes["hx-boost"] = true.toString()
+        attributes["hx-select"] = "#mainContent"
+        attributes["hx-target"] = "#mainContent"
+        attributes["hx-swap"] = "outerHTML"
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {

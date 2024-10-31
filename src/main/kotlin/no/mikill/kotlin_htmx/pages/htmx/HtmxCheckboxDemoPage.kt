@@ -17,8 +17,8 @@ import kotlinx.html.style
 import kotlinx.html.ul
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
-import no.mikill.kotlin_htmx.pages.HtmlElements
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.partialHtml
+import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -34,40 +34,6 @@ class HtmxCheckboxDemoPage {
     private val numberOfBoxes = 3000
     private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8  } // This is our "DB". Initializing 20% filled.
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
-
-    suspend fun handleCheckboxToggle(context: RoutingContext) {
-        val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
-        checkboxState[boxNumber] = !checkboxState[boxNumber]
-
-        /**
-         * These are registered, but there doesn't seem to be a hook
-         * for closing connections. So we handle that when we iterate
-         * through the list, and remove the broken ones.
-         */
-        val iterator = connectedListeners.iterator()
-        while (iterator.hasNext()) {
-            try {
-                iterator.next().send(
-                    HtmlElements.partialHtml {
-                        renderCheckbox(boxNumber, checkboxState[boxNumber])
-                    },
-                    "update-$boxNumber",
-                    UUID.randomUUID().toString()
-                )
-            } catch (e: IOException) {
-                logger.info("Dead connection detected, unregistering", e)
-                iterator.remove()
-            }
-        }
-
-        context.call.respondHtmlFragment {
-            renderCheckbox(boxNumber, checkboxState[boxNumber])
-        }
-    }
-
-    fun registerOnCheckBoxNotification(session: ServerSSESession) {
-        connectedListeners.add(session)
-    }
 
     suspend fun renderBoxGridFragment(context: RoutingContext) {
         with(context) {
@@ -106,6 +72,44 @@ class HtmxCheckboxDemoPage {
                 }
             }
         }
+    }
+
+    suspend fun handleCheckboxToggle(context: RoutingContext) {
+        val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
+        checkboxState[boxNumber] = !checkboxState[boxNumber]
+
+        /**
+         * These are registered, but there doesn't seem to be a hook
+         * for closing connections. So we handle that when we iterate
+         * through the list, and remove the broken ones.
+         */
+        val iterator = connectedListeners.iterator()
+        while (iterator.hasNext()) {
+            try {
+                iterator.next().send(
+                    partialHtml {
+                        renderCheckbox(boxNumber, checkboxState[boxNumber])
+                    },
+                    "update-$boxNumber",
+                    UUID.randomUUID().toString()
+                )
+            } catch (e: IOException) {
+                logger.info("Dead connection detected, unregistering", e)
+                iterator.remove()
+            }
+        }
+
+        context.call.respondHtmlFragment {
+            renderCheckbox(boxNumber, checkboxState[boxNumber])
+        }
+    }
+
+    fun registerOnCheckBoxNotification(session: ServerSSESession) {
+        connectedListeners.add(session)
+    }
+
+    fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
+        this.connectedListeners.remove(session)
     }
 
     private fun DIV.renderBoxGridHtml() {
@@ -165,9 +169,5 @@ class HtmxCheckboxDemoPage {
             }
             +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
         }
-    }
-
-    fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
-        this.connectedListeners.remove(session)
     }
 }

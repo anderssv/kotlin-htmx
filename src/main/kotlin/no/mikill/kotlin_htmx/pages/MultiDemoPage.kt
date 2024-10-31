@@ -3,8 +3,8 @@ package no.mikill.kotlin_htmx.pages
 import io.ktor.server.html.*
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmlSectionContent
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.htmlTodolistSectionContent
+import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
@@ -27,8 +27,8 @@ class MultiDemoPage {
                 }
                 mainSectionTemplate {
                     emptyContentWrapper {
-                        htmlSectionContent()
-                        htmxSectionContent(loadDelay = 5.seconds, backendDelay = 0.seconds)
+                        htmlTodolistSectionContent()
+                        htmxTodolistSectionContent(loadDelay = 5.seconds, backendDelay = 0.seconds)
                         section {
                             h1 { +"Lit Element" }
                             div {

@@ -7,11 +7,11 @@ import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
-import no.mikill.kotlin_htmx.selection.items
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.SelectionTemplate
+import no.mikill.kotlin_htmx.selection.items
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import kotlin.collections.set

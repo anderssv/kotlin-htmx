@@ -5,7 +5,7 @@ import io.ktor.server.routing.RoutingContext
 import kotlinx.coroutines.delay
 import kotlinx.html.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
-import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import kotlin.time.Duration.Companion.seconds
 
 class AdminDemoPage {
