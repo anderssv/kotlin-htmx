@@ -1,4 +1,4 @@
-package no.mikill.kotlin_htmx.pages
+package no.mikill.kotlin_htmx.pages.selection
 
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -10,6 +10,8 @@ import no.mikill.kotlin_htmx.integration.LookupResult
 import no.mikill.kotlin_htmx.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
+import no.mikill.kotlin_htmx.pages.MainTemplate
+import no.mikill.kotlin_htmx.pages.SelectionTemplate
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import kotlin.collections.set

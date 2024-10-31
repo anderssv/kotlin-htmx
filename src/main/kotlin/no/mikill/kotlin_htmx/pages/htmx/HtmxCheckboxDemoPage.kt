@@ -1,12 +1,25 @@
-package no.mikill.kotlin_htmx.pages
+package no.mikill.kotlin_htmx.pages.htmx
 
-import io.ktor.server.html.*
+import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.sse.ServerSSESession
-import kotlinx.html.*
+import kotlinx.html.DIV
+import kotlinx.html.HtmlBlockTag
+import kotlinx.html.InputType
+import kotlinx.html.a
+import kotlinx.html.div
+import kotlinx.html.id
+import kotlinx.html.input
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.span
+import kotlinx.html.style
+import kotlinx.html.ul
 import kotlinx.io.IOException
-import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.htmxSectionContent
+import no.mikill.kotlin_htmx.pages.EmptyTemplate
+import no.mikill.kotlin_htmx.pages.HtmlElements
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.MainTemplate
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -14,10 +27,9 @@ import java.util.Collections
 import java.util.UUID
 import kotlin.random.Random
 import kotlin.text.toInt
-import kotlin.time.Duration.Companion.seconds
 
-class HtmxDemoPage {
-    private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
+class HtmxCheckboxDemoPage {
+    private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val numberOfBoxes = 3000
     private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8  } // This is our "DB". Initializing 20% filled.
@@ -90,26 +102,6 @@ class HtmxDemoPage {
                                 renderBoxGridHtml()
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    suspend fun renderPage(context: RoutingContext) {
-        with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
-                headerContent {
-                    div {
-                        +"Page header"
-                    }
-                }
-                mainSectionTemplate {
-                    emptyContentWrapper {
-                        htmxSectionContent(
-                            loadDelay = 5.seconds,
-                            backendDelay = 5.seconds
-                        )
                     }
                 }
             }

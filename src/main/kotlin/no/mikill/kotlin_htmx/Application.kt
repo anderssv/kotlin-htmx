@@ -5,8 +5,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.integration.LookupClient
-import no.mikill.kotlin_htmx.pages.SelectMainPage
-import no.mikill.kotlin_htmx.pages.SelectedPage
 import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
 import no.mikill.kotlin_htmx.plugins.configureRouting

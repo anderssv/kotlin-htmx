@@ -13,6 +13,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.sse.sse
 import jakarta.validation.Validation
+import jakarta.validation.Validator
 import kotlinx.coroutines.delay
 import kotlinx.html.a
 import kotlinx.html.div
@@ -25,6 +26,10 @@ import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.DemoContent.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
+import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
+import no.mikill.kotlin_htmx.pages.selection.SelectMainPage
+import no.mikill.kotlin_htmx.pages.selection.SelectedPage
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
@@ -37,14 +42,6 @@ fun Application.configurePageRoutes(
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
-
-    val selectMainPage = SelectMainPage(lookupClient)
-    val selectedPage = SelectedPage()
-
-    val multiDemoPage = MultiDemoPage()
-    val htmxDemoPage = HtmxDemoPage()
-    val adminDemoPage = AdminDemoPage()
-    val formDemoPage = FormDemoPage()
 
     routing {
         get("/robots.txt") {
@@ -75,6 +72,8 @@ fun Application.configurePageRoutes(
         }
 
         route("/select") {
+            val selectMainPage = SelectMainPage(lookupClient)
+            val selectedPage = SelectedPage()
             get {
                 selectMainPage.renderMainPage(this)
             }
@@ -87,10 +86,6 @@ fun Application.configurePageRoutes(
         }
         route("/demo") {
             configureDemoRoutes(
-                multiDemoPage,
-                htmxDemoPage,
-                adminDemoPage,
-                formDemoPage,
                 applicationRepository,
                 mapper,
                 validator
@@ -103,14 +98,13 @@ fun Application.configurePageRoutes(
 }
 
 private fun Route.configureDemoRoutes(
-    multiDemoPage: MultiDemoPage,
-    htmxDemoPage: HtmxDemoPage,
-    adminDemoPage: AdminDemoPage,
-    formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: jakarta.validation.Validator,
+    validator: Validator,
 ) {
+    val adminDemoPage = AdminDemoPage()
+    val multiDemoPage = MultiDemoPage()
+
     get("/item/{itemId}") {
         val itemId = call.parameters["itemId"]!!.toInt()
         adminDemoPage.renderItemResponse(this, itemId)
@@ -121,28 +115,32 @@ private fun Route.configureDemoRoutes(
     get("/admin") {
         adminDemoPage.renderAdminPage(this)
     }
-    configureHtmxRoutes(htmxDemoPage)
-    configureFormRoutes(formDemoPage, applicationRepository, mapper, validator)
+
+    configureHtmxRoutes()
+    configureFormRoutes(applicationRepository, mapper, validator)
 }
 
-private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
+private fun Route.configureHtmxRoutes() {
+    val htmxCheckboxDemoPage = HtmxCheckboxDemoPage()
+    val htmxTodolistDemoPage = HtmxTodolistDemoPage()
+
     route("/htmx") {
         get {
-            htmxDemoPage.renderPage(this)
+            htmxTodolistDemoPage.renderHtmxTodoListPage(this)
         }
         route("/checkboxes") {
             get {
-                htmxDemoPage.renderCheckboxesPage(this)
+                htmxCheckboxDemoPage.renderCheckboxesPage(this)
             }
             get("/update") {
-                htmxDemoPage.renderBoxGridFragment(this)
+                htmxCheckboxDemoPage.renderBoxGridFragment(this)
             }
             put("{boxNumber}") {
-                htmxDemoPage.handleCheckboxToggle(this)
+                htmxCheckboxDemoPage.handleCheckboxToggle(this)
             }
             sse("events") {
                 /**
-                 * Sending update all event to trigger a full refresh of the page om
+                 * Sending update all event to trigger a full refresh of the page on
                  * reconnects. It's not supported by KTor SSE but is sent by the client
                  * if the connection is lost.
                  *
@@ -154,12 +152,12 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
                 } else {
                     logger.info("SSE First connection")
                 }
-                htmxDemoPage.registerOnCheckBoxNotification(this)
+                htmxCheckboxDemoPage.registerOnCheckBoxNotification(this)
 
                 /**
-                 * Looping to keep connection alive (so the page can publish).
-                 * Semi frequent pings to detect dead connections, and unregister.
-                 * But it is also handled in the page with the listeners.
+                 * Looping to keep the connection alive (so the page can publish).
+                 * Semi-frequent pings to detect dead connections and unregister.
+                 * But it is also handled on the page with the listeners.
                  */
                 var alive = true
                 while (alive) {
@@ -168,7 +166,7 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
                         delay(10.seconds)
                     } catch (e: IOException) {
                         alive = false
-                        htmxDemoPage.unregisterOnCheckBoxNotification(this)
+                        htmxCheckboxDemoPage.unregisterOnCheckBoxNotification(this)
                         logger.debug("Detected dead connection, unregistering", e)
                     }
                 }
@@ -178,11 +176,11 @@ private fun Route.configureHtmxRoutes(htmxDemoPage: HtmxDemoPage) {
 }
 
 private fun Route.configureFormRoutes(
-    formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: jakarta.validation.Validator
+    validator: Validator
 ) {
+    val formDemoPage = FormDemoPage()
     route("/form") {
         get {
             formDemoPage.renderInputForm(this, null, emptySet())
@@ -201,9 +199,9 @@ private suspend fun RoutingContext.handleFormSubmission(
     formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: jakarta.validation.Validator
+    validator: Validator
 ) {
-    // Since this method takes in repo and a lot of other stuff it probably belongs to a Controller
+    // Since this method takes in repo and a lot of other stuff, it probably belongs to a Controller
     val form = call.receiveParameters()
     logger.info("Received form data: $form")
 
