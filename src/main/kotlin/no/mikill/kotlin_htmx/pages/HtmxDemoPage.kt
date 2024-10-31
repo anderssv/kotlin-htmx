@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Collections
+import kotlin.random.Random
 import kotlin.text.toInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -18,7 +19,7 @@ class HtmxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxDemoPage::class.java)
 
     private val numberOfBoxes = 3000
-    private val checkboxState = BooleanArray(numberOfBoxes) { false } // This is our "DB"
+    private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextBoolean() } // This is our "DB"
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
     suspend fun handleCheckboxToggle(context: RoutingContext) {
