@@ -32,7 +32,6 @@ object HtmlRenderUtils {
     }
 
     fun partialHtml(block: BODY.() -> Unit): String = buildString {
-        append("<!DOCTYPE html>\n")
         appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
             body {
                 block(this)
