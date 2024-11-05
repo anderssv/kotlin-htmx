@@ -58,18 +58,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
 
             style {
                 rawCss(
-                    """
-                        #choices {
-                            display: grid; /* Enables grid layout */
-                            grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
-                            /* Key line for responsiveness: */
-                            gap: 20px; /* Adjust the spacing between items */
-                
-                            a {
-                                display: block;
-                            }
-                        }
-                        
+                    """                        
                         .htmx-indicator{
                             opacity:0;
                             transition: opacity 500ms ease-in;
@@ -133,6 +122,22 @@ class SelectionTemplate : Template<FlowContent> {
     val selectionPagesContent = Placeholder<FlowContent>()
 
     override fun FlowContent.apply() {
+        style {
+            rawCss(
+                """
+                    #choices {
+                        display: grid; /* Enables grid layout */
+                        grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
+                        /* Key line for responsiveness: */
+                        gap: 20px; /* Adjust the spacing between items */
+            
+                        a {
+                            display: block;
+                        }
+                    }                    
+                """.trimIndent()
+            )
+        }
         insert(selectionPagesContent)
     }
 }

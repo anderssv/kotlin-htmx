@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 
 fun Application.configureRouting() {
     val logger = LoggerFactory.getLogger("Routing")
+    install(SSE)
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             logger.error("Unhandled error", cause)
@@ -21,5 +22,4 @@ fun Application.configureRouting() {
         staticResources("/static", "static")
         staticResources("/script", "script")
     }
-    install(SSE)
 }

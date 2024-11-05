@@ -3,6 +3,7 @@ package no.mikill.kotlin_htmx
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.compression.*
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.plugins.configureHTTP
@@ -61,6 +62,7 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureRouting()
+    install(Compression)
 
     // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
     val config = ApplicationConfig.load()

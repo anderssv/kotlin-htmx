@@ -12,6 +12,7 @@ import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.li
 import kotlinx.html.p
+import kotlinx.html.section
 import kotlinx.html.span
 import kotlinx.html.style
 import kotlinx.html.ul
@@ -31,8 +32,9 @@ import kotlin.text.toInt
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
-    private val numberOfBoxes = 3000
-    private val checkboxState = BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8  } // This is our "DB". Initializing 20% filled.
+    private val numberOfBoxes = 5000
+    private val checkboxState =
+        BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 } // This is our "DB". Initializing 20% filled.
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
     suspend fun renderBoxGridFragment(context: RoutingContext) {
@@ -49,10 +51,24 @@ class HtmxCheckboxDemoPage {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
                 headerContent {
-                    div {
+                    section {
+                        p {
+                            +"This is a demo for HTMX. It is part of a series of demos I have done for presentations. You can "
+                            a(href = "/") { +"go here to see the other demos" }
+                            +"."
+                        }
                         p { +"Showing: $numberOfBoxes checkboxes." }
+                    }
+                    section {
                         p { +"This page shows how you can do a event driven synchronization between browsers with HTMX and SSE. Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
                         renderDetailedNotes()
+                    }
+                    section {
+                        +"This is inspired by "
+                        a(href = "https://hamy.xyz/labs/1000-checkboxes") {
+                            +"Hamilton Greene's 1000-checkboxes"
+                        }
+                        +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
                     }
                 }
                 mainSectionTemplate {
@@ -81,7 +97,7 @@ class HtmxCheckboxDemoPage {
         /**
          * These are registered, but there doesn't seem to be a hook
          * for closing connections. So we handle that when we iterate
-         * through the list, and remove the broken ones.
+         * through the list and remove the broken ones.
          */
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
@@ -139,7 +155,7 @@ class HtmxCheckboxDemoPage {
         }
     }
 
-    private fun DIV.renderDetailedNotes() {
+    private fun HtmlBlockTag.renderDetailedNotes() {
         p {
             +"Some notes:"
             ul {
@@ -161,13 +177,6 @@ class HtmxCheckboxDemoPage {
                     +"."
                 }
             }
-        }
-        p {
-            +"This is inspired by "
-            a(href = "https://hamy.xyz/labs/1000-checkboxes") {
-                +"Hamilton Greene's 1000-checkboxes"
-            }
-            +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
         }
     }
 }
