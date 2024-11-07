@@ -139,7 +139,7 @@ class HtmxCheckboxDemoPage {
                      * response from the PUT and one from the SSE Event. But it shouldn't
                      * be noticeable in this case.
                      */
-                    attributes["hx-sse"] = "swap:update-${boxNumber}" // Takes the HTML from the message and inserts
+                    attributes["sse-swap"] = "update-${boxNumber}" // Takes the HTML from the message and inserts
                     attributes["hx-put"] = "checkboxes/$boxNumber"
 
                     renderCheckbox(boxNumber, checkboxState[boxNumber])
