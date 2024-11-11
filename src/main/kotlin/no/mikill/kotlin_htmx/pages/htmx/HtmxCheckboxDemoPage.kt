@@ -14,6 +14,7 @@ import kotlinx.html.li
 import kotlinx.html.p
 import kotlinx.html.section
 import kotlinx.html.span
+import kotlinx.html.strong
 import kotlinx.html.style
 import kotlinx.html.ul
 import kotlinx.io.IOException
@@ -57,18 +58,23 @@ class HtmxCheckboxDemoPage {
                             a(href = "/") { +"go here to see the other demos" }
                             +"."
                         }
-                        p { +"Showing: $numberOfBoxes checkboxes." }
-                    }
-                    section {
-                        p { +"This page shows how you can do a event driven synchronization between browsers with HTMX and SSE. Open an additional browser to see updates between them. State is only kept in memory, so a restart of the server will wipe the matrix." }
-                        renderDetailedNotes()
-                    }
-                    section {
-                        +"This is inspired by "
-                        a(href = "https://hamy.xyz/labs/1000-checkboxes") {
-                            +"Hamilton Greene's 1000-checkboxes"
+                        p {
+                            +"This page shows synchronization between browser windows. "
+                            strong { +"Open multiple windows to this URL to see it in action."}
                         }
-                        +". I wanted to see how I could do it with SSE and how instant updates felt. He also has another solution that handles a million checkboxes."
+                        p {
+                            a(href="https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") {+"Go here for a lengty blogpost about the implementation"}
+                            + " and links to code. I use HTXM, SSE and KTor to do this."
+                        }
+                        p {
+                            +"It is inspired by "
+                            a(href = "https://hamy.xyz/labs/1000-checkboxes") {
+                                +"Hamilton Greene's 1000-checkboxes"
+                            }
+                        }
+                    }
+                    section {
+                        p { +"Showing: $numberOfBoxes checkboxes." }
                     }
                 }
                 mainSectionTemplate {
@@ -155,28 +161,4 @@ class HtmxCheckboxDemoPage {
         }
     }
 
-    private fun HtmlBlockTag.renderDetailedNotes() {
-        p {
-            +"Some notes:"
-            ul {
-                li {
-                    +"Updates are partial per checkbox. This creates a blind spot if you loose or have intermittent connections. When the page reconnects to the SSE endpoint, the whole checkbox matrix will be reloaded, which can be slow. One possible fix could be to split the matrix into parts."
-                }
-                li {
-                    +"There is no proper error handling, but the SSE stream will be re-connected, possibly overwriting changes you have done locally."
-                }
-                li {
-                    +"When the number of checkboxes becomes large rendering gets slow, but also the processing (HTMX scans for things to do)."
-                }
-                li {
-                    +"Update event is sent with "
-                    a(href = "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events") { +"SSE" }
-                    +" (see events endpoint in developer console), with the fresh SSE support in KTor. Whole div with checkboxes is updated every time a checkbox is updated (update endpoint). HTMX listens for SSE events and triggers an update of the HTML. "
-                    +"You can view most of the code needed for this "
-                    a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/HtmxDemoPage.kt") { +"here" }
-                    +"."
-                }
-            }
-        }
-    }
 }
