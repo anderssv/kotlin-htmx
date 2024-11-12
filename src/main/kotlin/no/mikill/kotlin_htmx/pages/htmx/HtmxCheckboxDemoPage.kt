@@ -64,7 +64,7 @@ class HtmxCheckboxDemoPage {
                         }
                         p {
                             a(href="https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") {+"Go here for a lengty blogpost about the implementation"}
-                            + " and links to code. I use HTXM, SSE and KTor to do this."
+                            + " and links to code. I use HTMX, SSE and KTor to do this."
                         }
                         p {
                             +"It is inspired by "
