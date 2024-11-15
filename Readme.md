@@ -9,9 +9,11 @@ Almost like Next.js, but less complexity.
 - HTMX for front end interactivity — https://htmx.org
 - Pico CSS for responsive styling and semantic defaults — https://picocss.com
 
-You can try the "application" here: https://kotlin-htmx.fly.dev/
-
+You can try the "application" here: https://kotlin-htmx.fly.dev/ .
 On the first page you can find links to the different demos.
+
+There's a lengthy blog post about KTor SSE and HTMX (one of the demos) here:
+https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/ . 
 
 # Other stuff
 
