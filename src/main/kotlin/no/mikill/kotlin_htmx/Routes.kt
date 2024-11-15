@@ -4,21 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.server.response.respond
 import io.ktor.server.routing.*
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.sse.sse
+import io.ktor.server.sse.*
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import kotlinx.coroutines.delay
-import kotlinx.html.a
-import kotlinx.html.div
-import kotlinx.html.li
-import kotlinx.html.ul
+import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
@@ -55,16 +49,47 @@ fun Application.configurePageRoutes(
         }
 
         get {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Front page")) {
                 mainSectionTemplate {
                     emptyContentWrapper {
-                        div { +"Demos:" }
-                        ul {
-                            li { a(href = "/select") { +"Select a thing wizard" } }
-                            li { a(href = "/demo/htmx/checkboxes") { +"HTMX Checkboxes with synchronization across browser windows" } }
-                            li { a(href = "/demo/admin") { +"Simple admin page operations" } }
-                            li { a(href = "/demo/form") { +"Form flow handling with validations" } }
-                            li { a(href = "/demo/multi") { +"HTMX component together with React and Lit in the same page" } }
+                        section {
+                            p {
+                                +"Demo. Check out my writings at "
+                                a(href = "https://blog.f12.no") { +"https://blog.f12.no" }
+                                +" or my company page at "
+                                a(href = "https://www.mikill.no") { +"https://www.mikill.no" }
+                                +"."
+                            }
+                            p {
+                                +"Full source at "
+                                a(href = "https://github.com/anderssv/kotlin-htmx/") { +"https://github.com/anderssv/kotlin-htmx/" }
+                                +"."
+                            }
+                        }
+                        section {
+                            p { +"Demos:" }
+                            ul {
+                                li {
+                                    +"HTMX and KTor"
+                                    ul {
+                                        li {
+                                            a(href = "/demo/htmx/checkboxes") { +"Checkboxes with synchronization across browser windows" }
+                                            +" - "
+                                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
+                                        }
+                                        li { a(href = "/select") { +"Select a thing wizard. Some HX-Boost and SPA emulation." } }
+
+                                        li { a(href = "/demo/admin") { +"Simple admin page operations" } }
+                                        li { a(href = "/demo/multi") { +"Web component together with React and Lit in the same page" } }
+                                    }
+                                }
+                                li {
+                                    +"Just HTML and KTor"
+                                    ul {
+                                        li { a(href = "/demo/form") { +"Just HTML form - Form flow handling with validations" } }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

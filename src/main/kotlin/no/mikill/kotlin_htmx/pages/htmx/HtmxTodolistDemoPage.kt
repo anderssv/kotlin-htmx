@@ -12,7 +12,7 @@ class HtmxTodolistDemoPage {
 
     suspend fun renderHtmxTodoListPage(context: RoutingContext) {
         with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "HTMX TodoList Demo")) {
                 headerContent {
                     div {
                         +"Page header"

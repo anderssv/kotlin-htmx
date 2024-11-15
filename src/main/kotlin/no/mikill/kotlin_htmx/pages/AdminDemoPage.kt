@@ -12,7 +12,7 @@ class AdminDemoPage {
 
     suspend fun renderAdminPage(pipelineContext: RoutingContext) {
         with(pipelineContext) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Admin")) {
                 mainSectionTemplate {
                     emptyContentWrapper {
                         h1 { +"Admin page" }

@@ -7,7 +7,7 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 /**
  * See https://ktor.io/docs/server-html-dsl.html#templates for more information
  */
-class MainTemplate<T : Template<FlowContent>>(private val template: T) : Template<HTML> {
+class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageTitle: String) : Template<HTML> {
 
     val mainSectionTemplate = TemplatePlaceholder<T>()
     val headerContent = Placeholder<FlowContent>()
@@ -17,7 +17,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T) : Templat
         attributes["data-theme"] = "light"
 
         head {
-            title { +"HTMX and KTor <3" }
+            title { +"HTMX and KTor <3 - $pageTitle" }
             meta { charset = "UTF-8" }
             meta {
                 name = "viewport"

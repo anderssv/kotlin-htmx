@@ -29,7 +29,7 @@ class SelectMainPage(
 
     suspend fun renderMainPage(routingHandler: RoutingContext) {
         with(routingHandler) {
-            call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate(), "Select Main")) {
                 mainSectionTemplate {
                     selectionPagesContent {
                         section {

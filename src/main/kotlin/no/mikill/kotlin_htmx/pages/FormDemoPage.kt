@@ -14,7 +14,7 @@ class FormDemoPage {
         existingApplication: Application?,
         errors: Set<ConstraintViolation<Application>>
     ) {
-        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Form input")) {
             headerContent {
                 span { +"Form demo" }
             }
@@ -51,7 +51,7 @@ class FormDemoPage {
         context: RoutingContext,
         existingApplication: Application
     ) {
-        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Form saved")) {
             mainSectionTemplate {
                 emptyContentWrapper {
                     section {

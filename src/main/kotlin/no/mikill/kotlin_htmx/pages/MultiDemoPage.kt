@@ -13,7 +13,7 @@ class MultiDemoPage {
 
     suspend fun renderMultiJsPage(context: RoutingContext) {
         with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Multi frameworks demo")) {
                 headerContent {
                     p {
                         +"This is a small test. You can see the source at: "

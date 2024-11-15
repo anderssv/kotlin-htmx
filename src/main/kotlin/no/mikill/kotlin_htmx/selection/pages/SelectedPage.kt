@@ -16,7 +16,7 @@ class SelectedPage {
     suspend fun renderPage(context: RoutingContext) {
         with(context) {
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
-            call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate(), "Select Selected ${selected.name}")) {
                 mainSectionTemplate {
                     selectionPagesContent {
                         val name =

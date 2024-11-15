@@ -50,7 +50,7 @@ class HtmxCheckboxDemoPage {
 
     suspend fun renderCheckboxesPage(context: RoutingContext) {
         with(context) {
-            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate())) {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "HTMX + SSE Checkboxes demo")) {
                 headerContent {
                     section {
                         p {
