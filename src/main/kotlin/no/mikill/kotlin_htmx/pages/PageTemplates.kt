@@ -122,7 +122,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                                 color: #66c2ff;
                             }
                         }
-
+                        
                         .form-error {
                             color: red;
                         }
