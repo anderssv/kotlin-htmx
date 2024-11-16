@@ -54,11 +54,6 @@ class HtmxCheckboxDemoPage {
                 headerContent {
                     section {
                         p {
-                            +"This is a demo for HTMX. It is part of a series of demos I have done for presentations. You can "
-                            a(href = "/") { +"go here to see the other demos" }
-                            +"."
-                        }
-                        p {
                             +"This page shows synchronization between browser windows. "
                             strong { +"Open multiple windows to this URL to see it in action."}
                         }
