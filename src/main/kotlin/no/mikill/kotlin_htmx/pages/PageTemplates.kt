@@ -80,7 +80,49 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         section {
                             margin-bottom: 2em;
                         }
-                                            
+                                                                                                    
+                        nav {
+                            background-color: #333;
+                            width: 100%;
+                            border-radius: 8px;
+                            font-size: 0.8em;
+                            padding-left: 1em;
+                            padding-right: 1em;
+                            margin-bottom: 1em;
+                        
+                            & ul {
+                                list-style: none;
+                                display: flex;
+                                justify-content: space-evenly;
+                                align-items: center;
+                                margin: 0 auto;
+                                padding: 0;
+                                width: 100%;
+                            }
+                        
+                            & li {
+                                display: flex;
+                                align-items: center;
+                                margin: 0;
+                                white-space: nowrap;
+                            }
+                        
+                            & .separator {
+                                color: #666;
+                            }
+                        
+                            & a {
+                                color: white;
+                                text-decoration: none;
+                                font-family: Arial, sans-serif;
+                                transition: color 0.3s ease;
+                            }
+                        
+                            & a:hover {
+                                color: #66c2ff;
+                            }
+                        }
+
                         .form-error {
                             color: red;
                         }
@@ -97,6 +139,21 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 // Logo
                 header {
                     h1 { +"Kotlin, KTor and HTMX front end demos" }
+
+                    nav {
+                        ul {
+                            li { a(href = "/") { +"Home" } }
+                            li { span("separator") { +"🚀" } }
+                            li { a(href = "/demo/htmx/checkboxes") { +"Checkboxes" } }
+                            li { span("separator") { +"🚀" } }
+                            li { a(href = "/select") { +"SPA Emulation" } }
+                            li { span("separator") { +"🚀" } }
+                            li { a(href = "/demo/admin") { +"Admin demo" } }
+                            li { span("separator") { +"🚀" } }
+                            li { a(href = "/demo/form") { +"Form" } }
+                        }
+                    }
+
                     div {
                         insert(headerContent)
                     }
