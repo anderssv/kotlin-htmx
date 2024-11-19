@@ -155,7 +155,7 @@ object HtmlElements {
         attributes["hx-boost"] = true.toString()
         attributes["hx-select"] = "#mainContent"
         attributes["hx-target"] = "#mainContent"
-        attributes["hx-swap"] = "outerHTML"
+        attributes["hx-swap"] = "outerHTML show:window:top"
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {

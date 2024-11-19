@@ -126,6 +126,14 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         .form-error {
                             color: red;
                         }
+    
+                        #mainContent.htmx-added {
+                          background-color: #d07777;
+                        }
+                        #mainContent {
+                          background-color: transparent;
+                          transition: background-color 3s ease-out;
+                        }
                     """.trimIndent()
                 )
             }
