@@ -91,7 +91,7 @@ object HtmlElements {
             div {
                 attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
                 attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
-                attributes["hx-swap"] = "innerHTML" // Default is outerHTML
+                attributes["hx-swap"] = "innerHTML"
                 style = BOX_STYLE
                 // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
                 +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
