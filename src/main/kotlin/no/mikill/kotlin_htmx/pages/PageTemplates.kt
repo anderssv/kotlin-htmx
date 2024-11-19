@@ -52,7 +52,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 }
             }
             script(src = "https://unpkg.com/htmx.org@2.0.3") {}
-            script(src = "https://unpkg.com/htmx.org@2.0.3/dist/ext/json-enc.js") {}
+            script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") {}
             script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") {}
             script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") {}
 

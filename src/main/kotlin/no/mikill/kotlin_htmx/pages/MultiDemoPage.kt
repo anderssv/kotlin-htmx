@@ -28,7 +28,7 @@ class MultiDemoPage {
                 mainSectionTemplate {
                     emptyContentWrapper {
                         htmlTodolistSectionContent()
-                        htmxTodolistSectionContent(loadDelay = 5.seconds, backendDelay = 0.seconds)
+                        htmxTodolistSectionContent(loadDelay = 5.seconds, backendDelay = 5.seconds)
                         section {
                             h1 { +"Lit Element" }
                             div {
