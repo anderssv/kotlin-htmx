@@ -79,7 +79,7 @@ class HtmxCheckboxDemoPage {
                             attributes["hx-ext"] = "sse"
                             attributes["sse-connect"] = "checkboxes/events"
                             div {
-                                attributes["hx-get"] = "checkboxes/update"
+                                attributes["hx-get"] = "checkboxes/all"
                                 attributes["hx-trigger"] = "sse:update-all"
 
                                 renderBoxGridHtml()

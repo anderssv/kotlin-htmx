@@ -73,13 +73,16 @@ fun Application.configurePageRoutes(
                                     +"HTMX and KTor"
                                     ul {
                                         li {
+                                            a(href = "/demo/htmx") { +"Simple example with fetching content" }
+                                        }
+                                        li {
                                             a(href = "/demo/htmx/checkboxes") { +"Checkboxes with synchronization across browser windows" }
                                             +" - "
                                             a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
                                         }
-                                        li { a(href = "/select") { +"Select a thing wizard. Some HX-Boost and SPA emulation." } }
+                                        li { a(href = "/select") { +"A wizard flow for selecting a thing. Some HX-Boost and SPA emulation." } }
 
-                                        li { a(href = "/demo/admin") { +"Simple admin page operations" } }
+                                        li { a(href = "/demo/admin") { +"Simple admin page for editing data" } }
                                         li { a(href = "/demo/multi") { +"Web component together with React and Lit in the same page" } }
                                     }
                                 }
@@ -157,7 +160,7 @@ private fun Route.configureHtmxRoutes() {
             get {
                 htmxCheckboxDemoPage.renderCheckboxesPage(this)
             }
-            get("/update") {
+            get("/all") {
                 htmxCheckboxDemoPage.renderBoxGridFragment(this)
             }
             put("{boxNumber}") {

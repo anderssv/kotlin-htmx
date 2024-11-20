@@ -127,12 +127,17 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                             color: red;
                         }
     
-                        #mainContent.htmx-added {
-                          background-color: #d07777;
+                        .htmx-modified {
+                          animation: highlight-fade 3s ease-out;
                         }
-                        #mainContent {
-                          background-color: transparent;
-                          transition: background-color 3s ease-out;
+                        
+                        @keyframes highlight-fade {
+                          from {
+                            background-color: #d07777;
+                          }
+                          to {
+                            background-color: transparent;
+                          }
                         }
                     """.trimIndent()
                 )
@@ -176,6 +181,20 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 footer {
                     +"This is the footer. - Made by Anders Sveen. Check out "
                     a(href = "https://www.mikill.no") { +"https://www.mikill.no" }
+                }
+
+                script {
+                    unsafe {
+                        raw(
+                            """
+                            document.body.addEventListener('htmx:afterSettle', function(evt) {
+                                // The updated element is directly available in evt.detail.elt
+                                const updatedElement = evt.detail.elt;
+                                updatedElement.classList.add('htmx-modified');
+                            });
+                        """.trimIndent()
+                        )
+                    }
                 }
             }
         }
