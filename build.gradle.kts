@@ -6,9 +6,9 @@ val logbackVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.21"
-    id("io.ktor.plugin") version "3.0.0"
+    id("io.ktor.plugin") version "3.0.1"
     id("com.github.ben-manes.versions") version "0.51.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 group = "no.mikill.kotlin-htmx"
@@ -49,6 +49,7 @@ dependencies {
     implementation("io.ktor:ktor-server-caching-headers-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-html-builder-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
+    implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
 
     implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     implementation("org.glassfish.expressly:expressly:5.0.0")
@@ -62,7 +63,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1")
-    implementation("io.ktor:ktor-server-compression-jvm:3.0.0")
 
     testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
