@@ -2,7 +2,6 @@ package no.mikill.kotlin_htmx
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -24,6 +23,8 @@ import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
+import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
+import no.mikill.kotlin_htmx.todo.todoListItems
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
@@ -31,8 +32,7 @@ import kotlin.time.Duration.Companion.seconds
 private val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
 
 fun Application.configurePageRoutes(
-    lookupClient: LookupClient,
-    applicationRepository: ApplicationRepository
+    lookupClient: LookupClient, applicationRepository: ApplicationRepository
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
@@ -114,9 +114,7 @@ fun Application.configurePageRoutes(
         }
         route("/demo") {
             configureDemoRoutes(
-                applicationRepository,
-                mapper,
-                validator
+                applicationRepository, mapper, validator
             )
         }
         route("/data") {
@@ -131,14 +129,14 @@ private fun Route.configureDemoRoutes(
     validator: Validator,
 ) {
     val adminDemoPage = AdminDemoPage()
-    val multiDemoPage = MultiDemoPage()
+    val multiTodoDemoPage = MultiTodoDemoPage()
 
     get("/item/{itemId}") {
         val itemId = call.parameters["itemId"]!!.toInt()
         adminDemoPage.renderItemResponse(this, itemId)
     }
     get("/multi") {
-        multiDemoPage.renderMultiJsPage(this)
+        multiTodoDemoPage.renderMultiJsPage(this)
     }
     get("/admin") {
         adminDemoPage.renderAdminPage(this)
@@ -204,9 +202,7 @@ private fun Route.configureHtmxRoutes() {
 }
 
 private fun Route.configureFormRoutes(
-    applicationRepository: ApplicationRepository,
-    mapper: ObjectMapper,
-    validator: Validator
+    applicationRepository: ApplicationRepository, mapper: ObjectMapper, validator: Validator
 ) {
     val formDemoPage = FormDemoPage()
     route("/form") {
@@ -224,19 +220,14 @@ private fun Route.configureFormRoutes(
 }
 
 private suspend fun RoutingContext.handleFormSubmission(
-    formDemoPage: FormDemoPage,
-    applicationRepository: ApplicationRepository,
-    mapper: ObjectMapper,
-    validator: Validator
+    formDemoPage: FormDemoPage, applicationRepository: ApplicationRepository, mapper: ObjectMapper, validator: Validator
 ) {
     // Since this method takes in repo and a lot of other stuff, it probably belongs to a Controller
     val form = call.receiveParameters()
     logger.info("Received form data: $form")
 
     val application = no.mikill.kotlin_htmx.application.Application(
-        UUID.randomUUID(),
-        Person("", ""),
-        ""
+        UUID.randomUUID(), Person("", ""), ""
     )
     val updatedApplication: no.mikill.kotlin_htmx.application.Application =
         mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
@@ -250,19 +241,10 @@ private suspend fun RoutingContext.handleFormSubmission(
     }
 }
 
+
 private fun Route.configureDataRoutes() {
     get("/todolist.json") {
-        call.respondText(
-            """
-                [
-                  {"id": 1, "title": "Buy milk", "completed": false},
-                  {"id": 2, "title": "Buy bread", "completed": false},
-                  {"id": 3, "title": "Buy eggs", "completed": false},
-                  {"id": 4, "title": "Buy butter", "completed": false}
-                ]
-                """.trimIndent(),
-            ContentType.Application.Json
-        )
+        call.respond(todoListItems)
     }
     get("/todolist.html") {
         val delaySeconds = call.parameters["delay"]?.toInt() ?: 1

@@ -1,15 +1,17 @@
-package no.mikill.kotlin_htmx.pages
+package no.mikill.kotlin_htmx.todo
 
 import io.ktor.server.html.*
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmlTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent
+import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
 
-class MultiDemoPage {
+class MultiTodoDemoPage {
 
     suspend fun renderMultiJsPage(context: RoutingContext) {
         with(context) {
