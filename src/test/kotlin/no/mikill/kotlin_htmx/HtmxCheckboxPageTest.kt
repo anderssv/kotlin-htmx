@@ -1,6 +1,11 @@
 package no.mikill.kotlin_htmx
 
 import io.github.bonigarcia.wdm.WebDriverManager
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -16,11 +21,20 @@ import java.time.Duration
 class HtmxCheckboxPageTest {
 
     private lateinit var driver: WebDriver
-    private val baseUrl = "http://0.0.0.0:8080"
-    private val checkboxPageUrl = "$baseUrl/demo/htmx/checkboxes"
+    private lateinit var server: EmbeddedServer<*, *>
+    private val checkboxPageUrl = "/demo/htmx/checkboxes"
+    private var serverUrl: String? = null
 
     @Before
     fun setUp() {
+        // Start KTor server
+        server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
+            module()
+        }.start(wait = false)
+
+        val port = runBlocking { server.engine.resolvedConnectors().first().port }
+        serverUrl = "http://localhost:$port"
+
         // Set up WebDriver
         WebDriverManager.chromedriver().setup()
 
@@ -42,12 +56,15 @@ class HtmxCheckboxPageTest {
     fun tearDown() {
         // Close the browser
         driver.quit()
+
+        // Stop the server
+        server.stop(1000, 2000)
     }
 
     @Test
     fun testHtmxCheckboxPage() {
         // Navigate to the checkbox page
-        driver.get(checkboxPageUrl)
+        driver.get(serverUrl!! + checkboxPageUrl)
 
         // Wait for the page to load
         val wait = WebDriverWait(driver, Duration.ofSeconds(10))
@@ -69,7 +86,6 @@ class HtmxCheckboxPageTest {
         // Click the checkbox
         firstCheckbox.click()
 
-        // Wait a moment for HTMX to update the DOM
         Thread.sleep(1000)
 
         // Re-find the checkbox (to avoid stale element reference)
