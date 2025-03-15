@@ -128,7 +128,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         }
     
                         .htmx-modified {
-                          animation: highlight-fade 3s ease-out;
+                          animation: highlight-fade 2s ease-out;
                         }
                         
                         @keyframes highlight-fade {
@@ -191,6 +191,11 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                                 // The updated element is directly available in evt.detail.elt
                                 const updatedElement = evt.detail.elt;
                                 updatedElement.classList.add('htmx-modified');
+                                
+                                // Remove the class when the animation completes
+                                updatedElement.addEventListener('animationend', function() {
+                                    updatedElement.classList.remove('htmx-modified');
+                                }, { once: true });
                             });
                         """.trimIndent()
                         )
