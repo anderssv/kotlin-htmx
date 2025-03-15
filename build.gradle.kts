@@ -5,10 +5,10 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    id("io.ktor.plugin") version "3.0.1"
-    id("com.github.ben-manes.versions") version "0.51.0"
-    id("com.gradleup.shadow") version "8.3.5"
+    kotlin("jvm") version "2.1.10"
+    id("io.ktor.plugin") version "3.1.1"
+    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 group = "no.mikill.kotlin-htmx"
@@ -62,9 +62,9 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3")
 
-    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
