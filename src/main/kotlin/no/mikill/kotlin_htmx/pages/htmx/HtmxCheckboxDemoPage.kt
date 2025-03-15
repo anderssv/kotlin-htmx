@@ -13,16 +13,14 @@ import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.MutableList
-import kotlin.collections.forEach
-import kotlin.collections.mutableListOf
 import kotlin.collections.set
 import kotlin.random.Random
 
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
-    private val numberOfBoxes = 5000
+    private val batchSize = 50
+    private val numberOfBoxes = 10000
     private val checkboxState =
         BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 } // This is our "DB". Initializing 20% filled.
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
@@ -44,11 +42,11 @@ class HtmxCheckboxDemoPage {
                     section {
                         p {
                             +"This page shows synchronization between browser windows. "
-                            strong { +"Open multiple windows to this URL to see it in action."}
+                            strong { +"Open multiple windows to this URL to see it in action." }
                         }
                         p {
-                            a(href="https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") {+"Go here for a lengty blogpost about the implementation"}
-                            + " and links to code. I use HTMX, SSE and KTor to do this."
+                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Go here for a lengty blogpost about the implementation" }
+                            +" and links to code. I use HTMX, SSE and KTor to do this."
                         }
                         p {
                             +"It is inspired by "
@@ -83,6 +81,7 @@ class HtmxCheckboxDemoPage {
     suspend fun handleCheckboxToggle(context: RoutingContext) {
         val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
         checkboxState[boxNumber] = !checkboxState[boxNumber]
+        val batchNumber = boxNumber / batchSize
 
         /**
          * These are registered, but there doesn't seem to be a hook
@@ -94,9 +93,9 @@ class HtmxCheckboxDemoPage {
             try {
                 iterator.next().send(
                     partialHtml {
-                        renderCheckbox(boxNumber, checkboxState[boxNumber])
+                        renderBoxesForBatch(batchNumber)
                     },
-                    "update-$boxNumber",
+                    "update-$batchNumber",
                     UUID.randomUUID().toString()
                 )
             } catch (e: IOException) {
@@ -121,7 +120,7 @@ class HtmxCheckboxDemoPage {
     private fun DIV.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
-            (0..numberOfBoxes - 1).forEach { boxNumber ->
+            (0..(numberOfBoxes / batchSize) - 1).forEach { batchNumber ->
                 span {
                     /*
                      * There are pros and cons to have SSE and PUT on the same element.
@@ -129,17 +128,25 @@ class HtmxCheckboxDemoPage {
                      * response from the PUT and one from the SSE Event. But it shouldn't
                      * be noticeable in this case.
                      */
-                    attributes["sse-swap"] = "update-${boxNumber}" // Takes the HTML from the message and inserts
-                    attributes["hx-put"] = "checkboxes/$boxNumber"
+                    attributes["sse-swap"] = "update-${batchNumber}" // Takes the HTML from the message and inserts
 
-                    renderCheckbox(boxNumber, checkboxState[boxNumber])
+                    renderBoxesForBatch(batchNumber)
                 }
             }
         }
     }
 
+    private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
+        (0..batchSize - 1).forEach {
+            val checkBoxNumber = batchNumber * batchSize + it
+            renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
+        }
+    }
+
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
         input(type = InputType.checkBox) {
+            attributes["hx-put"] = "checkboxes/$boxNumber"
+
             checked = checkedState
             id = "$boxNumber"
         }
