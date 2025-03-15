@@ -68,6 +68,10 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+
+    // Selenium dependencies
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.18.1")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
 }
 
 tasks.withType<DependencyUpdatesTask> {

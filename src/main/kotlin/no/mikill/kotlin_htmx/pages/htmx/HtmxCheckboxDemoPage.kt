@@ -1,22 +1,9 @@
 package no.mikill.kotlin_htmx.pages.htmx
 
-import io.ktor.server.html.respondHtmlTemplate
-import io.ktor.server.routing.RoutingContext
-import io.ktor.server.sse.ServerSSESession
-import kotlinx.html.DIV
-import kotlinx.html.HtmlBlockTag
-import kotlinx.html.InputType
-import kotlinx.html.a
-import kotlinx.html.div
-import kotlinx.html.id
-import kotlinx.html.input
-import kotlinx.html.li
-import kotlinx.html.p
-import kotlinx.html.section
-import kotlinx.html.span
-import kotlinx.html.strong
-import kotlinx.html.style
-import kotlinx.html.ul
+import io.ktor.server.html.*
+import io.ktor.server.routing.*
+import io.ktor.server.sse.*
+import kotlinx.html.*
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.partialHtml
@@ -25,10 +12,12 @@ import no.mikill.kotlin_htmx.pages.MainTemplate
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Collections
-import java.util.UUID
+import java.util.*
+import kotlin.collections.MutableList
+import kotlin.collections.forEach
+import kotlin.collections.mutableListOf
+import kotlin.collections.set
 import kotlin.random.Random
-import kotlin.text.toInt
 
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
