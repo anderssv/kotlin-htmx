@@ -62,7 +62,14 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureRouting()
-    install(Compression)
+    install(Compression) {
+        gzip {
+            priority = 1.0
+        }
+        deflate {
+            priority = 0.9
+        }
+    }
 
     // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
     val config = ApplicationConfig.load()

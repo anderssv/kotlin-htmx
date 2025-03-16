@@ -19,7 +19,7 @@ import kotlin.random.Random
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
-    private val batchSize = 50
+    private val batchSize = 10
     private val numberOfBoxes = 10000
     private val checkboxState =
         BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 } // This is our "DB". Initializing 20% filled.
@@ -120,27 +120,33 @@ class HtmxCheckboxDemoPage {
     private fun DIV.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
-            (0..(numberOfBoxes / batchSize) - 1).forEach { batchNumber ->
-                span {
-                    /*
-                     * There are pros and cons to have SSE and PUT on the same element.
-                     * It basically means that you will get two DOM updates, one for the
-                     * response from the PUT and one from the SSE Event. But it shouldn't
-                     * be noticeable in this case.
-                     */
-                    attributes["sse-swap"] = "update-${batchNumber}" // Takes the HTML from the message and inserts
+            // If the number is high it is really imporant to have this as a sequence to start
+            // sending data to the client and not wait for the whole thing to be done.
+            generateSequence(0) { it + 1 }
+                .takeWhile { it <= (numberOfBoxes / batchSize) - 1 }
+                .forEach { batchNumber ->
+                    span {
+                        /*
+                         * There are pros and cons to have SSE and PUT on the same element.
+                         * It basically means that you will get two DOM updates, one for the
+                         * response from the PUT and one from the SSE Event. But it shouldn't
+                         * be noticeable in this case.
+                         */
+                        attributes["sse-swap"] = "update-${batchNumber}" // Takes the HTML from the message and inserts
 
-                    renderBoxesForBatch(batchNumber)
+                        renderBoxesForBatch(batchNumber)
+                    }
                 }
-            }
         }
     }
 
     private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
-        (0..batchSize - 1).forEach {
-            val checkBoxNumber = batchNumber * batchSize + it
-            renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
-        }
+        generateSequence(0) { it + 1 }
+            .takeWhile { it <= batchSize - 1 }
+            .forEach {
+                val checkBoxNumber = batchNumber * batchSize + it
+                renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
+            }
     }
 
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
