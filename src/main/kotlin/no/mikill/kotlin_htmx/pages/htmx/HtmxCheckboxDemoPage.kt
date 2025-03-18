@@ -10,6 +10,7 @@ import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.partialHtml
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import org.slf4j.LoggerFactory
+import java.text.NumberFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -56,7 +57,8 @@ class HtmxCheckboxDemoPage {
                         }
                     }
                     section {
-                        p { +"Showing: $numberOfBoxes checkboxes. SSE update batches are $batchSize. " }
+
+                        p { +"Showing: ${NumberFormat.getNumberInstance(Locale.forLanguageTag("no-bok")).format(numberOfBoxes)} checkboxes. SSE update batches are $batchSize. " }
                     }
                 }
                 mainSectionTemplate {
