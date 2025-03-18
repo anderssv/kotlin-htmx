@@ -70,8 +70,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.18.1")
-    testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.29.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.9.3")
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -80,7 +80,8 @@ tasks.withType<DependencyUpdatesTask> {
             all {
                 if (candidate.version.contains("beta", true)
                     || candidate.version.contains("-rc", true)
-                    || candidate.version.endsWith("-M1")) {
+                    || candidate.version.endsWith("-M1")
+                    || candidate.version.endsWith(".CR1")) {
                     reject("Not a release")
                 }
             }
