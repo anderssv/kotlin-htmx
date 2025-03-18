@@ -1,15 +1,17 @@
 package no.mikill.kotlin_htmx.selection.pages
 
 import io.ktor.server.html.*
-import io.ktor.server.routing.RoutingContext
+import io.ktor.server.routing.*
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.p
 import kotlinx.html.section
-import no.mikill.kotlin_htmx.selection.items
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.SelectionTemplate
+import no.mikill.kotlin_htmx.selection.items
+import kotlin.collections.set
+import kotlin.collections.single
 
 
 class SelectedPage {

@@ -6,7 +6,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.sse.SSE
+import io.ktor.server.sse.*
 import org.slf4j.LoggerFactory
 
 fun Application.configureRouting() {

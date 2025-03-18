@@ -6,12 +6,6 @@ export class MyElement extends LitElement {
     static properties = {
         time: {},
     };
-
-    constructor() {
-        super();
-        this.time = new Date().toLocaleString();
-    }
-
     _productList = new Task(this, {
         task: async () => {
             // Introduce the 1-second delay
@@ -22,17 +16,22 @@ export class MyElement extends LitElement {
         args: () => []
     });
 
+    constructor() {
+        super();
+        this.time = new Date().toLocaleString();
+    }
+
     render() {
         return html`
             <h1>Todo List</h1>
             <ul>
                 ${this._productList.render({
-                    pending: () => html`<p>Loading...</p>`,
-                    complete: (todoList) => todoList.map(item => html`
+            pending: () => html`<p>Loading...</p>`,
+            complete: (todoList) => todoList.map(item => html`
                         <li>${item.title}</li>`)
-                    ,
-                    error: (error) => html`<p>Error: ${error}</p>`
-                })}
+            ,
+            error: (error) => html`<p>Error: ${error}</p>`
+        })}
             </ul>
             <p>It is now ${this.time}</p>`
     }

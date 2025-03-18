@@ -81,7 +81,8 @@ tasks.withType<DependencyUpdatesTask> {
                 if (candidate.version.contains("beta", true)
                     || candidate.version.contains("-rc", true)
                     || candidate.version.endsWith("-M1")
-                    || candidate.version.endsWith(".CR1")) {
+                    || candidate.version.endsWith(".CR1")
+                ) {
                     reject("Not a release")
                 }
             }

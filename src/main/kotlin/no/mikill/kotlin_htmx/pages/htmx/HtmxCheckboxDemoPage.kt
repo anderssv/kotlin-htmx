@@ -58,7 +58,11 @@ class HtmxCheckboxDemoPage {
                     }
                     section {
 
-                        p { +"Showing: ${NumberFormat.getNumberInstance(Locale.forLanguageTag("no-bok")).format(numberOfBoxes)} checkboxes. SSE update batches are $batchSize. " }
+                        p {
+                            +"Showing: ${
+                                NumberFormat.getNumberInstance(Locale.forLanguageTag("no-bok")).format(numberOfBoxes)
+                            } checkboxes. SSE update batches are $batchSize. "
+                        }
                     }
                 }
                 mainSectionTemplate {
