@@ -20,11 +20,12 @@ class HtmxQuestionsPage {
 
     // Using LinkedHashMap with a maximum size specified at creation time
     // Wrapped in Collections.synchronizedMap for thread safety
-    private val questions = Collections.synchronizedMap(object : LinkedHashMap<UUID, Question>(MAX_QUESTIONS, 0.75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<UUID, Question>?): Boolean {
-            return size > MAX_QUESTIONS
-        }
-    })
+    private val questions =
+        Collections.synchronizedMap(object : LinkedHashMap<UUID, Question>(MAX_QUESTIONS, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<UUID, Question>?): Boolean {
+                return size > MAX_QUESTIONS
+            }
+        })
 
     data class Question(
         val id: UUID = UUID.randomUUID(),
@@ -54,6 +55,7 @@ class HtmxQuestionsPage {
                                 h2 { +"Ask a Question" }
                                 form {
                                     id = "question-form"
+                                    attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
 
                                     div {
                                         style = "display: flex; gap: 10px;"

@@ -104,8 +104,9 @@ class HtmxQuestionsPageTest {
         // Submit another question to verify multiple questions work
         val secondQuestion = "This is another test question " + System.currentTimeMillis()
 
-        // Clear the input field and enter the second question
-        questionInput.clear()
+        // Verify the text box is cleared after manual clearing
+        assertThat(questionInput.getAttribute("value")).isEmpty()
+
         questionInput.sendKeys(secondQuestion)
 
         // Click the submit button again
@@ -128,4 +129,3 @@ class HtmxQuestionsPageTest {
         assertThat(questionElements[0].text).contains(secondQuestion)
     }
 }
-
