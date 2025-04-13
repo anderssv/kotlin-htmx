@@ -11,15 +11,20 @@ import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 class HtmxQuestionsPage {
     private val logger = LoggerFactory.getLogger(HtmxQuestionsPage::class.java)
 
-    // Using ConcurrentHashMap for thread safety with UUID keys
     // Maximum size of 1000 to prevent DDoS attacks
-    private val questions = ConcurrentHashMap<UUID, Question>()
     private val MAX_QUESTIONS = 1000
+
+    // Using LinkedHashMap with a maximum size specified at creation time
+    // Wrapped in Collections.synchronizedMap for thread safety
+    private val questions = Collections.synchronizedMap(object : LinkedHashMap<UUID, Question>(MAX_QUESTIONS, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<UUID, Question>?): Boolean {
+            return size > MAX_QUESTIONS
+        }
+    })
 
     data class Question(
         val id: UUID = UUID.randomUUID(),
@@ -104,18 +109,8 @@ class HtmxQuestionsPage {
                 val questionId = UUID.randomUUID()
                 val newQuestion = Question(id = questionId, text = questionText)
 
-                // Check if we've reached the maximum number of questions
-                if (questions.size >= MAX_QUESTIONS) {
-                    // Find the oldest question by timestamp
-                    val oldestQuestion = questions.values.minByOrNull { it.timestamp }
-                    oldestQuestion?.let {
-                        // Remove the oldest question
-                        questions.remove(it.id)
-                        logger.info("Removed oldest question with ID: ${it.id} to maintain size limit")
-                    }
-                }
-
                 // Add the new question
+                // The LinkedHashMap will automatically remove the oldest entry if the maximum size is reached
                 questions[questionId] = newQuestion
                 logger.info("New question submitted: $questionText with ID: $questionId")
                 logger.info("Current questions map size: ${questions.size}")
