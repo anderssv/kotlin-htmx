@@ -21,7 +21,7 @@ class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val batchSize = 100
-    private val numberOfBoxes = 10000
+    private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 10000
     private val checkboxState =
         BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 } // This is our "DB". Initializing 20% filled.
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
