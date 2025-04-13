@@ -59,12 +59,12 @@ class HtmxQuestionsPage {
 
                                     div {
                                         style = "display: flex; gap: 10px;"
-                                        input(type = InputType.text) {
+                                        textArea {
                                             id = "question-input"
                                             name = "question"
                                             placeholder = "Type your question here..."
                                             required = true
-                                            style = "flex-grow: 1; padding: 8px;"
+                                            style = "flex-grow: 1; padding: 8px; min-height: 60px; resize: vertical; overflow-wrap: break-word; word-wrap: break-word;"
                                         }
                                         button(type = ButtonType.submit) {
                                             id = "submit-button"
@@ -139,7 +139,7 @@ class HtmxQuestionsPage {
                         li {
                             style = "border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px;"
                             div {
-                                style = "font-weight: bold;"
+                                style = "font-weight: bold; word-wrap: break-word; overflow-wrap: break-word;"
                                 +question.text
                             }
                             div {
