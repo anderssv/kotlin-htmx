@@ -35,6 +35,7 @@ class SelectMainPage(
                         section {
                             div {
                                 form {
+                                    attributes["hx-ext"] = "json-enc"
                                     attributes["hx-post"] = "/select/search"
                                     attributes["hx-swap"] = "outerHTML"
 

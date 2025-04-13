@@ -20,6 +20,7 @@ import no.mikill.kotlin_htmx.pages.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
+import no.mikill.kotlin_htmx.pages.htmx.HtmxQuestionsPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
@@ -79,6 +80,9 @@ fun Application.configurePageRoutes(
                                             a(href = "/demo/htmx/checkboxes") { +"Checkboxes with synchronization across browser windows" }
                                             +" - "
                                             a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
+                                        }
+                                        li {
+                                            a(href = "/demo/htmx/questions") { +"Questions page - submit and view questions" }
                                         }
                                         li { a(href = "/select") { +"A wizard flow for selecting a thing. Some HX-Boost and SPA emulation." } }
 
@@ -149,11 +153,21 @@ private fun Route.configureDemoRoutes(
 private fun Route.configureHtmxRoutes() {
     val htmxCheckboxDemoPage = HtmxCheckboxDemoPage()
     val htmxTodolistDemoPage = HtmxTodolistDemoPage()
+    val htmxQuestionsPage = HtmxQuestionsPage()
 
     route("/htmx") {
         get {
             htmxTodolistDemoPage.renderHtmxTodoListPage(this)
         }
+        route("/questions") {
+            get {
+                htmxQuestionsPage.renderQuestionsPage(this)
+            }
+            post("/submit") {
+                htmxQuestionsPage.handleQuestionSubmission(this)
+            }
+        }
+
         route("/checkboxes") {
             get {
                 htmxCheckboxDemoPage.renderCheckboxesPage(this)

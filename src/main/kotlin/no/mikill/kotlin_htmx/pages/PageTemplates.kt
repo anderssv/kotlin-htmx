@@ -143,8 +143,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 )
             }
         }
-        body {            // This is inherited so means we use JSON as a default for all communication
-            attributes["hx-ext"] = "json-enc"
+        body {
 
             div {
                 style = "max-width: 90vw; margin: auto;"
