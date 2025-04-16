@@ -25,9 +25,11 @@ class AdminDemoPage {
                         style {
                             rawCss(
                                 """
+                                    /* Grid item styling with picocss-friendly colors */
                                     .grid > div {
-                                        border: 1px solid red;
+                                        border: 1px solid #ced4da;
                                         padding: 1em;
+                                        border-radius: 8px;
                                     }                                
                                 """.trimIndent()
                             )

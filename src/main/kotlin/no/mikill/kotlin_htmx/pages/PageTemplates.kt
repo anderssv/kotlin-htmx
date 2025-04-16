@@ -25,7 +25,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             }
             meta {
                 name = "description"
-                content = "Hello"
+                content = "HTMX and KTor demos and examples"
             }
             link {
                 rel = "icon"
@@ -36,6 +36,11 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             link {
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+            }
+            // Add Google Fonts for better typography
+            link {
+                rel = "stylesheet"
+                href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
             }
             script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") {}
             script {
@@ -61,37 +66,64 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
 
             style {
                 rawCss(
-                    """                        
-                        .htmx-indicator{
-                            opacity:0;
+                    """
+                        /* Custom font for better typography - works with picocss */
+                        body {
+                            font-family: 'Inter', sans-serif;
+                        }
+
+                        /* Primary color for headings to match our theme */
+                        h1 {
+                            color: #4361ee;
+                        }
+
+                        /* HTMX-specific styles for loading indicators */
+                        .htmx-indicator {
+                            opacity: 0;
                             transition: opacity 500ms ease-in;
                         }
-                        .htmx-request .htmx-indicator{
-                            opacity:1
-                        }
-                        .htmx-request.htmx-indicator{
-                            opacity:1
-                        }                                        
 
+                        .htmx-request .htmx-indicator {
+                            opacity: 1;
+                        }
+
+                        .htmx-request.htmx-indicator {
+                            opacity: 1;
+                        }
+
+                        /* Custom box component with hover effect */
                         .box {
-                            border: 1px solid red;
-                            border-radius: 0.5em;
+                            border: 1px solid #ced4da;
+                            border-radius: 8px;
                             text-align: center;
-                            padding: 1em;                    
+                            padding: 1.5em;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            transition: transform 0.3s ease, box-shadow 0.3s ease;
                         }
 
+                        .box:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                        }
+
+                        /* Section styling for card-like appearance */
                         section {
-                            margin-bottom: 2em;
+                            margin-bottom: 2.5em;
+                            padding: 1.5em;
+                            background-color: white;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                         }
 
+                        /* Custom navigation styling */
                         nav {
-                            background-color: #333;
+                            background: linear-gradient(135deg, #4361ee, #3f37c9);
                             width: 100%;
                             border-radius: 8px;
-                            font-size: 0.8em;
-                            padding-left: 1em;
-                            padding-right: 1em;
-                            margin-bottom: 1em;
+                            font-size: 0.9em;
+                            padding: 0.8em 1.5em;
+                            margin-bottom: 1.5em;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
                             & ul {
                                 list-style: none;
@@ -99,10 +131,10 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                                 flex-wrap: wrap;
                                 justify-content: space-evenly;
                                 align-items: center;
-                                margin: 1em auto 1em;
+                                margin: 0.5em auto;
                                 padding: 0;
                                 width: 100%;
-                                gap: 0.5em;
+                                gap: 1em;
                             }
 
                             & li {
@@ -113,38 +145,50 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                             }
 
                             & .separator {
-                                color: #666;
+                                color: rgba(255, 255, 255, 0.5);
                             }
 
                             & a {
                                 color: white;
                                 text-decoration: none;
-                                font-family: Arial, sans-serif;
-                                transition: color 0.3s ease;
-                                padding: 0.25em 0.5em;
+                                font-weight: 500;
+                                transition: all 0.3s ease;
+                                padding: 0.5em 0.8em;
+                                border-radius: 8px;
                             }
 
                             & a:hover {
-                                color: #66c2ff;
+                                background-color: rgba(255, 255, 255, 0.1);
+                                transform: translateY(-2px);
+                                text-decoration: none;
                             }
-
                         }
 
+                        /* Form validation error styling */
                         .form-error {
-                            color: red;
+                            color: #f44336;
+                            font-size: 0.9em;
+                            margin-top: 0.3em;
                         }
 
+                        /* HTMX content update highlight effect */
                         .htmx-modified {
-                          animation: highlight-fade 2s ease-out;
+                            animation: highlight-fade 2s ease-out;
                         }
 
                         @keyframes highlight-fade {
-                          from {
-                            background-color: #d07777;
-                          }
-                          to {
-                            background-color: transparent;
-                          }
+                            from {
+                                background-color: rgba(76, 201, 240, 0.3);
+                            }
+                            to {
+                                background-color: transparent;
+                            }
+                        }
+
+                        /* Page transition animation */
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(10px); }
+                            to { opacity: 1; transform: translateY(0); }
                         }
                     """.trimIndent()
                 )
@@ -153,11 +197,17 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
         body {
 
             div {
-                style = "max-width: 90vw; margin: auto;"
+                style = "max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;"
 
-                // Logo
+                // Logo and header
                 header {
-                    h1 { +"Kotlin, KTor and HTMX front end demos" }
+                    classes = setOf("site-header")
+                    style = "text-align: center; margin-bottom: 2rem;"
+
+                    h1 { 
+                        style = "margin-bottom: 1rem; font-weight: 700;"
+                        +"Kotlin, KTor and HTMX front end demos" 
+                    }
 
                     nav {
                         ul {
@@ -174,6 +224,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                     }
 
                     div {
+                        style = "margin-top: 1.5rem;"
                         insert(headerContent)
                     }
                 }
@@ -181,12 +232,14 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 // Main content
                 main {
                     id = "mainContent"
+                    style = "min-height: 60vh; animation: fadeIn 0.5s ease-in-out;"
                     insert(template, mainSectionTemplate)
                 }
 
                 footer {
-                    +"This is the footer. - Made by Anders Sveen. Check out "
-                    a(href = "https://www.mikill.no") { +"https://www.mikill.no" }
+                    style = "text-align: center; padding: 2rem 0; margin-top: 3rem;"
+                    +"Made with ❤️ by Anders Sveen • Check out "
+                    a(href = "https://www.mikill.no") { +"mikill.no" }
                 }
 
                 script {
@@ -220,11 +273,11 @@ class SelectionTemplate : Template<FlowContent> {
         style {
             rawCss(
                 """
+                    /* Responsive grid layout for selection choices - works well with picocss */
                     #choices {
-                        display: grid; /* Enables grid layout */
-                        grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
-                        /* Key line for responsiveness: */
-                        gap: 20px; /* Adjust the spacing between items */
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); 
+                        gap: 20px;
 
                         a {
                             display: block;
