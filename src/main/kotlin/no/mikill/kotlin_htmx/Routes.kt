@@ -76,18 +76,22 @@ fun Application.configurePageRoutes(
                                 li {
                                     +"HTMX and KTor"
                                     ul {
-                                        li { a(href = "/demo/htmx") { +"Todolist: HTMX component" } }
-                                        li { a(href = "/demo/multi") { +"Todolist: HTML, HTMX, React and Lit component in the same page" } }
-                                        li { a(href = "/select") { +"Wizard:  Flow for selecting a thing. Some HX-Boost and SPA emulation." } }
-
+                                        li {
+                                            +"Todolist"
+                                            ul {
+                                                li { a(href = "/demo/htmx") { +"HTMX component" } }
+                                                li { a(href = "/demo/multi") { +"HTML, HTMX, React and Lit component in the same page" } }
+                                            }
+                                        }
                                         li { a(href = "/demo/admin") { +"Dynamic content: Admin page for editing data" } }
+                                        li { a(href = "/select") { +"Wizard:  Flow for selecting a thing. Some HX-Boost and SPA emulation." } }
                                         li {
                                             a(href = "/demo/htmx/checkboxes") { +"Checkboxes: Synchronization across browser windows" }
                                             +" - "
                                             a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
                                         }
                                         li {
-                                            a(href = "/demo/htmx/questions") { +"Questions page - submit and view questions" }
+                                            a(href = "/demo/htmx/questions") { +"Questions page: Submit and view questions" }
                                         }
                                     }
                                 }
