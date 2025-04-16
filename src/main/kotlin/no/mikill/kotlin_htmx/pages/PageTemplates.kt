@@ -72,18 +72,18 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         .htmx-request.htmx-indicator{
                             opacity:1
                         }                                        
-                        
+
                         .box {
                             border: 1px solid red;
                             border-radius: 0.5em;
                             text-align: center;
                             padding: 1em;                    
                         }
-                                            
+
                         section {
                             margin-bottom: 2em;
                         }
-                                                                                                    
+
                         nav {
                             background-color: #333;
                             width: 100%;
@@ -92,48 +92,52 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                             padding-left: 1em;
                             padding-right: 1em;
                             margin-bottom: 1em;
-                        
+
                             & ul {
                                 list-style: none;
                                 display: flex;
+                                flex-wrap: wrap;
                                 justify-content: space-evenly;
                                 align-items: center;
-                                margin: 0 auto;
+                                margin: 1em auto 1em;
                                 padding: 0;
                                 width: 100%;
+                                gap: 0.5em;
                             }
-                        
+
                             & li {
                                 display: flex;
                                 align-items: center;
                                 margin: 0;
-                                white-space: nowrap;
+                                padding: 0;
                             }
-                        
+
                             & .separator {
                                 color: #666;
                             }
-                        
+
                             & a {
                                 color: white;
                                 text-decoration: none;
                                 font-family: Arial, sans-serif;
                                 transition: color 0.3s ease;
+                                padding: 0.25em 0.5em;
                             }
-                        
+
                             & a:hover {
                                 color: #66c2ff;
                             }
+
                         }
-                        
+
                         .form-error {
                             color: red;
                         }
-    
+
                         .htmx-modified {
                           animation: highlight-fade 2s ease-out;
                         }
-                        
+
                         @keyframes highlight-fade {
                           from {
                             background-color: #d07777;
@@ -193,7 +197,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                                 // The updated element is directly available in evt.detail.elt
                                 const updatedElement = evt.detail.elt;
                                 updatedElement.classList.add('htmx-modified');
-                                
+
                                 // Remove the class when the animation completes
                                 updatedElement.addEventListener('animationend', function() {
                                     updatedElement.classList.remove('htmx-modified');
@@ -221,7 +225,7 @@ class SelectionTemplate : Template<FlowContent> {
                         grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); /* Adjust the number of columns based on the width of the container */
                         /* Key line for responsiveness: */
                         gap: 20px; /* Adjust the spacing between items */
-            
+
                         a {
                             display: block;
                         }
