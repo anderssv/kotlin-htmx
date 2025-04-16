@@ -15,5 +15,5 @@ primary_region = 'arn'
   processes = ['app']
 
 [env]
-  NUMBER_OF_BOXES = 100000
+  NUMBER_OF_BOXES = 300000
   ENABLE_HTMX = true
