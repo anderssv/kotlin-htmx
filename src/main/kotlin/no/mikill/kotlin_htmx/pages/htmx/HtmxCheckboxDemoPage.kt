@@ -14,7 +14,6 @@ import java.text.NumberFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.set
 import kotlin.random.Random
 
 class HtmxCheckboxDemoPage {
@@ -29,9 +28,7 @@ class HtmxCheckboxDemoPage {
     suspend fun renderBoxGridFragment(context: RoutingContext) {
         with(context) {
             call.respondHtmlFragment {
-                div {
-                    renderBoxGridHtml()
-                }
+                renderBoxGridHtml()
             }
         }
     }
@@ -71,7 +68,7 @@ class HtmxCheckboxDemoPage {
                             style = "max-width: 40em;"
                             attributes["hx-ext"] = "sse"
                             attributes["sse-connect"] = "checkboxes/events"
-                            div {
+                            section {
                                 attributes["hx-get"] = "checkboxes/all"
                                 attributes["hx-trigger"] = "sse:update-all"
 
@@ -123,7 +120,7 @@ class HtmxCheckboxDemoPage {
         this.connectedListeners.remove(session)
     }
 
-    private fun DIV.renderBoxGridHtml() {
+    private fun HtmlBlockTag.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
             // If the number is high it is really imporant to have this as a sequence to start
