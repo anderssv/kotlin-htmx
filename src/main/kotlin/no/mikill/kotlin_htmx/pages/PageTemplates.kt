@@ -52,7 +52,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 }
             }
             // Just experimenting to see how much the HTMX JS code adds overhead
-            if(System.getenv("DISABLE_HTMX") == "true") {
+            if ((System.getenv("ENABLE_HTMX") ?: "true") == "true") {
                 script(src = "https://unpkg.com/htmx.org@2.0.3") {}
                 script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") {}
                 script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") {}
