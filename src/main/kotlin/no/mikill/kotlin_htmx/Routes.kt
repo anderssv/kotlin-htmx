@@ -16,9 +16,12 @@ import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.integration.LookupClient
-import no.mikill.kotlin_htmx.pages.*
+import no.mikill.kotlin_htmx.pages.AdminDemoPage
+import no.mikill.kotlin_htmx.pages.EmptyTemplate
+import no.mikill.kotlin_htmx.pages.FormDemoPage
 import no.mikill.kotlin_htmx.pages.HtmlElements.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
+import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxQuestionsPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
@@ -73,27 +76,25 @@ fun Application.configurePageRoutes(
                                 li {
                                     +"HTMX and KTor"
                                     ul {
+                                        li { a(href = "/demo/htmx") { +"Todolist: HTMX component" } }
+                                        li { a(href = "/demo/multi") { +"Todolist: HTML, HTMX, React and Lit component in the same page" } }
+                                        li { a(href = "/select") { +"Wizard:  Flow for selecting a thing. Some HX-Boost and SPA emulation." } }
+
+                                        li { a(href = "/demo/admin") { +"Dynamic content: Admin page for editing data" } }
                                         li {
-                                            a(href = "/demo/htmx") { +"Simple example with fetching content" }
-                                        }
-                                        li {
-                                            a(href = "/demo/htmx/checkboxes") { +"Checkboxes with synchronization across browser windows" }
+                                            a(href = "/demo/htmx/checkboxes") { +"Checkboxes: Synchronization across browser windows" }
                                             +" - "
                                             a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
                                         }
                                         li {
                                             a(href = "/demo/htmx/questions") { +"Questions page - submit and view questions" }
                                         }
-                                        li { a(href = "/select") { +"A wizard flow for selecting a thing. Some HX-Boost and SPA emulation." } }
-
-                                        li { a(href = "/demo/admin") { +"Simple admin page for editing data" } }
-                                        li { a(href = "/demo/multi") { +"Web component together with React and Lit in the same page" } }
                                     }
                                 }
                                 li {
                                     +"Just HTML and KTor"
                                     ul {
-                                        li { a(href = "/demo/form") { +"Just HTML form - Form flow handling with validations" } }
+                                        li { a(href = "/demo/form") { +"Form handling: Flow handling with validations" } }
                                     }
                                 }
                             }
