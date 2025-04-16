@@ -17,6 +17,13 @@
 ./gradlew test --tests "fully.qualified.TestClassName"
 ```
 
+## Tools
+
+```bash
+# Print new versions of dependencies
+./gradlew dependencyUpdates
+```
+
 ## Development Setup
 
 1. Install prerequisites:

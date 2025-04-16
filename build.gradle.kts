@@ -5,8 +5,8 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.1.10"
-    id("io.ktor.plugin") version "3.1.1"
+    kotlin("jvm") version "2.1.20"
+    id("io.ktor.plugin") version "3.1.2"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("com.gradleup.shadow") version "8.3.6"
 }
@@ -51,7 +51,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
     implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
 
-    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.2.Final")
     implementation("org.glassfish.expressly:expressly:5.0.0")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -70,8 +70,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.29.0")
-    testImplementation("io.github.bonigarcia:webdrivermanager:5.9.3")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.31.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.0.1")
 }
 
 tasks.withType<DependencyUpdatesTask> {
