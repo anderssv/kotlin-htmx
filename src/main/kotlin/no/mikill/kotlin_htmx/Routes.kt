@@ -249,7 +249,7 @@ private suspend fun RoutingContext.handleFormSubmission(
         UUID.randomUUID(), Person("", ""), ""
     )
     val updatedApplication: no.mikill.kotlin_htmx.application.Application =
-        mapper.readerForUpdating(application).readValue(form["_formjson"]!!)
+        mapper.readerForUpdating(application).readValue(form["__formjson"]!!)
     applicationRepository.addApplication(updatedApplication)
 
     val errors = validator.validate(updatedApplication)
