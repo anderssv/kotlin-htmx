@@ -16,4 +16,4 @@ primary_region = 'arn'
 
 [env]
   NUMBER_OF_BOXES = 100000
-  ENABLE_HTMX = false
+  ENABLE_HTMX = true
