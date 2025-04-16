@@ -18,8 +18,7 @@ data class ApplicationConfig(
 
     companion object {
         fun load(): ApplicationConfig {
-            System.setProperty("io.ktor.development", "true")
-
+            // Private
             fun Map<String, String>.envOrLookup(key: String): String {
                 return System.getenv(key) ?: this[key]!!
             }

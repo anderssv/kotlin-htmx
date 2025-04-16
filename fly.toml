@@ -17,3 +17,4 @@ primary_region = 'arn'
 [env]
   NUMBER_OF_BOXES = 300000
   ENABLE_HTMX = true
+  LOOKUP_API_KEY = 'somekey'
