@@ -22,7 +22,11 @@
 ```bash
 # Print new versions of dependencies
 ./gradlew dependencyUpdates
+
+# Run the application
+./gradlew run
 ```
+
 
 ## Development Setup
 
