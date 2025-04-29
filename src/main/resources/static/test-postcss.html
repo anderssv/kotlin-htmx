@@ -57,120 +57,155 @@
         $primary-color: #1095c1;
         $secondary-color: #98c1d9;
         $accent-color: #ee6c4d;
-        $text-color: #293241;
         $spacing-unit: 8px;
         $border-radius: 4px;
         $transition-speed: 0.3s;
 
-        /* Base styles using variables */
-        .postcss-demo {
-            width: calc(100% - $spacing-unit * 5);
-            margin: calc($spacing-unit * 2) auto;
-            padding: calc($spacing-unit * 2);
-            border-radius: $border-radius;
-            border-left: 4px solid $primary-color;
+        /* Only essential styles for demonstrating PostCSS features */
+        /* Example for CSS Variables */
+        .feature-vars h3 {
+            color: $primary-color;
         }
 
-        /* Nested selectors using postcss-nested */
-        .postcss-demo-item {
-            user-select: none;
-            backdrop-filter: blur(5px);
-            margin-bottom: calc($spacing-unit * 2);
-            padding: calc($spacing-unit * 2);
-            border-radius: $border-radius;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all $transition-speed ease;
-
-            &:hover {
-                transform: scale(1.02);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-
+        /* Example for Nested Selectors */
+        .feature-nesting {
             h3 {
                 color: $primary-color;
-                margin-top: 0;
-
                 &::before {
                     content: "→ ";
                     color: $accent-color;
                 }
             }
-
-            code {
-                padding: calc($spacing-unit / 2);
-                border-radius: calc($border-radius / 2);
-            }
-
-            &.feature-calc {
-                border-bottom: 3px solid $primary-color;
-            }
-
-            &.feature-vars {
-                border-bottom: 3px solid $secondary-color;
-            }
-
-            &.feature-nesting {
-                border-bottom: 3px solid $accent-color;
-            }
-
-            &.feature-prefixer {
-                border-bottom: 3px solid #6c757d;
-            }
         }
 
-        /* Advanced calc examples */
-        .calc-examples {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(calc(200px + $spacing-unit * 4), 1fr));
-            gap: calc($spacing-unit * 2);
-
-            .calc-item {
-                height: calc(100px + $spacing-unit * 2);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: $border-radius;
-
-                &:nth-child(odd) {
-                    background-color: rgba(16, 149, 193, 0.3);
-                }
-            }
+        /* Example for Calc Functions */
+        .feature-calc {
+            padding: calc($spacing-unit * 2);
         }
 
-        /* Accordion with nested styles */
+        /* Example for Autoprefixer */
+        .feature-prefixer {
+            user-select: none;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Example for Accordion */
         .accordion {
-            height: 0;
-            overflow: hidden;
             transition: height $transition-speed ease-in-out;
-            border-radius: $border-radius;
-
             &.open {
                 height: 150px;
                 padding: $spacing-unit;
             }
-
-            h3 {
-                margin-top: 0;
-                color: $primary-color;
-            }
         }
 
-        /* Media query with variables */
-        @media (max-width: 600px) {
-            .postcss-demo {
-                width: calc(100% - $spacing-unit * 2);
-                padding: $spacing-unit;
-            }
-
-            .calc-examples {
-                grid-template-columns: 1fr;
+        /* Example for Calc Grid */
+        .calc-examples {
+            .calc-item {
+                height: calc(100px + $spacing-unit * 2);
+                &:nth-child(odd) {
+                    background-color: rgba(16, 149, 193, 0.3);
+                }
             }
         }
     </style>
 
     <!-- Minimal CSS that won't be processed by PostCSS -->
     <style>
-        /* Only keeping styles that are essential and not provided by PicoCSS */
+        /* Base styles that would cause layout shifts if processed by PostCSS */
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .postcss-demo {
+            width: calc(100% - 40px);
+            margin: 16px auto;
+            padding: 16px;
+            border-radius: 4px;
+            border-left: 4px solid #1095c1;
+        }
+
+        .postcss-demo-item {
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .postcss-demo-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .postcss-demo-item h3 {
+            margin-top: 0;
+        }
+
+        .postcss-demo-item code {
+            padding: 4px;
+            border-radius: 2px;
+        }
+
+        .feature-calc {
+            border-bottom: 3px solid #1095c1;
+        }
+
+        .feature-vars {
+            border-bottom: 3px solid #98c1d9;
+        }
+
+        .feature-nesting {
+            border-bottom: 3px solid #ee6c4d;
+        }
+
+        .feature-prefixer {
+            border-bottom: 3px solid #6c757d;
+        }
+
+        .calc-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+            gap: 16px;
+        }
+
+        .calc-item {
+            height: 116px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .accordion {
+            height: 0;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .accordion.open {
+            height: 150px;
+            padding: 8px;
+        }
+
+        .accordion h3 {
+            margin-top: 0;
+            color: #1095c1;
+        }
+
+        /* Media query example */
+        @media (max-width: 600px) {
+            .postcss-demo {
+                width: calc(100% - 16px);
+                padding: 8px;
+            }
+
+            .calc-examples {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Container styles */
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -180,13 +215,6 @@
 
         .card:hover {
             transform: translateY(-5px);
-        }
-
-        /* Media query example */
-        @media (max-width: 600px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
         }
 
         /* Styles for displaying processed CSS */
@@ -205,6 +233,8 @@
         }
 
         .feature-list {
+            list-style-type: none;
+            padding: 0;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
@@ -216,27 +246,30 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.85rem;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-<header>
-    <h1>PostCSS Test Example</h1>
-    <p>This is a sample HTML file to demonstrate PostCSS capabilities with live processing in the browser.</p>
-    <p>Because the processing is done in the browser you will see a layout shift. This can be compensated for by smart usage of CSS and only keeping the necessary parts in postcss.</p>
+<header style="padding-bottom: 0.5em">
+    <h1 style="margin-bottom: 0.5em">PostCSS In Browser Example</h1>
 </header>
 
 <main>
     <section>
+        <p>This is a sample HTML file to demonstrate PostCSS capabilities with live processing in the browser.</p>
+        <p>This example demonstrates how to minimize layout shifts when using PostCSS in the browser by keeping only essential styles in the PostCSS section and placing the base layout styles in regular CSS.</p>
+    </section>
+    <section>
         <h2>Features Demonstrated</h2>
-        <div class="feature-list">
-            <span class="feature-tag">CSS Variables</span>
-            <span class="feature-tag">Nested CSS</span>
-            <span class="feature-tag">Calc Functions</span>
-            <span class="feature-tag">Autoprefixer</span>
-            <span class="feature-tag">Media Queries</span>
-            <span class="feature-tag">Transitions & Transforms</span>
-        </div>
+        <ul>
+            <li>CSS Variables</li>
+            <li>Nested CSS</li>
+            <li>Calc Functions</li>
+            <li>Autoprefixer</li>
+            <li>Media Queries</li>
+            <li>Transitions & Transforms</li>
+        </ul>
         <p>This demo uses the following PostCSS plugins loaded directly in the browser:</p>
         <ul>
             <li><strong>postcss-simple-vars</strong> - For CSS variables</li>
@@ -244,19 +277,7 @@
             <li><strong>postcss-calc</strong> - For advanced calculations</li>
             <li><strong>autoprefixer</strong> - For vendor prefixes</li>
         </ul>
-    </section>
-
-    <section>
-        <h2>About PostCSS</h2>
-        <p>PostCSS is a tool for transforming CSS with JavaScript plugins. These plugins can:</p>
-        <ul>
-            <li>Support variables and mixins</li>
-            <li>Enable nesting of CSS selectors</li>
-            <li>Transpile future CSS syntax</li>
-            <li>Add vendor prefixes automatically</li>
-            <li>Optimize and minify CSS</li>
-            <li>Process calculations and functions</li>
-        </ul>
+        <p>PostCSS processes CSS for maximum compatibility with browsers. Read <a href="https://postcss.org/">more about PostCSS</a>.</p>
     </section>
 
     <section>
