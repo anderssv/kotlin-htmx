@@ -10,15 +10,19 @@
         import autoprefixer from 'https://jspm.dev/autoprefixer@10.0.2'
         import calc from 'https://jspm.dev/postcss-calc@9.0.1'
         import simpleVars from 'https://jspm.dev/postcss-simple-vars@7.0.1'
+        import nested from 'https://jspm.dev/postcss-nested@6.0.1'
 
         // Process all style elements with type="text/postcss"
         document.addEventListener('DOMContentLoaded', () => {
             const postCssStyleElements = document.querySelectorAll('style[type="text/postcss"]');
 
+            // Add a section to display the processed CSS
+            const processedCssDisplay = document.getElementById('processed-css-display');
+
             postCssStyleElements.forEach(styleElement => {
                 const cssContent = styleElement.textContent;
 
-                postcss([autoprefixer, calc, simpleVars])
+                postcss([autoprefixer, calc, simpleVars, nested])
                     .process(cssContent, { from: undefined })
                     .then(result => {
                         // Create a new style element with the processed CSS
@@ -33,6 +37,13 @@
                         styleElement.setAttribute('media', 'not all');
 
                         console.log("Processed PostCSS style element:", result.css);
+
+                        // Display the processed CSS in the UI
+                        if (processedCssDisplay) {
+                            const pre = document.createElement('pre');
+                            pre.textContent = result.css;
+                            processedCssDisplay.appendChild(pre);
+                        }
                     })
                     .catch(error => {
                         console.error("Error processing PostCSS:", error);
@@ -42,36 +53,118 @@
     </script>
     <!-- This style element will be processed by PostCSS -->
     <style type="text/postcss">
-        /* PostCSS will process this CSS - minimal version */
+        /* PostCSS Variables using postcss-simple-vars */
+        $primary-color: #1095c1;
+        $secondary-color: #98c1d9;
+        $accent-color: #ee6c4d;
+        $text-color: #293241;
+        $spacing-unit: 8px;
+        $border-radius: 4px;
+        $transition-speed: 0.3s;
 
-        /* Using calc() which will be processed by postcss-calc */
+        /* Base styles using variables */
         .postcss-demo {
-            width: calc(100% - 40px);
-            margin: calc(16px * 1.5) auto;
-            padding: calc(10px + 5px);
+            width: calc(100% - $spacing-unit * 5);
+            margin: calc($spacing-unit * 2) auto;
+            padding: calc($spacing-unit * 2);
+            border-radius: $border-radius;
+            border-left: 4px solid $primary-color;
         }
 
-        /* Using properties that might need vendor prefixes */
+        /* Nested selectors using postcss-nested */
         .postcss-demo-item {
             user-select: none;
             backdrop-filter: blur(5px);
-            margin-bottom: 10px;
-            transition: transform 0.3s ease;
+            margin-bottom: calc($spacing-unit * 2);
+            padding: calc($spacing-unit * 2);
+            border-radius: $border-radius;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all $transition-speed ease;
+
+            &:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            h3 {
+                color: $primary-color;
+                margin-top: 0;
+
+                &::before {
+                    content: "→ ";
+                    color: $accent-color;
+                }
+            }
+
+            code {
+                padding: calc($spacing-unit / 2);
+                border-radius: calc($border-radius / 2);
+            }
+
+            &.feature-calc {
+                border-bottom: 3px solid $primary-color;
+            }
+
+            &.feature-vars {
+                border-bottom: 3px solid $secondary-color;
+            }
+
+            &.feature-nesting {
+                border-bottom: 3px solid $accent-color;
+            }
+
+            &.feature-prefixer {
+                border-bottom: 3px solid #6c757d;
+            }
         }
 
-        .postcss-demo-item:hover {
-            transform: scale(1.02);
+        /* Advanced calc examples */
+        .calc-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(calc(200px + $spacing-unit * 4), 1fr));
+            gap: calc($spacing-unit * 2);
+
+            .calc-item {
+                height: calc(100px + $spacing-unit * 2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: $border-radius;
+
+                &:nth-child(odd) {
+                    background-color: rgba(16, 149, 193, 0.3);
+                }
+            }
         }
 
-        /* Using nested selectors (if supported by plugins) */
+        /* Accordion with nested styles */
         .accordion {
             height: 0;
             overflow: hidden;
-            transition: height 0.3s ease-in-out;
+            transition: height $transition-speed ease-in-out;
+            border-radius: $border-radius;
+
+            &.open {
+                height: 150px;
+                padding: $spacing-unit;
+            }
+
+            h3 {
+                margin-top: 0;
+                color: $primary-color;
+            }
         }
 
-        .accordion.open {
-            height: calc(100px + 20px);
+        /* Media query with variables */
+        @media (max-width: 600px) {
+            .postcss-demo {
+                width: calc(100% - $spacing-unit * 2);
+                padding: $spacing-unit;
+            }
+
+            .calc-examples {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 
@@ -95,51 +188,62 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Styles for displaying processed CSS */
+        #processed-css-display {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 400px;
+        }
+
+        #processed-css-display pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .feature-tag {
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
 <header>
     <h1>PostCSS Test Example</h1>
-    <p>This is a sample HTML file to demonstrate PostCSS capabilities.</p>
+    <p>This is a sample HTML file to demonstrate PostCSS capabilities with live processing in the browser.</p>
+    <p>Because the processing is done in the browser you will see a layout shift. This can be compensated for by smart usage of CSS and only keeping the necessary parts in postcss.</p>
 </header>
 
 <main>
     <section>
         <h2>Features Demonstrated</h2>
+        <div class="feature-list">
+            <span class="feature-tag">CSS Variables</span>
+            <span class="feature-tag">Nested CSS</span>
+            <span class="feature-tag">Calc Functions</span>
+            <span class="feature-tag">Autoprefixer</span>
+            <span class="feature-tag">Media Queries</span>
+            <span class="feature-tag">Transitions & Transforms</span>
+        </div>
+        <p>This demo uses the following PostCSS plugins loaded directly in the browser:</p>
         <ul>
-            <li>CSS Variables (Custom Properties)</li>
-            <li>Nested CSS</li>
-            <li>Grid Layout</li>
-            <li>CSS Functions</li>
-            <li>Media Queries</li>
-            <li>Transitions and Transforms</li>
+            <li><strong>postcss-simple-vars</strong> - For CSS variables</li>
+            <li><strong>postcss-nested</strong> - For nesting selectors</li>
+            <li><strong>postcss-calc</strong> - For advanced calculations</li>
+            <li><strong>autoprefixer</strong> - For vendor prefixes</li>
         </ul>
-    </section>
-
-    <section class="container">
-        <article class="card">
-            <h3>Card One</h3>
-            <div>
-                <p>This is an example card that demonstrates styling with CSS variables and transitions.</p>
-            </div>
-            <a href="#" role="button">Learn More</a>
-        </article>
-
-        <article class="card">
-            <h3>Card Two</h3>
-            <div>
-                <p>PostCSS allows you to use future CSS features today through plugins.</p>
-            </div>
-            <a href="#" role="button" class="secondary">Explore</a>
-        </article>
-
-        <article class="card">
-            <h3>Card Three</h3>
-            <div>
-                <p>This layout uses CSS Grid which can be enhanced with PostCSS grid plugins.</p>
-            </div>
-            <a href="#" role="button">Details</a>
-        </article>
     </section>
 
     <section>
@@ -147,48 +251,77 @@
         <p>PostCSS is a tool for transforming CSS with JavaScript plugins. These plugins can:</p>
         <ul>
             <li>Support variables and mixins</li>
+            <li>Enable nesting of CSS selectors</li>
             <li>Transpile future CSS syntax</li>
             <li>Add vendor prefixes automatically</li>
             <li>Optimize and minify CSS</li>
-            <li>And much more!</li>
+            <li>Process calculations and functions</li>
         </ul>
     </section>
 
     <section>
         <h2>PostCSS Demo</h2>
-        <p>The following elements are styled using CSS processed by PostCSS:</p>
+        <p>The following elements are styled using CSS processed by PostCSS. Hover over items to see effects.</p>
 
         <div class="postcss-demo">
-            <article class="postcss-demo-item">
-                <h3>PostCSS Feature: Calc</h3>
-                <p>This element uses calc() functions that are processed by postcss-calc.</p>
-                <p>Original: <code>width: calc(100% - 40px);</code></p>
+            <article class="postcss-demo-item feature-vars">
+                <h3>CSS Variables</h3>
+                <p>This example uses PostCSS variables defined with the <code>$</code> prefix.</p>
+                <p>Original: <code>$primary-color: #1095c1; color: $primary-color;</code></p>
+                <p>These are processed by <strong>postcss-simple-vars</strong> and converted to standard CSS.</p>
             </article>
 
-            <article class="postcss-demo-item">
-                <h3>PostCSS Feature: Autoprefixer</h3>
-                <p>This element uses properties that might need vendor prefixes.</p>
+            <article class="postcss-demo-item feature-nesting">
+                <h3>Nested Selectors</h3>
+                <p>This example demonstrates nesting CSS selectors, similar to Sass/SCSS.</p>
+                <p>Original: <code>.parent { &:hover { } h3 { } }</code></p>
+                <p>The <strong>postcss-nested</strong> plugin processes these into standard CSS selectors.</p>
+            </article>
+
+            <article class="postcss-demo-item feature-calc">
+                <h3>Advanced Calculations</h3>
+                <p>This example shows complex calculations with variables:</p>
+                <p>Original: <code>width: calc(100% - $spacing-unit * 5);</code></p>
+                <p>The <strong>postcss-calc</strong> plugin evaluates and simplifies these expressions.</p>
+            </article>
+
+            <article class="postcss-demo-item feature-prefixer">
+                <h3>Autoprefixer</h3>
+                <p>This element uses properties that might need vendor prefixes:</p>
                 <p>Original: <code>user-select: none; backdrop-filter: blur(5px);</code></p>
+                <p><strong>Autoprefixer</strong> adds necessary browser prefixes automatically.</p>
             </article>
 
-            <article class="postcss-demo-item">
-                <h3>PostCSS Feature: Transform</h3>
-                <p>Hover over this element to see a transform effect.</p>
-                <p>Original: <code>transform: scale(1.02);</code></p>
-            </article>
+            <h3>Calc Examples Grid</h3>
+            <div class="calc-examples">
+                <div class="calc-item">calc(100px + $spacing-unit * 2)</div>
+                <div class="calc-item">minmax(calc(200px + $spacing-unit * 4), 1fr)</div>
+                <div class="calc-item">calc($spacing-unit / 2)</div>
+                <div class="calc-item">calc($border-radius / 2)</div>
+            </div>
 
+            <h3>Accordion with Nested Styles</h3>
             <div class="accordion" id="accordion-demo">
-                <h3>PostCSS Feature: Accordion</h3>
-                <p>This is a collapsible section using height calculations.</p>
-                <p>Click the button below to toggle.</p>
+                <h3>Nested Accordion Example</h3>
+                <p>This accordion uses nested styles and variable-based transitions.</p>
+                <p>Original: <code>.accordion { &.open { height: 150px; } }</code></p>
             </div>
             <button onclick="document.getElementById('accordion-demo').classList.toggle('open')">Toggle Accordion</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Processed CSS Output</h2>
+        <p>This section shows the CSS after it has been processed by PostCSS:</p>
+        <div id="processed-css-display">
+            <!-- Processed CSS will be displayed here by JavaScript -->
+            <p>Loading processed CSS...</p>
         </div>
     </section>
 </main>
 
 <footer>
-    <p>&copy; 2025 - Anders Sveen. This is just a demonstration.</p>
+    <p>&copy; 2025 - Anders Sveen. This is a demonstration of PostCSS capabilities.</p>
 </footer>
 </body>
 </html>
