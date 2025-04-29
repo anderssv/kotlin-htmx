@@ -14,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
+import kotlin.random.Random
 
 
 class HtmxCheckboxPageTest {
@@ -60,8 +61,9 @@ class HtmxCheckboxPageTest {
         if (!headless) { // Only bother if windows showing
             val (screenWidth, screenHeight) = getScreenDimensions(driver1)
             driver1.manage().window().size = Dimension(screenWidth / 2, screenHeight)
-            driver1.manage().window().position = Point(screenWidth / 2, 0)
             driver2.manage().window().size = Dimension(screenWidth / 2, screenHeight)
+            driver1.manage().window().position = Point(0, 0)
+            driver2.manage().window().position = Point(screenWidth / 2, 0)
         }
 
         // Set implicit wait time
@@ -102,37 +104,59 @@ class HtmxCheckboxPageTest {
         val pageContent = driver1.findElement(By.tagName("body")).text
         assertThat(pageContent).contains("This page shows synchronization between browser windows")
 
-        // Find the first checkbox and get its initial state
-        val checkboxId = "0"
-        val firstCheckbox = driver1.findElement(By.id(checkboxId))
-        val initialState = firstCheckbox.isSelected
-
         // Open the same page in the second browser
         driver2.openAndScrollToCheckbox()
         val wait2 = WebDriverWait(driver2, Duration.ofSeconds(10))
         wait2.until(ExpectedConditions.presenceOfElementLocated(By.tagName("input")))
 
-        // Verify the initial state of the checkbox is the same in both browsers
-        val secondBrowserCheckbox = driver2.findElement(By.id(checkboxId))
-        assertThat(secondBrowserCheckbox.isSelected).isEqualTo(initialState)
+        // Generate 20 random checkbox IDs (between 0 and 50)
+        val numberOfCheckboxes = 600
+        val randomCheckboxIds = generateSequence { Random.nextInt(0, numberOfCheckboxes) }
+            .distinct()
+            .take(20)
+            .map { it.toString() }
+            .toList()
 
-        // Click the checkbox in the first browser
-        firstCheckbox.click()
+        // Store initial states of all checkboxes
+        val initialStates = randomCheckboxIds.associateWith { checkboxId ->
+            val checkbox1 = driver1.findElement(By.id(checkboxId))
+            val initialState = checkbox1.isSelected
 
-        // Wait for the update to propagate to the second browser
+            // Verify the initial state is the same in both browsers
+            val checkbox2 = driver2.findElement(By.id(checkboxId))
+            assertThat(checkbox2.isSelected).isEqualTo(initialState)
+
+            initialState
+        }
+
+        // First click all checkboxes - re-find each element before clicking to avoid stale element issues
+        randomCheckboxIds.forEach { checkboxId ->
+            // Re-find the element before each click to avoid stale element references
+            val checkbox1 = driver1.findElement(By.id(checkboxId))
+            checkbox1.click()
+            // Small wait between clicks to allow the page to update
+            Thread.sleep(if (!headless) 500 else 5)
+        }
+
+        // Wait once for all updates to fully propagate to the second browser
         Thread.sleep(1000)
 
-        // Re-find the checkbox in both browsers (to avoid stale element reference)
-        val updatedCheckbox1 = driver1.findElement(By.id(checkboxId))
-        val updatedCheckbox2 = driver2.findElement(By.id(checkboxId))
+        // Then verify all checkboxes
+        randomCheckboxIds.forEach { checkboxId ->
+            val initialState = initialStates[checkboxId]!!
 
-        // Verify the checkbox state has changed in the first browser
-        val newState1 = updatedCheckbox1.isSelected
-        assertThat(newState1).isNotEqualTo(initialState)
+            // Re-find the checkbox in both browsers (to avoid stale element reference)
+            val updatedCheckbox1 = driver1.findElement(By.id(checkboxId))
+            val updatedCheckbox2 = driver2.findElement(By.id(checkboxId))
 
-        // Verify the checkbox state has also changed in the second browser
-        val newState2 = updatedCheckbox2.isSelected
-        assertThat(newState2).isEqualTo(newState1)
-        assertThat(newState2).isNotEqualTo(initialState)
+            // Verify the checkbox state has changed in the first browser
+            val newState1 = updatedCheckbox1.isSelected
+            assertThat(newState1).isNotEqualTo(initialState)
+
+            // Verify the checkbox state has also changed in the second browser
+            val newState2 = updatedCheckbox2.isSelected
+            assertThat(newState2).isEqualTo(newState1)
+            assertThat(newState2).isNotEqualTo(initialState)
+        }
     }
 }
