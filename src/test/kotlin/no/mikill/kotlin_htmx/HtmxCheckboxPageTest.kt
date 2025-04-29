@@ -109,7 +109,7 @@ class HtmxCheckboxPageTest {
         val wait2 = WebDriverWait(driver2, Duration.ofSeconds(10))
         wait2.until(ExpectedConditions.presenceOfElementLocated(By.tagName("input")))
 
-        // Generate 20 random checkbox IDs (between 0 and 50)
+        // Generate 20 random checkbox IDs (between 0 and 600)
         val numberOfCheckboxes = 600
         val randomCheckboxIds = generateSequence { Random.nextInt(0, numberOfCheckboxes) }
             .distinct()

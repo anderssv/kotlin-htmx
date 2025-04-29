@@ -27,6 +27,7 @@ import no.mikill.kotlin_htmx.pages.htmx.HtmxQuestionsPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
+import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
 import no.mikill.kotlin_htmx.todo.todoListItems
 import org.slf4j.LoggerFactory
@@ -77,6 +78,7 @@ fun Application.configurePageRoutes(
                                 li {
                                     +"Todolist"
                                     ul {
+                                        li { a(href = "/demo") { +"Plain HTML component" } }
                                         li { a(href = "/demo/htmx") { +"HTMX component" } }
                                         li { a(href = "/demo/multi") { +"HTML, HTMX, React and Lit component in the same page" } }
                                     }
@@ -133,16 +135,20 @@ private fun Route.configureDemoRoutes(
 ) {
     val adminDemoPage = AdminDemoPage()
     val multiTodoDemoPage = MultiTodoDemoPage()
+    val htmlTodoDemoPage = HtmlTodoDemoPage()
 
-    get("/item/{itemId}") {
-        val itemId = call.parameters["itemId"]!!.toInt()
-        adminDemoPage.renderItemResponse(this, itemId)
+    get {
+        htmlTodoDemoPage.renderHtmlPage(this)
     }
     get("/multi") {
         multiTodoDemoPage.renderMultiJsPage(this)
     }
     get("/admin") {
         adminDemoPage.renderAdminPage(this)
+    }
+    get("/item/{itemId}") {
+        val itemId = call.parameters["itemId"]!!.toInt()
+        adminDemoPage.renderItemResponse(this, itemId)
     }
 
     configureHtmxRoutes()

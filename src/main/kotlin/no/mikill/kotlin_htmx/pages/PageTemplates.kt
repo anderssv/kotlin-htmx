@@ -178,7 +178,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
 
                         @keyframes highlight-fade {
                             from {
-                                background-color: rgba(76, 201, 240, 0.3);
+                                background-color: rgba(240,76,180,0.86);
                             }
                             to {
                                 background-color: transparent;
@@ -246,6 +246,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                     unsafe {
                         raw(
                             """
+                            // This script is here to highlight changes done by HTMX
                             document.body.addEventListener('htmx:afterSettle', function(evt) {
                                 // The updated element is directly available in evt.detail.elt
                                 const updatedElement = evt.detail.elt;

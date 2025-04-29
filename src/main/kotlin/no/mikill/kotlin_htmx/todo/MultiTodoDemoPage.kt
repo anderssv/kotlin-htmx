@@ -21,7 +21,7 @@ class MultiTodoDemoPage {
                         +"This is a small test. You can see the source at: "
                         ul {
                             li { a(href = "https://github.com/anderssv/web-playground/tree/main/combined") { +"Pure HTML source (same as view source)" } }
-                            li { a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/pages/DemoPage.kt") { +"Kotlin + KTor source" } }
+                            li { a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/todo/MultiTodoDemoPage.kt") { +"Kotlin + KTor source" } }
                         }
                         +"Or just hit view source. 😃"
                     }
