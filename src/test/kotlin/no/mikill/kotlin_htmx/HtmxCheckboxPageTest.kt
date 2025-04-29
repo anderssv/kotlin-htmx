@@ -8,16 +8,17 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
+
 class HtmxCheckboxPageTest {
 
+    private val headless = true
     private lateinit var driver1: WebDriver
     private lateinit var driver2: WebDriver
     private lateinit var server: EmbeddedServer<*, *>
@@ -26,6 +27,14 @@ class HtmxCheckboxPageTest {
 
     @Before
     fun setUp() {
+        fun getScreenDimensions(driver: WebDriver): Pair<Int, Int> {
+            driver.manage().window().maximize()
+            val js = driver as JavascriptExecutor
+            val screenWidth = js.executeScript("return window.screen.width") as Long
+            val screenHeight = js.executeScript("return window.screen.height") as Long
+            return Pair(screenWidth.toInt(), screenHeight.toInt())
+        }
+
         // Start KTor server
         server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
             module()
@@ -39,7 +48,7 @@ class HtmxCheckboxPageTest {
 
         // Configure Chrome options for headless mode
         val options = ChromeOptions()
-        options.addArguments("--headless")
+        if (headless) options.addArguments("--headless")
         options.addArguments("--disable-gpu")
         options.addArguments("--no-sandbox")
         options.addArguments("--disable-dev-shm-usage")
@@ -47,6 +56,13 @@ class HtmxCheckboxPageTest {
         // Initialize two drivers with options
         driver1 = ChromeDriver(options)
         driver2 = ChromeDriver(options)
+
+        if (!headless) { // Only bother if windows showing
+            val (screenWidth, screenHeight) = getScreenDimensions(driver1)
+            driver1.manage().window().size = Dimension(screenWidth / 2, screenHeight)
+            driver1.manage().window().position = Point(screenWidth / 2, 0)
+            driver2.manage().window().size = Dimension(screenWidth / 2, screenHeight)
+        }
 
         // Set implicit wait time
         driver1.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
@@ -66,7 +82,13 @@ class HtmxCheckboxPageTest {
     @Test
     fun testHtmxCheckboxPage() {
         // Navigate to the checkbox page
-        driver1.get(serverUrl!! + checkboxPageUrl)
+        fun WebDriver.openAndScrollToCheckbox() {
+            get(serverUrl!! + checkboxPageUrl)
+            if (!headless) findElement(By.id("1"))
+                .also { (this as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true)", it) }
+        }
+
+        driver1.openAndScrollToCheckbox()
 
         // Wait for the page to load
         val wait1 = WebDriverWait(driver1, Duration.ofSeconds(10))
@@ -86,7 +108,7 @@ class HtmxCheckboxPageTest {
         val initialState = firstCheckbox.isSelected
 
         // Open the same page in the second browser
-        driver2.get(serverUrl!! + checkboxPageUrl)
+        driver2.openAndScrollToCheckbox()
         val wait2 = WebDriverWait(driver2, Duration.ofSeconds(10))
         wait2.until(ExpectedConditions.presenceOfElementLocated(By.tagName("input")))
 
