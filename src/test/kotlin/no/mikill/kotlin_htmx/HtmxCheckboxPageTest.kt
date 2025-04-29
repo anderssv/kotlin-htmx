@@ -107,7 +107,7 @@ class HtmxCheckboxPageTest {
         driver2.openAndScrollToCheckbox()
 
         // Find all checkboxes in page
-        val numberOfCheckboxes = 100
+        val numberOfCheckboxes = 600
         val checkboxes = driver1.findElements(By.tagName("input")).take(numberOfCheckboxes).associate { checkbox -> checkbox.getDomAttribute("id")!! to checkbox.isSelected }.toMutableMap()
 
         val randomCheckboxIds = generateSequence { Random.nextInt(0, numberOfCheckboxes) }
@@ -120,8 +120,8 @@ class HtmxCheckboxPageTest {
         randomCheckboxIds.forEach { checkboxId ->
             // Re-find the element before each click to avoid stale element references
             val checkbox1 = driver1.findElement(By.id(checkboxId))
-            checkboxes[checkboxId] = checkboxes[checkboxId]!!.not() // Flip state
             checkbox1.click()
+            checkboxes[checkboxId] = checkboxes[checkboxId]!!.not() // Flip state
             // Small wait between clicks to allow the page to update
             Thread.sleep(if (!headless) 500 else 5)
         }
