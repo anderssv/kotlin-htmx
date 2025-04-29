@@ -20,7 +20,7 @@ import kotlin.random.Random
 
 class HtmxCheckboxPageTest {
 
-    private val headless = false
+    private val headless = true
     private lateinit var driver1: WebDriver
     private lateinit var driver2: WebDriver
     private lateinit var server: EmbeddedServer<*, *>
