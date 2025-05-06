@@ -189,6 +189,13 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                             from { opacity: 0; transform: translateY(10px); }
                             to { opacity: 1; transform: translateY(0); }
                         }
+
+                        /* Responsive styles - hide QR code image on small screens */
+                        @media (max-width: 800px) {
+                            .qr-code-image {
+                                display: none;
+                            }
+                        }
                     """.trimIndent()
                 )
             }
