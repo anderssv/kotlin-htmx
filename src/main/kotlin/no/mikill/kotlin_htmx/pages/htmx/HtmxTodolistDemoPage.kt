@@ -21,7 +21,7 @@ class HtmxTodolistDemoPage {
                 mainSectionTemplate {
                     emptyContentWrapper {
                         htmxTodolistSectionContent(
-                            loadDelay = 5.seconds,
+                            loadDelay = null,
                             backendDelay = 5.seconds
                         )
                     }

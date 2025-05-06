@@ -86,16 +86,19 @@ object FormUtils {
 
 object HtmlElements {
 
-    fun FlowContent.htmxTodolistSectionContent(loadDelay: Duration, backendDelay: Duration) {
+    fun FlowContent.htmxTodolistSectionContent(loadDelay: Duration?, backendDelay: Duration) {
         section {
             h1 { +"HTMX Element" }
             div {
                 attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
-                attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                loadDelay?.let {
+                    // Click is default
+                    attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                }
                 attributes["hx-swap"] = "innerHTML"
                 style = BOX_STYLE
                 // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
-                +"Click me! (Will automatically load after ${loadDelay.inWholeSeconds} seconds)"
+                +"Click me! ${if (loadDelay != null) " (Will automatically load after ${loadDelay.inWholeSeconds} seconds)" else ""}"
                 div(classes = "htmx-indicator") {
                     img(src = "/static/images/loading.gif") { style = "height: 1em;" }
                     span {
@@ -152,10 +155,11 @@ object HtmlElements {
         attributes["preload-images"] = true.toString()
 
         // Boosting
-        attributes["hx-boost"] = true.toString()
+        // attributes["hx-boost"] = true.toString() // Add to avoid scrolling to top
         attributes["hx-select"] = "#mainContent"
         attributes["hx-target"] = "#mainContent"
-        attributes["hx-swap"] = "outerHTML show:window:top"
+        attributes["hx-swap"] = "outerHTML"
+        // attributes["hx-swap"] = "outerHTML show:window:top" // Makes sure the window scrolls to the top
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {
