@@ -42,7 +42,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 rel = "stylesheet"
                 href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=block"
             }
-            script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") {}
+            script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") { defer = true }
             script {
                 unsafe {
                     raw(
@@ -58,10 +58,10 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             }
             // Just experimenting to see how much the HTMX JS code adds overhead
             if ((System.getenv("ENABLE_HTMX") ?: "true") == "true") {
-                script(src = "https://unpkg.com/htmx.org@2.0.3") {}
-                script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") {}
-                script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") {}
-                script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") {}
+                script(src = "https://unpkg.com/htmx.org@2.0.3") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") { defer = true }
             }
 
             style {
