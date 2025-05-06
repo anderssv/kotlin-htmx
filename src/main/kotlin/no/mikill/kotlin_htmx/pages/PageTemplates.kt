@@ -110,7 +110,6 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         section {
                             margin-bottom: 2.5em;
                             padding: 1.5em;
-                            background-color: white;
                             border-radius: 8px;
                             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                         }
@@ -204,9 +203,9 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                     classes = setOf("site-header")
                     style = "text-align: center; margin-bottom: 2rem;"
 
-                    h1 { 
+                    h1 {
                         style = "margin-bottom: 1rem; font-weight: 700;"
-                        +"Kotlin, KTor and HTMX front end demos" 
+                        +"Kotlin, KTor and HTMX front end demos"
                     }
 
                     nav {
@@ -232,7 +231,10 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 // Main content
                 main {
                     id = "mainContent"
-                    style = "min-height: 60vh; animation: fadeIn 0.5s ease-in-out;"
+                    style = """
+                            min-height: 60vh; 
+                            /* animation: fadeIn 0.5s ease-in-out; */
+                        """.trimIndent()
                     insert(template, mainSectionTemplate)
                 }
 
