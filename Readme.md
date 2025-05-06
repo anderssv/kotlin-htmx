@@ -94,28 +94,31 @@ https://htmx.org/essays/a-real-world-react-to-htmx-port/
 This is a small demo that I do for my presentation "Effective development with Ktor, HTML and HTMX".
 
 - Demo HTMX
-    - Show HTML
-    - Remove TODO List, waiting
-    - Turn on More Tools > Rendering > Paint Flashing
-    - Add hx-get
+  - Explain red flashing
+  - Plain HTML
+    - Launch http://0.0.0.0:8080/demo
+    - View source
+  - HTMX Todo list
+    - Launch http://0.0.0.0:8080/demo/htmx
+    - View source
+    - Open developer tools
+    - Click
+    - Show response
     - Add hx-trigger
-    - Add hx-swap, change to outerHTML
-    - Add hx-indicator
+  - Admin interface
+    - Go to http://0.0.0.0:8080/demo/admin
+    - Talk about indicator
+    - Click
+    - Show response
+    - Go to http://0.0.0.0:8080/demo/item/0
+    - Could load full page here (detect call)
+  - Form
+    - Show HTML validation
+    - Show server validation
+    - We did a solution with just forms
 - Demo KTor and HTMX
-    - Simple interface
-        - Launch http://0.0.0.0:8080/demo/htmx
-        - Open developer tools
-        - Change backend delay to 0
-        - Reload
-    - Admin interface
-        - Go to http://0.0.0.0:8080/demo/admin
-        - Load and click
-        - Show response preview
-        - Reload, show how it "resets"
-        - Go to http://0.0.0.0:8080/demo/item/0
-        - View source, point out that this is one way to do it
     - Selection interface
-        - Go to http://0.0.0.0:8080
+        - Go to http://0.0.0.0:8080/select
         - Open developer tools
         - Search for "Something"
         - Search for "One"
@@ -123,10 +126,13 @@ This is a small demo that I do for my presentation "Effective development with K
         - Show hx-boost and preload code
         - Show preload on mouse over
         - Click on "One"
-    - Form interface
-        - Go to http://0.0.0.0:8080/demo/form
-        - Enter and show enter and tab
-        - Enter and show validation
+    - Checkboxes
+        - Tell everyone to scan QR code
+        - Go to http://localhost:8080/demo/htmx/checkboxes
+        - Open developer tools
+        - View source, talk about attributes
+        - Show put request
+        - Look at event stream
 
 # Possible TODO
 
