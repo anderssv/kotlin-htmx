@@ -44,22 +44,18 @@ class HtmxCheckboxDemoPage {
                         }
                         p {
                             a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Go here for a lengty blogpost about the implementation" }
-                            +" and links to code. I use HTMX, SSE and KTor to do this."
-                        }
-                        p {
+                            +" and links to code. I use HTMX, SSE and KTor to do this. "
                             +"It is inspired by "
                             a(href = "https://hamy.xyz/labs/1000-checkboxes") {
                                 +"Hamilton Greene's 1000-checkboxes"
                             }
                         }
-                    }
-                    section {
-
                         p {
                             +"Showing: ${
                                 NumberFormat.getNumberInstance(Locale.forLanguageTag("no-bok")).format(numberOfBoxes)
                             } checkboxes. SSE update batches are $batchSize. "
                         }
+                        img(src = "https://api.qrserver.com/v1/create-qr-code/?data=https://kotlin-htmx.fly.dev/demo/htmx/checkboxes&amp;size=200x200")
                     }
                 }
                 mainSectionTemplate {

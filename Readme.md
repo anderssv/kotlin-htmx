@@ -128,11 +128,12 @@ This is a small demo that I do for my presentation "Effective development with K
         - Click on "One"
     - Checkboxes
         - Tell everyone to scan QR code
+        - Talk about SSE, almost like websockets but for one way
         - Go to https://kotlin-htmx.fly.dev/demo/htmx/checkboxes
         - Open developer tools
+        - Show put request
         - Look at event stream
         - View source, talk about attributes
-        - Show put request
 
 # Possible TODO
 
