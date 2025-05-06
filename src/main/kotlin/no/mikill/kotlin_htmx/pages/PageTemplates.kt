@@ -40,7 +40,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             // Add Google Fonts for better typography
             link {
                 rel = "stylesheet"
-                href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+                href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=block"
             }
             script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") {}
             script {
