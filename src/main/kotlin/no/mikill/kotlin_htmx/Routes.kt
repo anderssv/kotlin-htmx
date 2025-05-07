@@ -2,6 +2,9 @@ package no.mikill.kotlin_htmx
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.ktor.http.CacheControl
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -201,6 +204,7 @@ private fun Route.configureDemoRoutes(
     }
 
     get("/item/{itemId}") {
+        call.response.header(HttpHeaders.CacheControl, CacheControl.MaxAge(maxAgeSeconds = 30).toString())
         val itemId = call.parameters["itemId"]!!.toInt()
         adminDemoPage.renderItemResponse(this, itemId)
     }
