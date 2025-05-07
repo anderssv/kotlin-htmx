@@ -5,7 +5,19 @@ import kotlinx.html.*
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
 /**
- * See https://ktor.io/docs/server-html-dsl.html#templates for more information
+ * Main template for all pages in the application.
+ * 
+ * This template provides the common HTML structure including:
+ * - HTML head with meta tags, CSS, and JavaScript
+ * - Header with navigation
+ * - Main content area
+ * - Footer
+ * 
+ * For more information on Ktor HTML templates, see:
+ * https://ktor.io/docs/server-html-dsl.html#templates
+ *
+ * @param template The content template to insert in the main section
+ * @param pageTitle The title of the page to display in the browser tab
  */
 class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageTitle: String) : Template<HTML> {
 
@@ -33,15 +45,20 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 type = "image/x-icon"
                 sizes = "any"
             }
+
+            // Load PicoCSS for responsive styling
             link {
                 rel = "stylesheet"
                 href = "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
             }
-            // Add Google Fonts for better typography
+
+            // Load Google Fonts for better typography
             link {
                 rel = "stylesheet"
                 href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=block"
             }
+
+            // Google Analytics
             script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") { defer = true }
             script {
                 unsafe {
@@ -56,7 +73,8 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                     )
                 }
             }
-            // Just experimenting to see how much the HTMX JS code adds overhead
+
+            // Load HTMX and its extensions
             if ((System.getenv("ENABLE_HTMX") ?: "true") == "true") {
                 script(src = "https://unpkg.com/htmx.org@2.0.3") { defer = true }
                 script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") { defer = true }
@@ -64,6 +82,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") { defer = true }
             }
 
+            // Application styles
             style {
                 rawCss(
                     """
@@ -201,11 +220,11 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             }
         }
         body {
-
+            // Main container with responsive width
             div {
                 style = "max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;"
 
-                // Logo and header
+                // Header section with site title and navigation
                 header {
                     classes = setOf("site-header")
                     style = "text-align: center; margin-bottom: 2rem;"
@@ -215,6 +234,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         +"Kotlin, KTor and HTMX front end demos"
                     }
 
+                    // Main navigation
                     nav {
                         ul {
                             li { a(href = "/") { +"Home" } }
@@ -229,33 +249,37 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         }
                     }
 
+                    // Optional header content from page
                     div {
                         style = "margin-top: 1.5rem;"
                         insert(headerContent)
                     }
                 }
 
-                // Main content
+                // Main content area
                 main {
                     id = "mainContent"
                     style = """
                             min-height: 60vh; 
-                            /* animation: fadeIn 0.5s ease-in-out; */
+                            /* Uncomment to enable page transition animation:
+                               animation: fadeIn 0.5s ease-in-out; */
                         """.trimIndent()
                     insert(template, mainSectionTemplate)
                 }
 
+                // Footer
                 footer {
                     style = "text-align: center; padding: 2rem 0; margin-top: 3rem;"
                     +"Made with ❤️ by Anders Sveen • Check out "
                     a(href = "https://www.mikill.no") { +"mikill.no" }
                 }
 
+                // HTMX highlight effect for updated elements
                 script {
                     unsafe {
                         raw(
                             """
-                            // This script is here to highlight changes done by HTMX
+                            // This script highlights elements that have been updated by HTMX
                             document.body.addEventListener('htmx:afterSettle', function(evt) {
                                 // The updated element is directly available in evt.detail.elt
                                 const updatedElement = evt.detail.elt;
@@ -275,7 +299,10 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
     }
 }
 
-// The two below is mainly to cater for two different sub-templates
+/**
+ * Template for selection pages that displays content in a responsive grid layout.
+ * Used for pages where users need to select from multiple options.
+ */
 class SelectionTemplate : Template<FlowContent> {
     val selectionPagesContent = Placeholder<FlowContent>()
 
@@ -301,9 +328,11 @@ class SelectionTemplate : Template<FlowContent> {
 }
 
 /**
- * This is an empty template to allow us to enforce specifying something
- *
- * There is probably a better way to do this
+ * An empty template that serves as a placeholder for content.
+ * 
+ * This template is used to enforce the template pattern even when a page
+ * doesn't need specific template functionality beyond the main template.
+ * It provides a consistent way to insert content into the main template.
  */
 class EmptyTemplate : Template<FlowContent> {
     val emptyContentWrapper = Placeholder<FlowContent>()

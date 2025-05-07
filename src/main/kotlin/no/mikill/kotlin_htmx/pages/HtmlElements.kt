@@ -155,7 +155,7 @@ object HtmlElements {
         attributes["preload-images"] = true.toString()
 
         // Boosting
-        // attributes["hx-boost"] = true.toString() // Add to avoid scrolling to top
+        attributes["hx-boost"] = true.toString() // Add to avoid scrolling to top
         attributes["hx-select"] = "#mainContent"
         attributes["hx-target"] = "#mainContent"
         attributes["hx-swap"] = "outerHTML"

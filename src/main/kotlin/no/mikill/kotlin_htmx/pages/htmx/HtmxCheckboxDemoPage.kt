@@ -16,15 +16,39 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.random.Random
 
+/**
+ * Demo page that showcases real-time checkbox synchronization across multiple browser windows
+ * using HTMX and Server-Sent Events (SSE).
+ *
+ * This implementation demonstrates how to:
+ * - Use SSE for real-time updates without WebSockets
+ * - Synchronize state across multiple clients
+ * - Handle connection management and cleanup
+ * - Batch updates for performance optimization
+ */
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val batchSize = 1
     private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 10000
+
+    /**
+     * In-memory state storage for checkbox states.
+     * In a real application, this would be replaced with a persistent database.
+     * Initializes with approximately 20% of checkboxes checked.
+     */
     private val checkboxState =
-        BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 } // This is our "DB". Initializing 20% filled.
+        BooleanArray(numberOfBoxes) { Random.nextInt(1, 10) > 8 }
+
+    /**
+     * Thread-safe list of connected SSE sessions for broadcasting updates.
+     */
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
+    /**
+     * Renders just the grid of checkboxes as an HTML fragment.
+     * Used for full refreshes of the checkbox grid.
+     */
     suspend fun renderBoxGridFragment(context: RoutingContext) {
         with(context) {
             call.respondHtmlFragment {
@@ -33,6 +57,9 @@ class HtmxCheckboxDemoPage {
         }
     }
 
+    /**
+     * Renders the complete checkboxes demo page with header information and the checkbox grid.
+     */
     suspend fun renderCheckboxesPage(context: RoutingContext) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "HTMX + SSE Checkboxes demo")) {
@@ -47,7 +74,7 @@ class HtmxCheckboxDemoPage {
                             strong { +"Open multiple windows to this URL to see it in action." }
                         }
                         p {
-                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Go here for a lengty blogpost about the implementation" }
+                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Go here for a lengthy blogpost about the implementation" }
                             +" and links to code. I use HTMX, SSE and KTor to do this. "
                             +"It is inspired by "
                             a(href = "https://hamy.xyz/labs/1000-checkboxes") {
@@ -80,16 +107,32 @@ class HtmxCheckboxDemoPage {
         }
     }
 
+    /**
+     * Handles a checkbox toggle request, updates the state, and broadcasts the change to all connected clients.
+     * 
+     * @param context The routing context containing the request information
+     */
     suspend fun handleCheckboxToggle(context: RoutingContext) {
         val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
         checkboxState[boxNumber] = !checkboxState[boxNumber]
         val batchNumber = boxNumber / batchSize
 
-        /**
-         * These are registered, but there doesn't seem to be a hook
-         * for closing connections. So we handle that when we iterate
-         * through the list and remove the broken ones.
-         */
+        // Broadcast the update to all connected clients
+        broadcastUpdate(batchNumber)
+
+        // Respond to the original request with the updated checkbox
+        context.call.respondHtmlFragment {
+            renderCheckbox(boxNumber, checkboxState[boxNumber])
+        }
+    }
+
+    /**
+     * Broadcasts an update for a specific batch to all connected clients.
+     * Also handles cleanup of dead connections.
+     * 
+     * @param batchNumber The batch number to update
+     */
+    private suspend fun broadcastUpdate(batchNumber: Int) {
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
@@ -105,36 +148,47 @@ class HtmxCheckboxDemoPage {
                 iterator.remove()
             }
         }
-
-        context.call.respondHtmlFragment {
-            renderCheckbox(boxNumber, checkboxState[boxNumber])
-        }
     }
 
+    /**
+     * Registers a new SSE session for checkbox update notifications.
+     * 
+     * @param session The SSE session to register
+     */
     fun registerOnCheckBoxNotification(session: ServerSSESession) {
         connectedListeners.add(session)
     }
 
+    /**
+     * Unregisters an SSE session when the connection is closed.
+     * 
+     * @param session The SSE session to unregister
+     */
     fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
         this.connectedListeners.remove(session)
     }
 
+    /**
+     * Renders the complete checkbox grid HTML.
+     * Uses sequences for efficient rendering of large numbers of checkboxes.
+     */
     private fun HtmlBlockTag.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
-            // If the number is high it is really imporant to have this as a sequence to start
-            // sending data to the client and not wait for the whole thing to be done.
+            // Use sequences for efficient streaming of large datasets to the client
             generateSequence(0) { it + 1 }
                 .takeWhile { it <= (numberOfBoxes / batchSize) - 1 }
                 .forEach { batchNumber ->
                     span {
-                        /*
-                         * There are pros and cons to have SSE and PUT on the same element.
-                         * It basically means that you will get two DOM updates, one for the
-                         * response from the PUT and one from the SSE Event. But it shouldn't
-                         * be noticeable in this case.
+                        /**
+                         * The sse-swap attribute tells HTMX to replace this element's content
+                         * when an SSE event with the specified name is received.
+                         * 
+                         * Note: Having both SSE updates and PUT responses on the same element
+                         * means we'll get two DOM updates (one from the PUT response and one 
+                         * from the SSE event), but the visual effect is negligible in this case.
                          */
-                        attributes["sse-swap"] = "update-${batchNumber}" // Takes the HTML from the message and inserts
+                        attributes["sse-swap"] = "update-${batchNumber}"
 
                         renderBoxesForBatch(batchNumber)
                     }
@@ -142,6 +196,11 @@ class HtmxCheckboxDemoPage {
         }
     }
 
+    /**
+     * Renders all checkboxes for a specific batch.
+     * 
+     * @param batchNumber The batch number to render
+     */
     private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
         generateSequence(0) { it + 1 }
             .takeWhile { it <= batchSize - 1 }
@@ -151,13 +210,17 @@ class HtmxCheckboxDemoPage {
             }
     }
 
+    /**
+     * Renders a single checkbox with the appropriate HTMX attributes.
+     * 
+     * @param boxNumber The checkbox number/ID
+     * @param checkedState Whether the checkbox should be checked
+     */
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
         input(type = InputType.checkBox) {
             attributes["hx-put"] = "checkboxes/$boxNumber"
-
             checked = checkedState
             id = "$boxNumber"
         }
     }
-
 }

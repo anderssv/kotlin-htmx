@@ -12,15 +12,34 @@ import no.mikill.kotlin_htmx.plugins.configureRouting
 import no.mikill.kotlin_htmx.plugins.configureSerialization
 import java.io.File
 
+/**
+ * Configuration class for the application.
+ * Loads configuration from environment variables or .env files.
+ *
+ * @property lookupApiKey API key for the lookup service
+ */
 data class ApplicationConfig(
     val lookupApiKey: String
 ) {
-
     companion object {
+        /**
+         * Loads the application configuration from environment variables or .env files.
+         * Environment variables take precedence over .env file values.
+         *
+         * @return Configured ApplicationConfig instance
+         * @throws IllegalStateException if required configuration values are missing
+         */
         fun load(): ApplicationConfig {
-            // Private
+            /**
+             * Gets a value from environment variables or the provided map.
+             * Environment variables take precedence.
+             *
+             * @param key The configuration key to look up
+             * @return The value for the key
+             * @throws IllegalStateException if the key is not found in either source
+             */
             fun Map<String, String>.envOrLookup(key: String): String {
-                return System.getenv(key) ?: this[key] ?: throw IllegalStateException("Missing '$key' in either env ofr env file")
+                return System.getenv(key) ?: this[key] ?: throw IllegalStateException("Missing '$key' in either env or env file")
             }
 
             val envVars: Map<String, String> = envFile().let { envFile ->
@@ -36,31 +55,49 @@ data class ApplicationConfig(
                 lookupApiKey = envVars.envOrLookup("LOOKUP_API_KEY")
             )
         }
-
     }
 }
 
+/**
+ * Finds and returns the first existing environment file from the predefined list.
+ * Checks for .env.local first, then falls back to .env.default.
+ *
+ * Note: Using a default env file is convenient for testing but not recommended for production.
+ * Environment variables should always take precedence over file-based configuration.
+ *
+ * @return The first existing environment file, or null if none exists
+ */
 fun envFile(): File? {
-    // I don't really recommend having this default env file, but do it now to ease testing of example app
-    // Settings in ENV will override file always
     return listOf(".env.local", ".env.default").map { File(it) }.firstOrNull { it.exists() }
 }
 
+/**
+ * Application entry point that starts the Ktor server.
+ * Sets up development mode if specified in the environment file.
+ */
 fun main() {
-    // Have to do this before the rest of the loading of KTor. I guess it's because it does something fancy
-    // with the classloader to be able to do hot reload.
-    if (envFile()?.readText()?.contains("KTOR_DEVELOPMENT=true") == true) System.setProperty(
-        "io.ktor.development",
-        "true"
-    )
+    // Set development mode property before Ktor initialization
+    // This needs to be done early because Ktor configures the classloader for hot reloading
+    if (envFile()?.readText()?.contains("KTOR_DEVELOPMENT=true") == true) {
+        System.setProperty("io.ktor.development", "true")
+    }
+
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module).start(wait = true)
 }
 
+/**
+ * Configures the Ktor application module with all necessary components.
+ * Sets up HTTP, monitoring, serialization, routing, and compression.
+ * Initializes dependencies and configures page routes.
+ */
 fun Application.module() {
+    // Configure Ktor features
     configureHTTP()
     configureMonitoring()
     configureSerialization()
     configureRouting()
+
+    // Enable compression for better performance
     install(Compression) {
         gzip {
             priority = 1.0
@@ -73,7 +110,7 @@ fun Application.module() {
     // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
     val config = ApplicationConfig.load()
 
-    // Load pages
+    // Configure page routes with dependencies
     configurePageRoutes(
         LookupClient(config.lookupApiKey),
         ApplicationRepository()
