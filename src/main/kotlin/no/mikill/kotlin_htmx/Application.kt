@@ -10,6 +10,7 @@ import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
 import no.mikill.kotlin_htmx.plugins.configureRouting
 import no.mikill.kotlin_htmx.plugins.configureSerialization
+import org.slf4j.LoggerFactory
 import java.io.File
 
 /**
@@ -71,11 +72,20 @@ fun envFile(): File? {
     return listOf(".env.local", ".env.default").map { File(it) }.firstOrNull { it.exists() }
 }
 
+val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.ApplicationKt")!!
+
 /**
  * Application entry point that starts the Ktor server.
  * Sets up development mode if specified in the environment file.
  */
 fun main() {
+    // Print the memory configuration for debugging purposes
+    logger.info("Max memory: ${Runtime.getRuntime().maxMemory() / 1024 / 1024} MB")
+    logger.info("Total memory: ${Runtime.getRuntime().totalMemory() / 1024 / 1024} MB")
+    logger.info("Free memory: ${Runtime.getRuntime().freeMemory() / 1024 / 1024} MB")
+    logger.info("Available processors: ${Runtime.getRuntime().availableProcessors()}")
+    logger.info("Environment file: ${envFile()?.absolutePath}")
+
     // Set development mode property before Ktor initialization
     // This needs to be done early because Ktor configures the classloader for hot reloading
     if (envFile()?.readText()?.contains("KTOR_DEVELOPMENT=true") == true) {
