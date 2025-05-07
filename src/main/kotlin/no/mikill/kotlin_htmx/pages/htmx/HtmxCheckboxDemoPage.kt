@@ -68,6 +68,8 @@ class HtmxCheckboxDemoPage {
                         img(src = "https://api.qrserver.com/v1/create-qr-code/?data=https://kotlin-htmx.fly.dev/demo/htmx/checkboxes&amp;size=200x200") {
                             style = "float: right; margin-left: 20px;"
                             classes = setOf("qr-code-image")
+                            width = "200"
+                            height = "200"
                         }
                         p {
                             +"This page shows synchronization between browser windows. "
