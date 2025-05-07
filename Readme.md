@@ -94,6 +94,7 @@ https://htmx.org/essays/a-real-world-react-to-htmx-port/
 This is a small demo that I do for my presentation "Effective development with Ktor, HTML and HTMX".
 
 - Demo HTMX
+  - Remember to update memory limits in on Fly.io
   - Explain red flashing
   - Plain HTML
     - Launch http://0.0.0.0:8080/demo
