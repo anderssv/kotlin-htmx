@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.CacheControl
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
-private val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
+private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
 
 /**
  * Configures all page routes for the application.
@@ -268,9 +267,9 @@ private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: H
     // Handle reconnection by checking for Last-Event-ID header
     if (this.call.request.headers["Last-Event-ID"] != null) {
         this.send(data = "true", event = "update-all", id = UUID.randomUUID().toString())
-        logger.info("SSE Reconnect detected, sending update-all")
+        routesLogger.info("SSE Reconnect detected, sending update-all")
     } else {
-        logger.info("SSE First connection")
+        routesLogger.info("SSE First connection")
     }
 
     // Register this connection for checkbox updates
@@ -286,7 +285,7 @@ private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: H
         } catch (e: IOException) {
             alive = false
             htmxCheckboxDemoPage.unregisterOnCheckBoxNotification(this)
-            logger.debug("Detected dead connection, unregistering", e)
+            routesLogger.debug("Detected dead connection, unregistering", e)
         }
     }
 }
@@ -337,7 +336,7 @@ private suspend fun RoutingContext.handleFormSubmission(
     validator: Validator
 ) {
     val form = call.receiveParameters()
-    logger.info("Received form data: $form")
+    routesLogger.info("Received form data: $form")
 
     // Create a new application instance with default values
     val application = no.mikill.kotlin_htmx.application.Application(
