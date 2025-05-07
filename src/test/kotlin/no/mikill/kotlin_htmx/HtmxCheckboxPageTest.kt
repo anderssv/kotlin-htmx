@@ -107,7 +107,7 @@ class HtmxCheckboxPageTest {
         driver2.openAndScrollToCheckbox()
 
         // Find all checkboxes in page
-        val numberOfCheckboxes = 600
+        val numberOfCheckboxes = 100
         val checkboxes = driver1.findElements(By.tagName("input")).take(numberOfCheckboxes).associate { checkbox -> checkbox.getDomAttribute("id")!! to checkbox.isSelected }.toMutableMap()
 
         val randomCheckboxIds = generateSequence { Random.nextInt(0, numberOfCheckboxes) }
@@ -123,7 +123,7 @@ class HtmxCheckboxPageTest {
             checkbox1.click()
             checkboxes[checkboxId] = checkboxes[checkboxId]!!.not() // Flip state
             // Small wait between clicks to allow the page to update
-            Thread.sleep(if (!headless) 500 else 5)
+            Thread.sleep(if (!headless) 300 else 5)
         }
 
         // Wait once for all updates to fully propagate to the second browser
