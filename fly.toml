@@ -18,3 +18,4 @@ primary_region = 'arn'
   NUMBER_OF_BOXES = 1000
   ENABLE_HTMX = true
   LOOKUP_API_KEY = 'somekey'
+  JAVA_OPTS = '-Xmx200m'

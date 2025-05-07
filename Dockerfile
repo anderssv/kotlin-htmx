@@ -10,4 +10,4 @@ COPY --from=build /tmp/build/build/libs/kotlin-htmx-all.jar .
 
 EXPOSE 8080
 ENV TZ="Europe/Oslo"
-CMD ["java", "-jar", "kotlin-htmx-all.jar"]
+CMD java $JAVA_OPTS -jar kotlin-htmx-all.jar
