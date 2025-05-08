@@ -12,14 +12,32 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ * Demo page that showcases a simple question submission and display system using HTMX.
+ *
+ * This implementation demonstrates how to:
+ * - Create a form with HTMX attributes for submission without page reload
+ * - Handle form submission and reset the form after successful submission
+ * - Display dynamic content updates
+ * - Implement a thread-safe cache with automatic size management
+ */
 class HtmxQuestionsPage {
     private val logger = LoggerFactory.getLogger(HtmxQuestionsPage::class.java)
 
     // Maximum size of 1000 to prevent DDoS attacks
     private val MAX_QUESTIONS = 1000
 
-    // Using LinkedHashMap with a maximum size specified at creation time
-    // Wrapped in Collections.synchronizedMap for thread safety
+    /**
+     * Thread-safe question storage with automatic eviction of oldest entries.
+     * 
+     * Uses:
+     * - LinkedHashMap with access-order to track usage (true in the constructor)
+     * - Collections.synchronizedMap for thread safety
+     * - Custom removeEldestEntry implementation to limit the maximum size
+     * 
+     * This approach provides an efficient LRU (Least Recently Used) cache
+     * that automatically removes the oldest questions when the maximum size is reached.
+     */
     private val questions =
         Collections.synchronizedMap(object : LinkedHashMap<UUID, Question>(MAX_QUESTIONS, 0.75f, true) {
             override fun removeEldestEntry(eldest: MutableMap.MutableEntry<UUID, Question>?): Boolean {
@@ -27,12 +45,29 @@ class HtmxQuestionsPage {
             }
         })
 
+    /**
+     * Data class representing a question submitted by a user.
+     *
+     * @property id Unique identifier for the question, defaults to a random UUID
+     * @property text The content of the question
+     * @property timestamp When the question was submitted, defaults to current time
+     */
     data class Question(
         val id: UUID = UUID.randomUUID(),
         val text: String,
         val timestamp: ZonedDateTime = ZonedDateTime.now()
     )
 
+    /**
+     * Renders the complete questions page with a submission form and list of existing questions.
+     * 
+     * This method sets up:
+     * - The page header with title and description
+     * - A question submission form with HTMX attributes for dynamic submission
+     * - A list of existing questions
+     *
+     * @param context The routing context for the request
+     */
     suspend fun renderQuestionsPage(context: RoutingContext) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "HTMX Questions Page")) {
@@ -55,6 +90,8 @@ class HtmxQuestionsPage {
                                 h2 { +"Ask a Question" }
                                 form {
                                     id = "question-form"
+                                    // HTMX event handler to reset the form after successful submission
+                                    // This allows users to submit multiple questions without manually clearing the form
                                     attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
 
                                     div {
@@ -69,6 +106,11 @@ class HtmxQuestionsPage {
                                         button(type = ButtonType.submit) {
                                             id = "submit-button"
                                             style = "padding: 8px 16px;"
+                                            // HTMX attributes for form submission:
+                                            // - hx-post: The endpoint to submit the form data to
+                                            // - hx-target: The element to update with the response
+                                            // - hx-swap: How to insert the response (replace the inner HTML)
+                                            // - hx-indicator: The element to show during the request (loading indicator)
                                             attributes["hx-post"] = "questions/submit"
                                             attributes["hx-target"] = "#questions-list"
                                             attributes["hx-swap"] = "innerHTML"
@@ -100,6 +142,18 @@ class HtmxQuestionsPage {
         }
     }
 
+    /**
+     * Handles the submission of a new question from the form.
+     * 
+     * This method:
+     * 1. Extracts the question text from the form parameters
+     * 2. Validates that the question is not empty
+     * 3. Creates a new Question object with a unique ID
+     * 4. Adds the question to the thread-safe cache
+     * 5. Responds with an updated HTML fragment of the questions list
+     *
+     * @param context The routing context for the request
+     */
     suspend fun handleQuestionSubmission(context: RoutingContext) {
         with(context) {
             val formParameters = call.receiveParameters()
@@ -126,6 +180,19 @@ class HtmxQuestionsPage {
         }
     }
 
+    /**
+     * Renders the list of submitted questions as HTML.
+     * 
+     * This method:
+     * - Shows a message if no questions have been submitted yet
+     * - Otherwise, displays questions in a styled unordered list
+     * - Sorts questions by timestamp (newest first)
+     * - Formats each question with text and submission time
+     * 
+     * The HTML generated by this method is returned as a fragment
+     * when a new question is submitted, allowing for dynamic updates
+     * without a full page reload.
+     */
     private fun FlowContent.renderQuestionsList() {
         if (questions.isEmpty()) {
             p { +"No questions have been asked yet. Be the first to ask a question!" }

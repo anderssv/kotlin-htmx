@@ -11,8 +11,25 @@ import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Demo page that showcases multiple frontend frameworks working together on a single page.
+ *
+ * This class demonstrates how to integrate different frontend technologies:
+ * - Plain HTML
+ * - HTMX for dynamic content
+ * - Lit Element (Web Components)
+ * - React
+ *
+ * Each framework implements the same todolist functionality, allowing for
+ * comparison of different approaches to the same problem.
+ */
 class MultiTodoDemoPage {
 
+    /**
+     * Renders the multi-framework demo page with all four implementations.
+     *
+     * @param context The routing context for the request
+     */
     suspend fun renderMultiJsPage(context: RoutingContext) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Multi frameworks demo")) {
@@ -29,8 +46,18 @@ class MultiTodoDemoPage {
                 }
                 mainSectionTemplate {
                     emptyContentWrapper {
+                        // Section 1: Plain HTML implementation of the todolist
+                        // This uses server-side rendering with no JavaScript
                         htmlTodolistSectionContent()
+
+                        // Section 2: HTMX implementation of the todolist
+                        // This uses HTMX for dynamic content loading with minimal JavaScript
+                        // - loadDelay: 5 seconds client-side delay to demonstrate staggered loading
+                        // - backendDelay: 5 seconds simulated delay on the backend
                         htmxTodolistSectionContent(loadDelay = 5.seconds, backendDelay = 5.seconds)
+
+                        // Section 3: Lit Element implementation (Web Components)
+                        // This uses modern Web Components for a reusable custom element
                         section {
                             h1 { +"Lit Element" }
                             div {
@@ -39,23 +66,30 @@ class MultiTodoDemoPage {
                                     src = "/script/lit-script.js"
                                     type = "module"
                                 }
+                                // Custom element defined in the lit-script.js file
+                                // Note: Using unsafe is necessary for custom elements in kotlinx.html
                                 unsafe { raw("<my-element></my-element>") } // TODO: How is this done without unsafe?
                             }
                         }
+
+                        // Section 4: React implementation
+                        // This uses React with Babel for JSX transformation
                         section {
                             h1 { +"React Element" }
                             div {
-                                id = "react-content"
+                                id = "react-content" // Target div for React to render into
                                 style = BOX_STYLE
                                 script {
+                                    // Babel is needed for JSX transformation
                                     src = "https://unpkg.com/@babel/standalone/babel.min.js"
                                 }
                                 script {
+                                    // React script that will replace the "React not loaded" text
                                     src = "/script/react-script.js"
                                     type = "text/babel"
                                     attributes["data-type"] = "module"
                                 }
-                                +"React not loaded"
+                                +"React not loaded" // Fallback text if React fails to load
                             }
                         }
                     }
