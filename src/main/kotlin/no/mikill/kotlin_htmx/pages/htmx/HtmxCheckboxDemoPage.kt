@@ -31,8 +31,8 @@ class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 1000000
-    private val initialBoxes = 2000
-    private val batchSize = 1000
+    private val initialBoxes = 2000.let { if (numberOfBoxes > it) it else numberOfBoxes / 2 }
+    private val batchSize = initialBoxes / 4
     private val numberOfBatches = numberOfBoxes / batchSize
 
     /**
