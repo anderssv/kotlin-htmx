@@ -124,7 +124,7 @@ class HtmxCheckboxDemoPage {
             id = "end-of-list"
             attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
             attributes["hx-trigger"] = "revealed"
-            attributes["hx-swap"] = "afterend"
+            attributes["hx-swap"] = "outerHTML"
         }
     }
 
