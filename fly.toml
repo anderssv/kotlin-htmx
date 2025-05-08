@@ -15,7 +15,7 @@ primary_region = 'arn'
   processes = ['app']
 
 [env]
-  NUMBER_OF_BOXES = 1000
+  NUMBER_OF_BOXES = 100000
   ENABLE_HTMX = true
   LOOKUP_API_KEY = 'somekey'
   JAVA_OPTS = '-Xmx90m'
