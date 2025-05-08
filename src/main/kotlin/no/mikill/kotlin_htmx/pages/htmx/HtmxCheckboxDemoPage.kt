@@ -61,7 +61,10 @@ class HtmxCheckboxDemoPage {
             id = "checkbox-counter"
             p { +"Max boxes: $numberOfBoxes" }
             p { +"Batch size: $batchSize" }
-            p { +"Loaded in browser: LOADED_IN_BROWSER" }
+            p { 
+                id = "loaded-counter"
+                +"Loaded in browser: 0" 
+            }
         }
 
         div(classes = "checkbox-container") {
@@ -204,6 +207,61 @@ class HtmxCheckboxDemoPage {
                                 attributes["hx-trigger"] = "sse:update-all"
 
                                 renderBoxGridHtml()
+                            }
+                        }
+
+                        // Add JavaScript to count checkboxes and update the counter
+                        script {
+                            unsafe {
+                                raw(
+                                    """
+                                    // Function to count checkboxes and update the counter
+                                    function updateCheckboxCounter() {
+                                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                                        const counter = document.getElementById('loaded-counter');
+                                        if (counter) {
+                                            counter.textContent = 'Loaded in browser: ' + checkboxes.length;
+                                        }
+                                    }
+
+                                    // Initial count
+                                    updateCheckboxCounter();
+
+                                    // Set up a MutationObserver to detect when new checkboxes are loaded
+                                    const observer = new MutationObserver(function(mutations) {
+                                        let shouldUpdate = false;
+
+                                        // Check if any of the mutations added checkboxes
+                                        mutations.forEach(function(mutation) {
+                                            if (mutation.type === 'childList') {
+                                                mutation.addedNodes.forEach(function(node) {
+                                                    if (node.nodeName === 'INPUT' && node.type === 'checkbox') {
+                                                        shouldUpdate = true;
+                                                    } else if (node.querySelectorAll) {
+                                                        // Check for checkboxes in added subtrees
+                                                        const checkboxes = node.querySelectorAll('input[type="checkbox"]');
+                                                        if (checkboxes.length > 0) {
+                                                            shouldUpdate = true;
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                        // Update the counter if checkboxes were added
+                                        if (shouldUpdate) {
+                                            updateCheckboxCounter();
+                                        }
+                                    });
+
+                                    // Start observing the document with the configured parameters
+                                    observer.observe(document.body, { childList: true, subtree: true });
+
+                                    // Also update when HTMX completes a request (for infinite scrolling)
+                                    document.body.addEventListener('htmx:afterOnLoad', updateCheckboxCounter);
+                                    document.body.addEventListener('htmx:afterSettle', updateCheckboxCounter);
+                                    """.trimIndent()
+                                )
                             }
                         }
                     }
