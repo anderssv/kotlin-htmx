@@ -123,7 +123,7 @@ class HtmxCheckboxPageTest {
             checkbox1.click()
             checkboxes[checkboxId] = checkboxes[checkboxId]!!.not() // Flip state
             // Small wait between clicks to allow the page to update
-            Thread.sleep(if (!headless) 300 else 5)
+            Thread.sleep(if (!headless) 300 else 10)
         }
 
         // Wait once for all updates to fully propagate to the second browser
