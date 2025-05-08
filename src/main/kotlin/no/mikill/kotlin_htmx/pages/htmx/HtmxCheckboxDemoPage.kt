@@ -25,6 +25,7 @@ import kotlin.random.Random
  * - Synchronize state across multiple clients
  * - Handle connection management and cleanup
  * - Batch updates for performance optimization
+ * - Implement infinite scrolling for large datasets
  */
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
@@ -48,13 +49,105 @@ class HtmxCheckboxDemoPage {
     private var connectedListeners: MutableList<ServerSSESession> = Collections.synchronizedList(mutableListOf())
 
     /**
-     * Renders just the grid of checkboxes as an HTML fragment.
-     * Used for full refreshes of the checkbox grid.
+     * Renders the complete checkbox grid HTML.
+     * Uses sequences for efficient rendering of large numbers of checkboxes.
      */
-    suspend fun renderBoxGridFragment(context: RoutingContext) {
-        with(context) {
-            call.respondHtmlFragment {
-                renderBoxGridHtml()
+    private fun HtmlBlockTag.renderBoxGridHtml() {
+        div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
+        div(classes = "checkbox-container") {
+            // Use sequences for efficient streaming of large datasets to the client
+            val initialBatches = initialBoxes / batchSize
+            generateSequence(0) { it + 1 }
+                .take(initialBatches)
+                .forEach { batchNumber ->
+                    renderBatchSpan(batchNumber)
+                }
+            
+            // Add sentinel element for infinite scroll
+            div {
+                id = "end-of-list"
+                attributes["hx-get"] = "checkboxes/batch/$initialBatches"
+                attributes["hx-trigger"] = "revealed"
+                attributes["hx-swap"] = "afterend"
+            }
+        }
+    }
+
+    /**
+     * Renders a span containing a batch of checkboxes with appropriate HTMX attributes.
+     */
+    private fun HtmlBlockTag.renderBatchSpan(batchNumber: Int) {
+        span {
+            id = "batch-$batchNumber"
+            attributes["sse-swap"] = "update-$batchNumber"
+            
+            renderBoxesForBatch(batchNumber)
+        }
+    }
+
+    /**
+     * Renders all checkboxes for a specific batch.
+     */
+    private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
+        generateSequence(0) { it + 1 }
+            .takeWhile { it <= batchSize - 1 }
+            .forEach {
+                val checkBoxNumber = batchNumber * batchSize + it
+                renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
+            }
+    }
+
+    /**
+     * Renders a single checkbox with the appropriate HTMX attributes.
+     */
+    private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
+        input(type = InputType.checkBox) {
+            attributes["hx-put"] = "checkboxes/$boxNumber"
+            checked = checkedState
+            id = "$boxNumber"
+        }
+    }
+
+    /**
+     * Renders the next batch of checkboxes for infinite scrolling.
+     */
+    suspend fun renderBoxBatch(context: RoutingContext) {
+        val batchNumber = context.call.pathParameters["batchNumber"]!!.toInt()
+        
+        context.call.respondHtmlFragment {
+            // Render the current batch
+            renderBatchSpan(batchNumber)
+            
+            // Add new sentinel element if there are more batches
+            if (batchNumber < numberOfBatches - 1) {
+                div {
+                    id = "end-of-list"
+                    attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
+                    attributes["hx-trigger"] = "revealed"
+                    attributes["hx-swap"] = "afterend"
+                }
+            }
+        }
+    }
+
+    /**
+     * Broadcasts an update for a specific batch to all connected clients.
+     * Also handles cleanup of dead connections.
+     */
+    private suspend fun broadcastUpdate(batchNumber: Int) {
+        val iterator = connectedListeners.iterator()
+        while (iterator.hasNext()) {
+            try {
+                iterator.next().send(
+                    partialHtml {
+                        renderBoxesForBatch(batchNumber)
+                    },
+                    "update-$batchNumber",
+                    UUID.randomUUID().toString()
+                )
+            } catch (e: IOException) {
+                logger.info("Dead connection detected, unregistering", e)
+                iterator.remove()
             }
         }
     }
@@ -112,9 +205,19 @@ class HtmxCheckboxDemoPage {
     }
 
     /**
+     * Renders just the grid of checkboxes as an HTML fragment.
+     * Used for full refreshes of the checkbox grid.
+     */
+    suspend fun renderBoxGridFragment(context: RoutingContext) {
+        with(context) {
+            call.respondHtmlFragment {
+                renderBoxGridHtml()
+            }
+        }
+    }
+
+    /**
      * Handles a checkbox toggle request, updates the state, and broadcasts the change to all connected clients.
-     *
-     * @param context The routing context containing the request information
      */
     suspend fun handleCheckboxToggle(context: RoutingContext) {
         val boxNumber = context.call.pathParameters["boxNumber"]!!.toInt()
@@ -131,33 +234,7 @@ class HtmxCheckboxDemoPage {
     }
 
     /**
-     * Broadcasts an update for a specific batch to all connected clients.
-     * Also handles cleanup of dead connections.
-     *
-     * @param batchNumber The batch number to update
-     */
-    private suspend fun broadcastUpdate(batchNumber: Int) {
-        val iterator = connectedListeners.iterator()
-        while (iterator.hasNext()) {
-            try {
-                iterator.next().send(
-                    partialHtml {
-                        renderBoxesForBatch(batchNumber)
-                    },
-                    "update-$batchNumber",
-                    UUID.randomUUID().toString()
-                )
-            } catch (e: IOException) {
-                logger.info("Dead connection detected, unregistering", e)
-                iterator.remove()
-            }
-        }
-    }
-
-    /**
      * Registers a new SSE session for checkbox update notifications.
-     *
-     * @param session The SSE session to register
      */
     fun registerOnCheckBoxNotification(session: ServerSSESession) {
         connectedListeners.add(session)
@@ -165,117 +242,8 @@ class HtmxCheckboxDemoPage {
 
     /**
      * Unregisters an SSE session when the connection is closed.
-     *
-     * @param session The SSE session to unregister
      */
     fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
         this.connectedListeners.remove(session)
-    }
-
-    /**
-     * Renders the complete checkbox grid HTML.
-     * Uses sequences for efficient rendering of large numbers of checkboxes.
-     */
-    private fun HtmlBlockTag.renderBoxGridHtml() {
-        div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
-        div {
-            // Use sequences for efficient streaming of large datasets to the client
-            val numberOfBatches = initialBoxes / batchSize
-            generateSequence(0) { it + 1 }
-                .take(numberOfBatches)
-                .forEach { batchNumber ->
-                    span {
-                        if (batchNumber > numberOfBatches - 2) {
-                            attributes["hx-trigger"] = "revealed"
-                            attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
-                            attributes["hx-target"] = "#end-of-list"
-                            attributes["hx-swap"] = "outerHTML"
-                        }
-
-                        /**
-                         * The sse-swap attribute tells HTMX to replace this element's content
-                         * when an SSE event with the specified name is received.
-                         *
-                         * Note: Having both SSE updates and PUT responses on the same element
-                         * means we'll get two DOM updates (one from the PUT response and one
-                         * from the SSE event), but the visual effect is negligible in this case.
-                         */
-                        attributes["sse-swap"] = "update-${batchNumber}"
-
-                        renderBoxesForBatch(batchNumber)
-                    }
-                }
-            span {
-                id = "end-of-list"
-            }
-        }
-    }
-
-    /**
-     * Renders all checkboxes for a specific batch.
-     *
-     * @param batchNumber The batch number to render
-     */
-    private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
-        generateSequence(0) { it + 1 }
-            .takeWhile { it <= batchSize - 1 }
-            .forEach {
-                val checkBoxNumber = batchNumber * batchSize + it
-                renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
-            }
-    }
-
-    /**
-     * Renders a single checkbox with the appropriate HTMX attributes.
-     *
-     * @param boxNumber The checkbox number/ID
-     * @param checkedState Whether the checkbox should be checked
-     */
-    private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
-        input(type = InputType.checkBox) {
-            attributes["hx-put"] = "checkboxes/$boxNumber"
-            checked = checkedState
-            id = "$boxNumber"
-        }
-    }
-
-    suspend fun renderBoxBatch(context: RoutingContext) {
-        val batchNumber = context.call.pathParameters["batchNumber"]!!.toInt()
-        val start = batchNumber * batchSize
-        val end = start + batchSize
-
-        context.call.respondHtmlFragment {
-            newBatch(batchNumber, start, end)
-        }
-    }
-
-    private fun BODY.newBatch(batchNumber: Int, start: Int, end: Int) {
-        span {
-            if (batchNumber < numberOfBatches - 1) {
-                attributes["hx-trigger"] = "revealed"
-                attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
-                attributes["hx-target"] = "#end-of-list"
-                attributes["hx-swap"] = "outerHTML"
-            }
-
-            /**
-             * The sse-swap attribute tells HTMX to replace this element's content
-             * when an SSE event with the specified name is received.
-             *
-             * Note: Having both SSE updates and PUT responses on the same element
-             * means we'll get two DOM updates (one from the PUT response and one
-             * from the SSE event), but the visual effect is negligible in this case.
-             */
-            attributes["sse-swap"] = "update-${batchNumber}"
-
-            generateSequence(start) { it + 1 }
-                .takeWhile { it < end }
-                .forEach {
-                    renderCheckbox(it, checkboxState[it])
-                }
-        }
-        span {
-            id = "end-of-list"
-        }
     }
 }
