@@ -52,8 +52,18 @@ class HtmxCheckboxDemoPage {
      * Renders the complete checkbox grid HTML.
      * Uses sequences for efficient rendering of large numbers of checkboxes.
      */
+
     private fun HtmlBlockTag.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
+
+        // Add the checkbox counter that will always be visible
+        div(classes = "checkbox-counter") {
+            id = "checkbox-counter"
+            p { +"Max boxes: $numberOfBoxes" }
+            p { +"Batch size: $batchSize" }
+            p { +"Loaded in browser: LOADED_IN_BROWSER" }
+        }
+
         div(classes = "checkbox-container") {
             // Use sequences for efficient streaming of large datasets to the client
             val initialBatches = initialBoxes / batchSize

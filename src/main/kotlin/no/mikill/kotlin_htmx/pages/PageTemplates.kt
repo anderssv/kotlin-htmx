@@ -209,6 +209,23 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                             to { opacity: 1; transform: translateY(0); }
                         }
 
+                        /* Floating checkbox counter box */
+                        .checkbox-counter {
+                            & p {
+                                margin: 0;
+                                color: white;
+                            }
+                            position: fixed;
+                            bottom: 20px;
+                            right: 20px;
+                            background-color: #4361ee;
+                            padding: 10px 15px;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                            z-index: 1000;
+                            font-size: 0.8rem;
+                        }
+
                         /* Responsive styles - hide QR code image on small screens */
                         @media (max-width: 800px) {
                             .qr-code-image {
