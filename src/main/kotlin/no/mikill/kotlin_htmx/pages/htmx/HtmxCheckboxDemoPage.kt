@@ -61,9 +61,9 @@ class HtmxCheckboxDemoPage {
             id = "checkbox-counter"
             p { +"Max boxes: $numberOfBoxes" }
             p { +"Batch size: $batchSize" }
-            p { 
+            p {
                 id = "loaded-counter"
-                +"Loaded in browser: 0" 
+                +"Loaded in browser: 0"
             }
         }
 
@@ -86,6 +86,15 @@ class HtmxCheckboxDemoPage {
     private fun HtmlBlockTag.renderBatchSpan(batchNumber: Int) {
         span {
             id = "batch-$batchNumber"
+
+            /**
+             * The sse-swap attribute tells HTMX to replace this element's content
+             * when an SSE event with the specified name is received.
+             *
+             * Note: Having both SSE updates and PUT responses on the same element
+             * means we'll get two DOM updates (one from the PUT response and one
+             * from the SSE event), but the visual effect is negligible in this case.
+             */
             attributes["sse-swap"] = "update-$batchNumber"
 
             renderBoxesForBatch(batchNumber)
