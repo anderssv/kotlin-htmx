@@ -29,8 +29,10 @@ import kotlin.random.Random
 class HtmxCheckboxDemoPage {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
-    private val batchSize = 1
-    private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 10000
+    private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 1000000
+    private val initialBoxes = 1000
+    private val batchSize = 100
+    private val numberOfBatches = numberOfBoxes / batchSize
 
     /**
      * In-memory state storage for checkbox states.
@@ -111,7 +113,7 @@ class HtmxCheckboxDemoPage {
 
     /**
      * Handles a checkbox toggle request, updates the state, and broadcasts the change to all connected clients.
-     * 
+     *
      * @param context The routing context containing the request information
      */
     suspend fun handleCheckboxToggle(context: RoutingContext) {
@@ -131,7 +133,7 @@ class HtmxCheckboxDemoPage {
     /**
      * Broadcasts an update for a specific batch to all connected clients.
      * Also handles cleanup of dead connections.
-     * 
+     *
      * @param batchNumber The batch number to update
      */
     private suspend fun broadcastUpdate(batchNumber: Int) {
@@ -154,7 +156,7 @@ class HtmxCheckboxDemoPage {
 
     /**
      * Registers a new SSE session for checkbox update notifications.
-     * 
+     *
      * @param session The SSE session to register
      */
     fun registerOnCheckBoxNotification(session: ServerSSESession) {
@@ -163,7 +165,7 @@ class HtmxCheckboxDemoPage {
 
     /**
      * Unregisters an SSE session when the connection is closed.
-     * 
+     *
      * @param session The SSE session to unregister
      */
     fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
@@ -178,16 +180,24 @@ class HtmxCheckboxDemoPage {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
         div {
             // Use sequences for efficient streaming of large datasets to the client
+            val numberOfBatches = initialBoxes / batchSize
             generateSequence(0) { it + 1 }
-                .takeWhile { it <= (numberOfBoxes / batchSize) - 1 }
+                .take(numberOfBatches)
                 .forEach { batchNumber ->
                     span {
+                        if (batchNumber > numberOfBatches - 2) {
+                            attributes["hx-trigger"] = "revealed"
+                            attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
+                            attributes["hx-target"] = "#end-of-list"
+                            attributes["hx-swap"] = "outerHTML"
+                        }
+
                         /**
                          * The sse-swap attribute tells HTMX to replace this element's content
                          * when an SSE event with the specified name is received.
-                         * 
+                         *
                          * Note: Having both SSE updates and PUT responses on the same element
-                         * means we'll get two DOM updates (one from the PUT response and one 
+                         * means we'll get two DOM updates (one from the PUT response and one
                          * from the SSE event), but the visual effect is negligible in this case.
                          */
                         attributes["sse-swap"] = "update-${batchNumber}"
@@ -195,12 +205,15 @@ class HtmxCheckboxDemoPage {
                         renderBoxesForBatch(batchNumber)
                     }
                 }
+            span {
+                id = "end-of-list"
+            }
         }
     }
 
     /**
      * Renders all checkboxes for a specific batch.
-     * 
+     *
      * @param batchNumber The batch number to render
      */
     private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
@@ -214,7 +227,7 @@ class HtmxCheckboxDemoPage {
 
     /**
      * Renders a single checkbox with the appropriate HTMX attributes.
-     * 
+     *
      * @param boxNumber The checkbox number/ID
      * @param checkedState Whether the checkbox should be checked
      */
@@ -223,6 +236,46 @@ class HtmxCheckboxDemoPage {
             attributes["hx-put"] = "checkboxes/$boxNumber"
             checked = checkedState
             id = "$boxNumber"
+        }
+    }
+
+    suspend fun renderBoxBatch(context: RoutingContext) {
+        val batchNumber = context.call.pathParameters["batchNumber"]!!.toInt()
+        val start = batchNumber * batchSize
+        val end = start + batchSize
+
+        context.call.respondHtmlFragment {
+            newBatch(batchNumber, start, end)
+        }
+    }
+
+    private fun BODY.newBatch(batchNumber: Int, start: Int, end: Int) {
+        span {
+            if (batchNumber < numberOfBatches - 1) {
+                attributes["hx-trigger"] = "revealed"
+                attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
+                attributes["hx-target"] = "#end-of-list"
+                attributes["hx-swap"] = "outerHTML"
+            }
+
+            /**
+             * The sse-swap attribute tells HTMX to replace this element's content
+             * when an SSE event with the specified name is received.
+             *
+             * Note: Having both SSE updates and PUT responses on the same element
+             * means we'll get two DOM updates (one from the PUT response and one
+             * from the SSE event), but the visual effect is negligible in this case.
+             */
+            attributes["sse-swap"] = "update-${batchNumber}"
+
+            generateSequence(start) { it + 1 }
+                .takeWhile { it < end }
+                .forEach {
+                    renderCheckbox(it, checkboxState[it])
+                }
+        }
+        span {
+            id = "end-of-list"
         }
     }
 }

@@ -246,6 +246,11 @@ private fun Route.configureHtmxRoutes() {
                 htmxCheckboxDemoPage.renderBoxGridFragment(this)
             }
 
+            get("/batch/{batchNumber}") {
+                htmxCheckboxDemoPage.renderBoxBatch(this)
+                htmxCheckboxDemoPage.renderBoxGridFragment(this)
+            }
+
             put("{boxNumber}") {
                 htmxCheckboxDemoPage.handleCheckboxToggle(this)
             }

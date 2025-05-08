@@ -14,7 +14,6 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
-import kotlin.math.exp
 import kotlin.random.Random
 
 
@@ -106,7 +105,8 @@ class HtmxCheckboxPageTest {
         driver1.openAndScrollToCheckbox()
         driver2.openAndScrollToCheckbox()
 
-        // Find all checkboxes in page
+        // Find subset of boxes to test with
+        // TODO: This probably doesn't work if we use infinite scroll batches are smaller than 100
         val numberOfCheckboxes = 100
         val checkboxes = driver1.findElements(By.tagName("input")).take(numberOfCheckboxes).associate { checkbox -> checkbox.getDomAttribute("id")!! to checkbox.isSelected }.toMutableMap()
 
