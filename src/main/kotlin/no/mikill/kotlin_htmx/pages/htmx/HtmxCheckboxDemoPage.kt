@@ -62,14 +62,8 @@ class HtmxCheckboxDemoPage {
                 .forEach { batchNumber ->
                     renderBatchSpan(batchNumber)
                 }
-            
-            // Add sentinel element for infinite scroll
-            div {
-                id = "end-of-list"
-                attributes["hx-get"] = "checkboxes/batch/$initialBatches"
-                attributes["hx-trigger"] = "revealed"
-                attributes["hx-swap"] = "afterend"
-            }
+
+            endOfListTrigger(initialBatches - 1)
         }
     }
 
@@ -80,7 +74,7 @@ class HtmxCheckboxDemoPage {
         span {
             id = "batch-$batchNumber"
             attributes["sse-swap"] = "update-$batchNumber"
-            
+
             renderBoxesForBatch(batchNumber)
         }
     }
@@ -113,20 +107,24 @@ class HtmxCheckboxDemoPage {
      */
     suspend fun renderBoxBatch(context: RoutingContext) {
         val batchNumber = context.call.pathParameters["batchNumber"]!!.toInt()
-        
+
         context.call.respondHtmlFragment {
             // Render the current batch
             renderBatchSpan(batchNumber)
-            
+
             // Add new sentinel element if there are more batches
             if (batchNumber < numberOfBatches - 1) {
-                div {
-                    id = "end-of-list"
-                    attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
-                    attributes["hx-trigger"] = "revealed"
-                    attributes["hx-swap"] = "afterend"
-                }
+                endOfListTrigger(batchNumber)
             }
+        }
+    }
+
+    private fun HtmlBlockTag.endOfListTrigger(batchNumber: Int) {
+        span {
+            id = "end-of-list"
+            attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
+            attributes["hx-trigger"] = "revealed"
+            attributes["hx-swap"] = "afterend"
         }
     }
 
