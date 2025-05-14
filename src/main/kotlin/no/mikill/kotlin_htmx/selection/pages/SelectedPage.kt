@@ -1,6 +1,9 @@
 package no.mikill.kotlin_htmx.selection.pages
 
+import io.ktor.http.CacheControl
+import io.ktor.http.HttpHeaders
 import io.ktor.server.html.*
+import io.ktor.server.response.header
 import io.ktor.server.routing.*
 import kotlinx.html.id
 import kotlinx.html.img
@@ -17,6 +20,7 @@ import kotlin.collections.single
 class SelectedPage {
     suspend fun renderPage(context: RoutingContext) {
         with(context) {
+            call.response.header(HttpHeaders.CacheControl, CacheControl.MaxAge(maxAgeSeconds = 30).toString())
             val selected = items.single { it.name.equals(call.parameters["itemName"], ignoreCase = true) }
             call.respondHtmlTemplate(MainTemplate(template = SelectionTemplate(), "Select Selected ${selected.name}")) {
                 mainSectionTemplate {
