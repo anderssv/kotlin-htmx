@@ -142,9 +142,7 @@ object HtmlElements {
         a(href = linkUrl, classes = "box") {
             boostAndPreload()
 
-            img(
-                src = imageUrl, alt = "Choose $name"
-            ) { width = "100px" }
+            img(src = imageUrl, alt = "Choose $name") { width = "100px" }
             p { +name }
         }
     }
@@ -158,8 +156,8 @@ object HtmlElements {
         attributes["hx-boost"] = true.toString() // Add to avoid scrolling to top
         attributes["hx-select"] = "#mainContent"
         attributes["hx-target"] = "#mainContent"
-        attributes["hx-swap"] = "outerHTML"
-        // attributes["hx-swap"] = "outerHTML show:window:top" // Makes sure the window scrolls to the top
+        //attributes["hx-swap"] = "outerHTML"
+        attributes["hx-swap"] = "outerHTML show:window:top" // Makes sure the window scrolls to the top
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {
