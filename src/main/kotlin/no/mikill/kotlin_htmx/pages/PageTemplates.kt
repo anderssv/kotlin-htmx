@@ -213,20 +213,21 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                         .checkbox-counter {
                             & p {
                                 margin: 0;
-                                color: white;
+                                pointer-events: none; /* Ensure paragraphs also don't intercept clicks */
                             }
                             position: fixed;
                             bottom: 20px;
                             right: 20px;
-                            background-color: #4361ee;
+                            border-color: #005e7d;
                             padding: 10px 15px;
                             border-radius: 8px;
                             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                             z-index: 1000;
                             font-size: 0.8rem;
+                            pointer-events: none; /* Allow clicks to pass through to elements underneath */
                         }
 
-                        /* Responsive styles - hide QR code image on small screens */
+                        /* Responsive styles - hide QR code image */
                         @media (max-width: 800px) {
                             .qr-code-image {
                                 display: none;

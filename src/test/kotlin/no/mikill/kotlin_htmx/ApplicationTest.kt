@@ -12,7 +12,7 @@ class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
         application {
-            module(1000)
+            module()
         }
         client.get("/select").apply {
             assertEquals(HttpStatusCode.OK, status)

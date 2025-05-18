@@ -39,7 +39,7 @@ class HtmxCheckboxPageTest {
 
         // Start KTor server
         server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
-            module(1000)
+            module()
         }.start(wait = false)
 
         val port = runBlocking { server.engine.resolvedConnectors().first().port }

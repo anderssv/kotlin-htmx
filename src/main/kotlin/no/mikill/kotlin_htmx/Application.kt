@@ -93,9 +93,12 @@ fun main() {
         System.setProperty("io.ktor.development", "true")
     }
 
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        module(System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 100000)
-    }.start(wait = true)
+    embeddedServer(
+        Netty,
+        port = 8080,
+        host = "0.0.0.0",
+        module = Application::module
+    ).start(wait = true)
 }
 
 /**
@@ -103,7 +106,8 @@ fun main() {
  * Sets up HTTP, monitoring, serialization, routing, and compression.
  * Initializes dependencies and configures page routes.
  */
-fun Application.module(numberOfCheckboxes: Int) {
+fun Application.module() {
+    val numberOfCheckboxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 1000
     // Configure Ktor features
     configureHTTP()
     configureMonitoring()

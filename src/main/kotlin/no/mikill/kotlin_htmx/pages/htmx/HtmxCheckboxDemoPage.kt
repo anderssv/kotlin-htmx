@@ -56,7 +56,7 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
 
         // Add the checkbox counter that will always be visible
-/*        div(classes = "checkbox-counter") {
+        div(classes = "checkbox-counter") {
             id = "checkbox-counter"
             p { +"Max boxes: $numberOfBoxes" }
             p { +"Batch size: $batchSize" }
@@ -67,7 +67,6 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
         }
 
 
- */
         div(classes = "checkbox-container") {
             // Use sequences for efficient streaming of large datasets to the client
             val initialBatches = initialBoxes / batchSize
