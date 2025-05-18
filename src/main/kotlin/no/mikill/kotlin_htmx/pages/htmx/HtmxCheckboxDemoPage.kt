@@ -27,10 +27,9 @@ import kotlin.random.Random
  * - Batch updates for performance optimization
  * - Implement infinite scrolling for large datasets
  */
-class HtmxCheckboxDemoPage {
+class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
-    private val numberOfBoxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 1000000
     private val initialBoxes = 2000.let { if (numberOfBoxes > it) it else numberOfBoxes / 2 }
     private val batchSize = initialBoxes / 4
     private val numberOfBatches = numberOfBoxes / batchSize
@@ -57,7 +56,7 @@ class HtmxCheckboxDemoPage {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
 
         // Add the checkbox counter that will always be visible
-        div(classes = "checkbox-counter") {
+/*        div(classes = "checkbox-counter") {
             id = "checkbox-counter"
             p { +"Max boxes: $numberOfBoxes" }
             p { +"Batch size: $batchSize" }
@@ -67,6 +66,8 @@ class HtmxCheckboxDemoPage {
             }
         }
 
+
+ */
         div(classes = "checkbox-container") {
             // Use sequences for efficient streaming of large datasets to the client
             val initialBatches = initialBoxes / batchSize

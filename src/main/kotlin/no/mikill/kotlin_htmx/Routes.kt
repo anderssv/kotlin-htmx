@@ -46,7 +46,9 @@ private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes
  * @param applicationRepository Repository for application data
  */
 fun Application.configurePageRoutes(
-    lookupClient: LookupClient, applicationRepository: ApplicationRepository
+    lookupClient: LookupClient,
+    applicationRepository: ApplicationRepository,
+    numberOfCheckboxes: Int
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
@@ -65,7 +67,7 @@ fun Application.configurePageRoutes(
 
         route("/demo") {
             configureDemoRoutes(
-                applicationRepository, mapper, validator
+                applicationRepository, mapper, validator, numberOfCheckboxes
             )
         }
 
@@ -184,6 +186,7 @@ private fun Route.configureDemoRoutes(
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
     validator: Validator,
+    numberOfCheckboxes: Int,
 ) {
     val adminDemoPage = AdminDemoPage()
     val multiTodoDemoPage = MultiTodoDemoPage()
@@ -195,7 +198,8 @@ private fun Route.configureDemoRoutes(
     }
 
     get("/multi") {
-        multiTodoDemoPage.renderMultiJsPage(this)
+        // todoListItems would normally be fetched from a database
+        multiTodoDemoPage.renderMultiJsPage(this, todoListItems)
     }
 
     get("/admin") {
@@ -209,15 +213,15 @@ private fun Route.configureDemoRoutes(
     }
 
     // Configure specialized demo routes
-    configureHtmxRoutes()
+    configureHtmxRoutes(numberOfCheckboxes)
     configureFormRoutes(applicationRepository, mapper, validator)
 }
 
 /**
  * Configures HTMX-specific demo routes including todolist, questions, and checkboxes
  */
-private fun Route.configureHtmxRoutes() {
-    val htmxCheckboxDemoPage = HtmxCheckboxDemoPage()
+private fun Route.configureHtmxRoutes(numberOfCheckboxes: Int) {
+    val htmxCheckboxDemoPage = HtmxCheckboxDemoPage(numberOfCheckboxes)
     val htmxTodolistDemoPage = HtmxTodolistDemoPage()
     val htmxQuestionsPage = HtmxQuestionsPage()
 
@@ -377,7 +381,8 @@ private fun Route.configureDataRoutes() {
         val delaySeconds = call.parameters["delay"]?.toInt() ?: 1
         delay(delaySeconds.seconds)
         call.respondHtmlFragment {
-            todoListHtmlContent("htmx")
+            // todoListItems would normally be fetched from a database
+            todoListHtmlContent("htmx", todoListItems)
         }
     }
 }

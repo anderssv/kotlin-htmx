@@ -30,7 +30,7 @@ class MultiTodoDemoPage {
      *
      * @param context The routing context for the request
      */
-    suspend fun renderMultiJsPage(context: RoutingContext) {
+    suspend fun renderMultiJsPage(context: RoutingContext, todoListItems: List<TodoListItem>) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Multi frameworks demo")) {
                 headerContent {
@@ -48,7 +48,7 @@ class MultiTodoDemoPage {
                     emptyContentWrapper {
                         // Section 1: Plain HTML implementation of the todolist
                         // This uses server-side rendering with no JavaScript
-                        htmlTodolistSectionContent()
+                        htmlTodolistSectionContent(todoListItems)
 
                         // Section 2: HTMX implementation of the todolist
                         // This uses HTMX for dynamic content loading with minimal JavaScript

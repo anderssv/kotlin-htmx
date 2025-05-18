@@ -40,7 +40,8 @@ data class ApplicationConfig(
              * @throws IllegalStateException if the key is not found in either source
              */
             fun Map<String, String>.envOrLookup(key: String): String {
-                return System.getenv(key) ?: this[key] ?: throw IllegalStateException("Missing '$key' in either env or env file")
+                return System.getenv(key) ?: this[key]
+                ?: throw IllegalStateException("Missing '$key' in either env or env file")
             }
 
             val envVars: Map<String, String> = envFile().let { envFile ->
@@ -92,7 +93,9 @@ fun main() {
         System.setProperty("io.ktor.development", "true")
     }
 
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        module(System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 100000)
+    }.start(wait = true)
 }
 
 /**
@@ -100,7 +103,7 @@ fun main() {
  * Sets up HTTP, monitoring, serialization, routing, and compression.
  * Initializes dependencies and configures page routes.
  */
-fun Application.module() {
+fun Application.module(numberOfCheckboxes: Int) {
     // Configure Ktor features
     configureHTTP()
     configureMonitoring()
@@ -123,6 +126,7 @@ fun Application.module() {
     // Configure page routes with dependencies
     configurePageRoutes(
         LookupClient(config.lookupApiKey),
-        ApplicationRepository()
+        ApplicationRepository(),
+        numberOfCheckboxes
     )
 }

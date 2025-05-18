@@ -14,6 +14,7 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
+import no.mikill.kotlin_htmx.todo.TodoListItem
 import no.mikill.kotlin_htmx.todo.todoListItems
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
@@ -110,17 +111,17 @@ object HtmlElements {
         }
     }
 
-    fun FlowContent.htmlTodolistSectionContent() {
+    fun FlowContent.htmlTodolistSectionContent(todoListItems: List<TodoListItem>) {
         section {
             h1 { +"HTML Element" }
             div {
                 style = BOX_STYLE
-                todoListHtmlContent("html")
+                todoListHtmlContent("html", todoListItems)
             }
         }
     }
 
-    fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String) {
+    fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String, todoListItems: List<TodoListItem>) {
         h1 { +"Todo List" }
         ul {
             id = "todo-list"

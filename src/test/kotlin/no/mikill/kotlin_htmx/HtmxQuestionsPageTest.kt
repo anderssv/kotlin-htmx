@@ -28,7 +28,7 @@ class HtmxQuestionsPageTest {
     fun setUp() {
         // Start KTor server
         server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
-            module()
+            module(1000)
         }.start(wait = false)
 
         val port = runBlocking { server.engine.resolvedConnectors().first().port }

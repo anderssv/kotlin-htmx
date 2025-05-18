@@ -34,7 +34,8 @@ class HtmlTodoDemoPage {
                         // Render the todolist section with pure HTML
                         // This uses a shared component from HtmlElements to maintain consistency
                         // across different implementations while demonstrating server-side rendering
-                        htmlTodolistSectionContent()
+                        // todoListItems would normally be feched from a database
+                        htmlTodolistSectionContent(todoListItems)
                     }
                 }
             }
