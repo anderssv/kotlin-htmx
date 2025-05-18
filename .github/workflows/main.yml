@@ -5,9 +5,23 @@ on:
       - main
 # TODO cache stuff
 jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Run tests
+        run: ./gradlew test
+
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
+    needs: test
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
