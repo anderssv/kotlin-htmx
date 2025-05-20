@@ -154,9 +154,9 @@ object HtmlElements {
         attributes["preload-images"] = true.toString()
 
         // Boosting
-        attributes["hx-boost"] = true.toString() // Add to avoid scrolling to top
-        attributes["hx-select"] = "#mainContent"
-        attributes["hx-target"] = "#mainContent"
+        attributes["hx-boost"] = true.toString()
+        attributes["hx-select"] = "#mainContent" // The DIV in the response that is inserted
+        attributes["hx-target"] = "#mainContent" // The DIV in the existing page that is replaced
         //attributes["hx-swap"] = "outerHTML"
         attributes["hx-swap"] = "outerHTML show:window:top" // Makes sure the window scrolls to the top
     }
