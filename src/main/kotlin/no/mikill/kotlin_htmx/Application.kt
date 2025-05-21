@@ -107,7 +107,7 @@ fun main() {
  * Initializes dependencies and configures page routes.
  */
 fun Application.module() {
-    val numberOfCheckboxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 1000
+    val numberOfCheckboxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 5000
     // Configure Ktor features
     configureHTTP()
     configureMonitoring()
