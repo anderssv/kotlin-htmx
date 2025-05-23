@@ -31,7 +31,7 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val initialBoxes = 2000.let { if (numberOfBoxes > it) it else numberOfBoxes / 2 }
-    private val batchSize = initialBoxes / 4
+    private val batchSize = initialBoxes / 6
     private val numberOfBatches = numberOfBoxes / batchSize
 
     /**
@@ -224,6 +224,8 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                             unsafe {
                                 raw(
                                     """
+                                    // AI generated code for demo purposes 😬
+                                        
                                     // Function to count checkboxes and update the counter
                                     function updateCheckboxCounter() {
                                         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
