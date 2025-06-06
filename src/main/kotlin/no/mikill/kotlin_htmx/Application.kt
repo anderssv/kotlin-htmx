@@ -5,6 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.compression.*
 import no.mikill.kotlin_htmx.application.ApplicationRepository
+import no.mikill.kotlin_htmx.css.PostCssTransformer
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
@@ -112,7 +113,7 @@ fun Application.module() {
     configureHTTP()
     configureMonitoring()
     configureSerialization()
-    configureRouting()
+    configureRouting(PostCssTransformer())
 
     // Enable compression for better performance
     install(Compression) {

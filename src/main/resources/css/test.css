@@ -1,0 +1,12 @@
+$primary-color: #007bff;
+$border-radius: 4px;
+
+.card {
+    background-color: $primary-color;
+    border-radius: calc($border-radius * 2);
+    
+    .header {
+        font-weight: bold;
+        transform: translateX(10px);
+    }
+}

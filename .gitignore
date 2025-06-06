@@ -39,3 +39,6 @@ out/
 .kotlin
 .fleet
 .DS_Store
+
+# Node.js dependencies
+node_modules/
