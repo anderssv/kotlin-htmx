@@ -1,9 +1,5 @@
 package no.mikill.kotlin_htmx
 
-import io.github.bonigarcia.wdm.WebDriverManager
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -11,55 +7,25 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-class HtmxQuestionsPageTest {
+class HtmxQuestionsPageTest : BaseSeleniumTest() {
 
     private lateinit var driver: WebDriver
-    private lateinit var server: EmbeddedServer<*, *>
     private val questionsPageUrl = "/demo/htmx/questions"
-    private var serverUrl: String? = null
 
     @BeforeEach
-    fun setUp() {
-        // Start KTor server
-        server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
-            module()
-        }.start(wait = false)
-
-        val port = runBlocking { server.engine.resolvedConnectors().first().port }
-        serverUrl = "http://localhost:$port"
-
-        // Set up WebDriver - removed WebDriverManager.chromedriver().setup() to avoid conflicts
-
-        // Configure Chrome options for headless mode
-        val options = ChromeOptions()
-        options.addArguments("--headless")
-        options.addArguments("--disable-gpu")
-        options.addArguments("--no-sandbox")
-        options.addArguments("--disable-dev-shm-usage")
-        options.addArguments("--disable-extensions")
-        options.addArguments("--disable-web-security")
-        options.addArguments("--user-data-dir=/tmp/chrome-user-data-${System.currentTimeMillis()}-${kotlin.random.Random.nextInt(10000, 99999)}")
-
-        // Initialize driver with options
-        driver = ChromeDriver(options)
-
-        // Set implicit wait time
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
+    override fun setUp() {
+        super.setUp()
+        driver = createWebDriver()
     }
 
     @AfterEach
-    fun tearDown() {
-        // Close the browser
+    override fun tearDown() {
         driver.quit()
-
-        // Stop the server
-        server.stop(1000, 2000)
+        super.tearDown()
     }
 
     @Test
