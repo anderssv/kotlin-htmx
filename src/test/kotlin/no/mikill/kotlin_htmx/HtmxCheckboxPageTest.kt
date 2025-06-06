@@ -5,9 +5,9 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -26,7 +26,7 @@ class HtmxCheckboxPageTest {
     private lateinit var server: EmbeddedServer<*, *>
     private var serverUrl: String? = null
 
-    @Before
+    @BeforeEach
     fun setUp() {
         fun getScreenDimensions(driver: WebDriver): Pair<Int, Int> {
             driver.manage().window().maximize()
@@ -71,7 +71,7 @@ class HtmxCheckboxPageTest {
         driver2.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         // Close the browsers
         driver1.quit()

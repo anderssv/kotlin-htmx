@@ -6,9 +6,9 @@ import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
@@ -24,7 +24,7 @@ class HtmxQuestionsPageTest {
     private val questionsPageUrl = "/demo/htmx/questions"
     private var serverUrl: String? = null
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Start KTor server
         server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
@@ -51,7 +51,7 @@ class HtmxQuestionsPageTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         // Close the browser
         driver.quit()
