@@ -1,0 +1,29 @@
+{
+  "name": "postcss-server",
+  "version": "1.0.0",
+  "description": "PostCSS setup for Ktor server",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "browserslist": [
+    "defaults",
+    "IE 11"
+  ],
+  "dependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "postcss-calc": "^9.0.1",
+    "postcss-simple-vars": "^7.0.1",
+    "postcss-nested": "^6.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.5",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^5.1.4"
+  }
+}
