@@ -7,7 +7,6 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
@@ -45,19 +44,33 @@ class HtmxCheckboxPageTest {
         val port = runBlocking { server.engine.resolvedConnectors().first().port }
         serverUrl = "http://localhost:$port"
 
-        // Set up WebDriver
-        WebDriverManager.chromedriver().setup()
+        // Set up WebDriver - removed WebDriverManager.chromedriver().setup() to avoid conflicts
 
         // Configure Chrome options for headless mode
-        val options = ChromeOptions()
-        if (headless) options.addArguments("--headless")
-        options.addArguments("--disable-gpu")
-        options.addArguments("--no-sandbox")
-        options.addArguments("--disable-dev-shm-usage")
+        val baseTimestamp = System.currentTimeMillis()
+        val randomSuffix = kotlin.random.Random.nextInt(10000, 99999)
+        
+        val options1 = ChromeOptions()
+        if (headless) options1.addArguments("--headless")
+        options1.addArguments("--disable-gpu")
+        options1.addArguments("--no-sandbox")
+        options1.addArguments("--disable-dev-shm-usage")
+        options1.addArguments("--disable-extensions")
+        options1.addArguments("--disable-web-security")
+        options1.addArguments("--user-data-dir=/tmp/chrome-user-data-${baseTimestamp}-${randomSuffix}-1")
 
-        // Initialize two drivers with options
-        driver1 = ChromeDriver(options)
-        driver2 = ChromeDriver(options)
+        val options2 = ChromeOptions()
+        if (headless) options2.addArguments("--headless")
+        options2.addArguments("--disable-gpu")
+        options2.addArguments("--no-sandbox")
+        options2.addArguments("--disable-dev-shm-usage")
+        options2.addArguments("--disable-extensions")
+        options2.addArguments("--disable-web-security")
+        options2.addArguments("--user-data-dir=/tmp/chrome-user-data-${baseTimestamp}-${randomSuffix}-2")
+
+        // Initialize two drivers with separate options
+        driver1 = ChromeDriver(options1)
+        driver2 = ChromeDriver(options2)
 
         if (!headless) { // Only bother if windows showing
             val (screenWidth, screenHeight) = getScreenDimensions(driver1)
@@ -83,7 +96,6 @@ class HtmxCheckboxPageTest {
     }
 
     @Test
-    @Disabled
     fun testHtmxCheckboxPage() {
         // Navigate to the checkbox page
         fun WebDriver.openAndScrollToCheckbox() {

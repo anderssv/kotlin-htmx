@@ -8,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
@@ -35,8 +34,7 @@ class HtmxQuestionsPageTest {
         val port = runBlocking { server.engine.resolvedConnectors().first().port }
         serverUrl = "http://localhost:$port"
 
-        // Set up WebDriver
-        WebDriverManager.chromedriver().setup()
+        // Set up WebDriver - removed WebDriverManager.chromedriver().setup() to avoid conflicts
 
         // Configure Chrome options for headless mode
         val options = ChromeOptions()
@@ -44,6 +42,9 @@ class HtmxQuestionsPageTest {
         options.addArguments("--disable-gpu")
         options.addArguments("--no-sandbox")
         options.addArguments("--disable-dev-shm-usage")
+        options.addArguments("--disable-extensions")
+        options.addArguments("--disable-web-security")
+        options.addArguments("--user-data-dir=/tmp/chrome-user-data-${System.currentTimeMillis()}-${kotlin.random.Random.nextInt(10000, 99999)}")
 
         // Initialize driver with options
         driver = ChromeDriver(options)
@@ -62,7 +63,6 @@ class HtmxQuestionsPageTest {
     }
 
     @Test
-    @Disabled
     fun testHtmxQuestionsPage() = runTest {
         // Navigate to the questions page
         driver.get(serverUrl!! + questionsPageUrl)
