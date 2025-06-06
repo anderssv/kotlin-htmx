@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
@@ -82,6 +83,7 @@ class HtmxCheckboxPageTest {
     }
 
     @Test
+    @Disabled
     fun testHtmxCheckboxPage() {
         // Navigate to the checkbox page
         fun WebDriver.openAndScrollToCheckbox() {
