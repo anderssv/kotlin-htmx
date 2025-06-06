@@ -1,10 +1,10 @@
-FROM eclipse-temurin:20 as build
+FROM eclipse-temurin:21 as build
 
 WORKDIR /tmp/build
 COPY . .
 RUN ./gradlew shadowJar
 
-FROM eclipse-temurin:20
+FROM eclipse-temurin:21
 WORKDIR /app
 COPY --from=build /tmp/build/build/libs/kotlin-htmx-all.jar .
 
