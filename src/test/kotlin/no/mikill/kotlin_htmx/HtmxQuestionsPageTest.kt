@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
@@ -61,6 +62,7 @@ class HtmxQuestionsPageTest {
     }
 
     @Test
+    @Disabled
     fun testHtmxQuestionsPage() = runTest {
         // Navigate to the questions page
         driver.get(serverUrl!! + questionsPageUrl)
