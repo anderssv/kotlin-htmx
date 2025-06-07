@@ -1,6 +1,7 @@
 $primary-color: #007bff;
 $border-radius: 4px;
 
+//noinspection CssUnusedSymbol
 .card {
     background-color: $primary-color;
     border-radius: calc($border-radius * 2);

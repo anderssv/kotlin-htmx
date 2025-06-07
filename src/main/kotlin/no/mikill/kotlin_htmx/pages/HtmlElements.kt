@@ -15,7 +15,6 @@ import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import no.mikill.kotlin_htmx.todo.TodoListItem
-import no.mikill.kotlin_htmx.todo.todoListItems
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
 import kotlin.time.Duration

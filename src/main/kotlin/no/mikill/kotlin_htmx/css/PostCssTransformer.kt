@@ -104,30 +104,30 @@ private class HandlerSLF4JBridge(val slf4jLogger: Logger) : Handler() {
             return
         }
 
-        val message = if (getFormatter() != null) getFormatter().format(record) else record.getMessage()
+        val message = if (formatter != null) formatter.format(record) else record.message
 
-        val thrown = record.getThrown()
+        val thrown = record.thrown
 
 
-        if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
+        if (record.level.intValue() >= Level.SEVERE.intValue()) {
             if (thrown != null) {
                 slf4jLogger.error(message, thrown)
             } else {
                 slf4jLogger.error(message)
             }
-        } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+        } else if (record.level.intValue() >= Level.WARNING.intValue()) {
             if (thrown != null) {
                 slf4jLogger.warn(message, thrown)
             } else {
                 slf4jLogger.warn(message)
             }
-        } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
+        } else if (record.level.intValue() >= Level.INFO.intValue()) {
             if (thrown != null) {
                 slf4jLogger.info(message, thrown)
             } else {
                 slf4jLogger.info(message)
             }
-        } else if (record.getLevel().intValue() >= Level.FINE.intValue()) {
+        } else if (record.level.intValue() >= Level.FINE.intValue()) {
             if (thrown != null) {
                 slf4jLogger.debug(message, thrown)
             } else {

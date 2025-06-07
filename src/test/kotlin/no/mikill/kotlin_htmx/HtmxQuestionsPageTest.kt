@@ -63,7 +63,6 @@ class HtmxQuestionsPageTest : BaseSeleniumTest() {
 
         // Print the current content of the questions list for debugging
         val currentContent = driver.findElement(By.id("questions-list")).text
-        System.out.println("[DEBUG_LOG] Current questions list content after submission: " + currentContent)
 
         // Verify the submitted question appears in the list
         assertThat(currentContent).contains("Asked on")
@@ -85,7 +84,6 @@ class HtmxQuestionsPageTest : BaseSeleniumTest() {
 
         // Print the current content of the questions list for debugging
         val updatedListContent = driver.findElement(By.id("questions-list")).text
-        System.out.println("[DEBUG_LOG] Updated questions list content after second submission: " + updatedListContent)
 
         // Verify both questions appear in the list
         assertThat(updatedListContent).contains(firstQuestion)
