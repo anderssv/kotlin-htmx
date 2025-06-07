@@ -26,7 +26,7 @@ https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-ja
 Separate builds for the back end and front end are manageable
 but give a worse feedback loop than actually having it all integrated.
 It is one of the benefits of frameworks like Next.js.
-But those frameworks also come with a lot of complexities in the build pipelines, but also in the runtime.
+But those frameworks also come with a lot of complexities in the build pipelines, and in the runtime.
 
 I believe this "stack" gives a simpler environment that is easier to monitor, debug and maintain over time.
 
@@ -69,6 +69,7 @@ It is then available on [http://localhost:8080](http://localhost:8080).
 I used KTor generator to get started.
 
 We load _everything_ via ```<script />``` tags to avoid having any kind of build steps for the front end.
+These dependencies should probably be checked in to the repository for production use.
 
 ## Back end code structure
 
@@ -84,60 +85,9 @@ This is a small example with simple functionality.
 Performance vice there is no reason this won't scale,
 but for some features you will add additional JavaScript libraries.
 Something like [AlpineJS](https://alpinejs.dev/) seems to go well together with HTMX.
+The important part is that you start with something, and add as needed.
+You do not have to choose one-big-framework to rule-them-all.
 
 People are doing it in production.
 See this article and presentations for a real-world migration from React to HTMX:
 https://htmx.org/essays/a-real-world-react-to-htmx-port/
-
-# Demo steps
-
-This is a small demo that I do for my presentation "Effective development with Ktor, HTML and HTMX".
-
-- Demo HTMX
-  - Remember to update memory limits in on Fly.io
-  - Explain red flashing
-  - Plain HTML
-    - Launch http://0.0.0.0:8080/demo
-    - View source
-  - HTMX Todo list
-    - Launch http://0.0.0.0:8080/demo/htmx
-    - View source
-    - Open developer tools
-    - Click
-    - Show response
-    - Add hx-trigger
-  - Admin interface
-    - Go to http://0.0.0.0:8080/demo/admin
-    - Talk about indicator
-    - Click
-    - Show response
-    - Go to http://0.0.0.0:8080/demo/item/0
-    - Could load full page here (detect call)
-  - Form
-    - Show HTML validation
-    - Show server validation
-    - We did a solution with just forms
-- Demo KTor and HTMX
-    - Selection interface
-        - Go to http://0.0.0.0:8080/select
-        - Open developer tools
-        - Search for "Something"
-        - Search for "One"
-        - Go back
-        - Show hx-boost and preload code
-        - Show preload on mouse over
-        - Click on "One"
-    - Checkboxes
-        - Talk about SSE, almost like websockets but for one way
-        - Go to https://kotlin-htmx.fly.dev/demo/htmx/checkboxes
-        - Tell everyone to scan QR code
-        - Open developer tools
-        - Show put request
-        - Look at event stream
-        - View source, talk about attributes
-        - Show Selenium test in HtmxCheckboxPageTest
-
-# Possible TODO
-
-- Set up logging with JSON
-- Do item repo as an example?
