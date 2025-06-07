@@ -1,13 +1,20 @@
-# What ?
+# Kotlin-HTMX Demo Application
 
 A full-stack webapp with responsive, interactive pages.
 It has efficient feedback loops and hot reloading.
 Almost like Next.js, but less complexity.
 
+## Technologies Used
+
+Back end:
 - KTor as a web server — https://ktor.io
 - Kotlin typesafe HTML DSL - https://kotlinlang.org/docs/typesafe-html-dsl.html
+Front end:
 - HTMX for front end interactivity — https://htmx.org
 - Pico CSS for responsive styling and semantic defaults — https://picocss.com
+- PostCSS for CSS processing (actually running on the back end though) — https://postcss.org
+
+For more details on the tech stack and project guidelines, see [AGENTS.md](AGENTS.md).
 
 You can try the "application" here: https://kotlin-htmx.fly.dev/ .
 On the first page you can find links to the different demos.
@@ -47,16 +54,20 @@ You can find me here:
 - https://blog.f12.no/wp/
 - https://www.mikill.no
 
-# Running
+# Development
 
-## Local environment
+For detailed information on development setup, running tests, tools, and best practices, please refer to [AGENTS.md](AGENTS.md).
+
+## Running the Application
+
+### Local environment
 
 Set environment variables directly or in a .env.local file.
 
 See the possible variables in ```.env.default```, you can copy it to .env.local to do local modifications. Or you can
 set the variables in env.
 
-## Starting
+### Starting
 
 Run the ```fun main()``` in Application.kt in your favourite IDE, or run:
 
@@ -82,7 +93,7 @@ It is still important to have some kind of defaults for route, controller and pa
 ## Bigger scale and functionality?
 
 This is a small example with simple functionality.
-Performance vice there is no reason this won't scale,
+Performance wise there is no reason this won't scale,
 but for some features you will add additional JavaScript libraries.
 Something like [AlpineJS](https://alpinejs.dev/) seems to go well together with HTMX.
 The important part is that you start with something, and add as needed.

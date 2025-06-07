@@ -2,7 +2,7 @@
 
 ## Application functionality
 
-Thi is a demo application for showcasing plain HTM, CSS, HTMX and Kotlin.
+This is a demo application for showcasing plain HTML, CSS, HTMX and Kotlin.
 
 When a task is completed, create a summary of it in ./doc/tasks/<task_name>.md.
 
@@ -74,7 +74,7 @@ cd src/main/resources/postcss && npm run build
     - Use UUIDs for unique identifiers
     - Prefer objects to primitive types
     - Re-use test data setup, prefer <class>.valid() test extension methods.
-    - Use rich domain models, avoid splitting data into multiple tables unless necessary. JSONB columnt in PostgreSQL is a good option for complex data structures.
+    - Use rich domain models, avoid splitting data into multiple tables unless necessary. JSONB column in PostgreSQL is a good option for complex data structures.
 
 4. **Naming Conventions**
     - *Domain.kt for domain models
