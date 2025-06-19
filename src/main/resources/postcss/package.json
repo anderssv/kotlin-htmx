@@ -14,16 +14,16 @@
     "IE 11"
   ],
   "dependencies": {
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "postcss-calc": "^9.0.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.4",
+    "postcss-calc": "^10.1.1",
     "postcss-simple-vars": "^7.0.1",
-    "postcss-nested": "^6.0.1"
+    "postcss-nested": "^7.0.2"
   },
   "devDependencies": {
-    "esbuild": "^0.19.5",
-    "node-polyfill-webpack-plugin": "^2.0.1",
+    "esbuild": "^0.25.5",
+    "node-polyfill-webpack-plugin": "^4.1.0",
     "webpack": "^5.99.9",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^6.0.1"
   }
 }

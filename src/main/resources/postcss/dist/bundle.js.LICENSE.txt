@@ -1,24 +1,43 @@
 /*!
  * The buffer module from node.js, for the browser.
  *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-/*!
- * The buffer module from node.js, for the browser.
- *
  * @author   Feross Aboukhadijeh <https://feross.org>
  * @license  MIT
  */
 
 /*! Conditions:: INITIAL */
 
+/*! Production::    calc_keyword : CALC_KEYWORD */
+
 /*! Production::    dimension : ADD dimension */
 
 /*! Production::    dimension : ANGLE */
 
 /*! Production::    dimension : CHS */
+
+/*! Production::    dimension : CQBS */
+
+/*! Production::    dimension : CQHS */
+
+/*! Production::    dimension : CQIS */
+
+/*! Production::    dimension : CQMAXS */
+
+/*! Production::    dimension : CQMINS */
+
+/*! Production::    dimension : CQWS */
+
+/*! Production::    dimension : DVBS */
+
+/*! Production::    dimension : DVHS */
+
+/*! Production::    dimension : DVIS */
+
+/*! Production::    dimension : DVMAXS */
+
+/*! Production::    dimension : DVMINS */
+
+/*! Production::    dimension : DVWS */
 
 /*! Production::    dimension : EMS */
 
@@ -28,17 +47,49 @@
 
 /*! Production::    dimension : LENGTH */
 
+/*! Production::    dimension : LHS */
+
+/*! Production::    dimension : LVBS */
+
+/*! Production::    dimension : LVHS */
+
+/*! Production::    dimension : LVIS */
+
+/*! Production::    dimension : LVMAXS */
+
+/*! Production::    dimension : LVMINS */
+
+/*! Production::    dimension : LVWS */
+
 /*! Production::    dimension : PERCENTAGE */
 
 /*! Production::    dimension : REMS */
 
 /*! Production::    dimension : RES */
 
+/*! Production::    dimension : RLHS */
+
+/*! Production::    dimension : SVBS */
+
+/*! Production::    dimension : SVHS */
+
+/*! Production::    dimension : SVIS */
+
+/*! Production::    dimension : SVMAXS */
+
+/*! Production::    dimension : SVMINS */
+
+/*! Production::    dimension : SVWS */
+
 /*! Production::    dimension : TIME */
 
 /*! Production::    dimension : UNKNOWN_DIMENSION */
 
+/*! Production::    dimension : VBS */
+
 /*! Production::    dimension : VHS */
+
+/*! Production::    dimension : VIS */
 
 /*! Production::    dimension : VMAXS */
 
@@ -53,6 +104,8 @@
 /*! Production::    math_expression : CALC LPAREN math_expression RPAREN */
 
 /*! Production::    math_expression : LPAREN math_expression RPAREN */
+
+/*! Production::    math_expression : calc_keyword */
 
 /*! Production::    math_expression : dimension */
 
@@ -90,6 +143,18 @@
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cm\b */
 
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqb\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqi\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqmax\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqmin\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)cqw\b */
+
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)deg\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dpcm\b */
@@ -97,6 +162,18 @@
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dpi\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dppx\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvb\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvi\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvmax\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvmin\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)dvw\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)em\b */
 
@@ -107,6 +184,20 @@
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)in\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)kHz\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvb\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvi\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvmax\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvmin\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)lvw\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)mm\b */
 
@@ -122,11 +213,29 @@
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)rem\b */
 
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)rlh\b */
+
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)s\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svb\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svi\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svmax\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svmin\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)svw\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)turn\b */
 
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)vb\b */
+
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)vh\b */
+
+/*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)vi\b */
 
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)vmax\b */
 
@@ -135,6 +244,8 @@
 /*! Rule::       (([0-9]+(\.[0-9]+)?|\.[0-9]+)(e(\+|-)[0-9]+)?)vw\b */
 
 /*! Rule::       (-(webkit|moz)-)?calc\b */
+
+/*! Rule::       (infinity|pi|e)\b */
 
 /*! Rule::       - */
 
