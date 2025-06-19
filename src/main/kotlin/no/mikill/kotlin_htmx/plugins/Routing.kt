@@ -34,9 +34,11 @@ fun Application.configureRouting(postCssTransformer: PostCssTransformer) {
                     call::class.java.classLoader.getResource(it) != null
                 }
 
-                return call::class.java.classLoader.getResourceAsStream(resourcePath)
+                return resourcePath?.let {
+                    call::class.java.classLoader.getResourceAsStream(resourcePath)
                         ?.bufferedReader(Charsets.UTF_8)
                         ?.readText()
+                }
             }
 
             val fileName = call.parameters["fileName"]!!

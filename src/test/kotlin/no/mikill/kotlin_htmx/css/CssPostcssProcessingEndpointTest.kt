@@ -79,7 +79,6 @@ class CssPostcssProcessingEndpointTest {
 
         val response = client.get("/css/non-existent-file.css")
 
-        // Currently returns 500 due to implementation issue - this test documents the current behavior
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals(HttpStatusCode.NotFound, response.status)
     }
 }

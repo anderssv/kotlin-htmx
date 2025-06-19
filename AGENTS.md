@@ -4,8 +4,6 @@
 
 This is a demo application for showcasing plain HTML, CSS, HTMX and Kotlin.
 
-When a task is completed, create a summary of it in ./doc/tasks/<task_name>.md.
-
 ## Tech Stack
 
 - Kotlin on the JVM
