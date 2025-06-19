@@ -2,6 +2,7 @@ package no.mikill.kotlin_htmx.css
 
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
+import org.graalvm.polyglot.io.IOAccess
 import org.graalvm.polyglot.proxy.ProxyExecutable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,9 +12,22 @@ import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 
+/**
+ * This processes CSS files on demand using PostCSS.
+ *
+ * The GraalJS engine is single threaded, so we create a pool of contexts.
+ * The contexts are expensive to create, so it is important to reuse them.
+ *
+ * A PostCSS bundle is created with Webpack (src/main/resources/postcss) and includes the enabled plugins.
+ *
+ * This might be slow, but you should set a reasonable caching policy for CSS files.
+ * If that is too slow, use a in memory cache or a file cache to store the processed CSS.
+ */
 class PostCssTransformer() {
 
     private val log = LoggerFactory.getLogger(PostCssTransformer::class.java)
+
+    // Pool contexts to avoid the slow process of creating one
     private val contextPool: List<Value> = createContextPool(2)
     private val nextContextIndex = AtomicInteger(0)
 
@@ -72,7 +86,7 @@ class PostCssTransformer() {
     private fun createPostcssProcessFunction(): Value {
         val context = Context.newBuilder("js")
             .allowExperimentalOptions(true)
-            .allowIO(true)
+            .allowIO(IOAccess.ALL)
             .allowCreateThread(false)
             .options(
                 mutableMapOf(

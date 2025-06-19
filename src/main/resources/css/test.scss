@@ -12,9 +12,13 @@ $border-radius: 4px;
 }
 
 /*
-This CSS file uses SASS variables and nesting.
 
-Pre-processing content:
+This CSS file uses SASS variables and nesting. But is being processed by the backend on request.
+It uses PostCSS live via GraalJS to process the file and apply the transformations.
+
+You can see the implementation here: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/css/PostCssTransformer.kt
+
+Original file content:
 
 $primary-color: #007bff;
 $border-radius: 4px;
