@@ -1,84 +1,38 @@
 package no.mikill.kotlin_htmx
 
-import io.github.bonigarcia.wdm.WebDriverManager
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openqa.selenium.*
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 import kotlin.random.Random
 
+class HtmxCheckboxPageTest : BaseSeleniumTest() {
 
-class HtmxCheckboxPageTest {
-
-    private val headless = true
+    override val headless = true
     private val checkboxPageUrl = "/demo/htmx/checkboxes"
     private lateinit var driver1: WebDriver
     private lateinit var driver2: WebDriver
-    private lateinit var server: EmbeddedServer<*, *>
-    private var serverUrl: String? = null
 
-    @Before
-    fun setUp() {
-        fun getScreenDimensions(driver: WebDriver): Pair<Int, Int> {
-            driver.manage().window().maximize()
-            val js = driver as JavascriptExecutor
-            val screenWidth = js.executeScript("return window.screen.width") as Long
-            val screenHeight = js.executeScript("return window.screen.height") as Long
-            return Pair(screenWidth.toInt(), screenHeight.toInt())
-        }
-
-        // Start KTor server
-        server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
-            module()
-        }.start(wait = false)
-
-        val port = runBlocking { server.engine.resolvedConnectors().first().port }
-        serverUrl = "http://localhost:$port"
-
-        // Set up WebDriver
-        WebDriverManager.chromedriver().setup()
-
-        // Configure Chrome options for headless mode
-        val options = ChromeOptions()
-        if (headless) options.addArguments("--headless")
-        options.addArguments("--disable-gpu")
-        options.addArguments("--no-sandbox")
-        options.addArguments("--disable-dev-shm-usage")
-
-        // Initialize two drivers with options
-        driver1 = ChromeDriver(options)
-        driver2 = ChromeDriver(options)
-
-        if (!headless) { // Only bother if windows showing
-            val (screenWidth, screenHeight) = getScreenDimensions(driver1)
-            driver1.manage().window().size = Dimension(screenWidth / 2, screenHeight)
-            driver2.manage().window().size = Dimension(screenWidth / 2, screenHeight)
-            driver1.manage().window().position = Point(0, 0)
-            driver2.manage().window().position = Point(screenWidth / 2, 0)
-        }
-
-        // Set implicit wait time
-        driver1.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
-        driver2.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        
+        driver1 = createWebDriver("-1")
+        driver2 = createWebDriver("-2")
+        
+        configureDualDriverWindows(driver1, driver2)
     }
 
-    @After
-    fun tearDown() {
-        // Close the browsers
+    @AfterEach
+    override fun tearDown() {
         driver1.quit()
         driver2.quit()
-
-        // Stop the server
-        server.stop(1000, 2000)
+        
+        super.tearDown()
     }
 
     @Test

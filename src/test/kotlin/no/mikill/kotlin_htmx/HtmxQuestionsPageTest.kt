@@ -1,63 +1,31 @@
 package no.mikill.kotlin_htmx
 
-import io.github.bonigarcia.wdm.WebDriverManager
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-class HtmxQuestionsPageTest {
+class HtmxQuestionsPageTest : BaseSeleniumTest() {
 
     private lateinit var driver: WebDriver
-    private lateinit var server: EmbeddedServer<*, *>
     private val questionsPageUrl = "/demo/htmx/questions"
-    private var serverUrl: String? = null
 
-    @Before
-    fun setUp() {
-        // Start KTor server
-        server = embeddedServer(Netty, port = 0, host = "0.0.0.0") {
-            module()
-        }.start(wait = false)
-
-        val port = runBlocking { server.engine.resolvedConnectors().first().port }
-        serverUrl = "http://localhost:$port"
-
-        // Set up WebDriver
-        WebDriverManager.chromedriver().setup()
-
-        // Configure Chrome options for headless mode
-        val options = ChromeOptions()
-        options.addArguments("--headless")
-        options.addArguments("--disable-gpu")
-        options.addArguments("--no-sandbox")
-        options.addArguments("--disable-dev-shm-usage")
-
-        // Initialize driver with options
-        driver = ChromeDriver(options)
-
-        // Set implicit wait time
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        driver = createWebDriver()
     }
 
-    @After
-    fun tearDown() {
-        // Close the browser
+    @AfterEach
+    override fun tearDown() {
         driver.quit()
-
-        // Stop the server
-        server.stop(1000, 2000)
+        super.tearDown()
     }
 
     @Test
@@ -95,7 +63,6 @@ class HtmxQuestionsPageTest {
 
         // Print the current content of the questions list for debugging
         val currentContent = driver.findElement(By.id("questions-list")).text
-        System.out.println("[DEBUG_LOG] Current questions list content after submission: " + currentContent)
 
         // Verify the submitted question appears in the list
         assertThat(currentContent).contains("Asked on")
@@ -117,7 +84,6 @@ class HtmxQuestionsPageTest {
 
         // Print the current content of the questions list for debugging
         val updatedListContent = driver.findElement(By.id("questions-list")).text
-        System.out.println("[DEBUG_LOG] Updated questions list content after second submission: " + updatedListContent)
 
         // Verify both questions appear in the list
         assertThat(updatedListContent).contains(firstQuestion)

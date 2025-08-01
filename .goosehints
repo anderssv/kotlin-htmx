@@ -1,1 +1,0 @@
-.junie/guidelines.md

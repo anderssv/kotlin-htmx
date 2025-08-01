@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotEmpty
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.application.Person
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.reflect.jvm.javaField
 

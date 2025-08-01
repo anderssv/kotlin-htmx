@@ -1,0 +1,38 @@
+$primary-color: #007bff;
+$border-radius: 4px;
+
+.card {
+    background-color: $primary-color;
+    border-radius: calc($border-radius * 2);
+    
+    .header {
+        font-weight: bold;
+        transform: translateX(10px);
+    }
+}
+
+/*
+
+The CSS above is the result of PostCSS processing of a SASS file. The original is below.
+
+The original uses SASS variables and nesting. But is being processed by the backend on request.
+It uses PostCSS via GraalJS to process the file and apply the transformations.
+
+You can see the implementation here: https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/css/PostCssTransformer.kt
+
+Original file content:
+
+$primary-color: #007bff;
+$border-radius: 4px;
+
+.card {
+    background-color: $primary-color;
+    border-radius: calc($border-radius * 2);
+
+    .header {
+        font-weight: bold;
+        transform: translateX(10px);
+    }
+}
+
+ */

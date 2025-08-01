@@ -15,7 +15,6 @@ import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import no.mikill.kotlin_htmx.todo.TodoListItem
-import no.mikill.kotlin_htmx.todo.todoListItems
 import org.intellij.lang.annotations.Language
 import kotlin.reflect.jvm.javaField
 import kotlin.time.Duration
@@ -121,7 +120,10 @@ object HtmlElements {
         }
     }
 
-    fun HtmlBlockTag.todoListHtmlContent(blockIdPrefix: String, todoListItems: List<TodoListItem>) {
+    fun HtmlBlockTag.todoListHtmlContent(
+        blockIdPrefix: String, // Sometimes included twice in a page, so this gives isloation
+        todoListItems: List<TodoListItem> // The items to display
+    ) {
         h1 { +"Todo List" }
         ul {
             id = "todo-list"
