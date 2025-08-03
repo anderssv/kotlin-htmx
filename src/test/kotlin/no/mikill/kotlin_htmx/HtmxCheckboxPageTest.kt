@@ -13,7 +13,6 @@ import java.time.Duration
 import kotlin.random.Random
 
 class HtmxCheckboxPageTest : BaseSeleniumTest() {
-
     override val headless = true
     private val checkboxPageUrl = "/demo/htmx/checkboxes"
     private lateinit var driver1: WebDriver
@@ -22,10 +21,10 @@ class HtmxCheckboxPageTest : BaseSeleniumTest() {
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        
+
         driver1 = createWebDriver("-1")
         driver2 = createWebDriver("-2")
-        
+
         configureDualDriverWindows(driver1, driver2)
     }
 
@@ -33,7 +32,7 @@ class HtmxCheckboxPageTest : BaseSeleniumTest() {
     override fun tearDown() {
         driver1.quit()
         driver2.quit()
-        
+
         super.tearDown()
     }
 
@@ -42,8 +41,10 @@ class HtmxCheckboxPageTest : BaseSeleniumTest() {
         // Navigate to the checkbox page
         fun WebDriver.openAndScrollToCheckbox() {
             get(serverUrl!! + checkboxPageUrl)
-            if (!headless) findElement(By.id("1"))
-                .also { (this as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true)", it) }
+            if (!headless) {
+                findElement(By.id("1"))
+                    .also { (this as JavascriptExecutor).executeScript("arguments[0].scrollIntoView(true)", it) }
+            }
 
             // Wait for the page to load
             val wait1 = WebDriverWait(this, Duration.ofSeconds(10))
@@ -64,13 +65,21 @@ class HtmxCheckboxPageTest : BaseSeleniumTest() {
         // Find subset of boxes to test with
         // TODO: This probably doesn't work if we use infinite scroll batches are smaller than 100
         val numberOfCheckboxes = 100
-        val checkboxes = driver1.findElements(By.tagName("input")).take(numberOfCheckboxes).associate { checkbox -> checkbox.getDomAttribute("id")!! to checkbox.isSelected }.toMutableMap()
+        val checkboxes =
+            driver1
+                .findElements(By.tagName("input"))
+                .take(numberOfCheckboxes)
+                .associate { checkbox ->
+                    checkbox.getDomAttribute("id")!! to
+                        checkbox.isSelected
+                }.toMutableMap()
 
-        val randomCheckboxIds = generateSequence { Random.nextInt(0, numberOfCheckboxes) }
-            .distinct()
-            .take(20)
-            .map { it.toString() }
-            .toList()
+        val randomCheckboxIds =
+            generateSequence { Random.nextInt(0, numberOfCheckboxes) }
+                .distinct()
+                .take(20)
+                .map { it.toString() }
+                .toList()
 
         // Click only the checkboxes in randomCheckboxIds
         randomCheckboxIds.forEach { checkboxId ->

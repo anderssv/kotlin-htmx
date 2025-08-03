@@ -9,7 +9,5 @@ class ApplicationRepository {
         applications[application.id] = application
     }
 
-    fun getApplication(id: UUID): Application? {
-        return applications[id]
-    }
+    fun getApplication(id: UUID): Application? = applications[id]
 }

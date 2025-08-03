@@ -15,7 +15,6 @@ import no.mikill.kotlin_htmx.pages.MainTemplate
  * baseline for comparison with other implementations (HTMX, React, etc.).
  */
 class HtmlTodoDemoPage {
-
     /**
      * Renders the HTML todolist page with header and main content.
      *

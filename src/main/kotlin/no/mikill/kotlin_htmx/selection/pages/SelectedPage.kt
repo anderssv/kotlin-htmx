@@ -17,7 +17,6 @@ import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.SelectionTemplate
 import no.mikill.kotlin_htmx.selection.items
 
-
 class SelectedPage {
     suspend fun renderPage(context: RoutingContext) {
         with(context) {
@@ -42,12 +41,12 @@ class SelectedPage {
                             selectBox(
                                 name = "Yes",
                                 linkUrl = "Yes",
-                                imageUrl = "/static/images/influencer.png"
+                                imageUrl = "/static/images/influencer.png",
                             )
                             selectBox(
                                 name = "No",
                                 linkUrl = "No",
-                                imageUrl = "/static/images/influencer.png"
+                                imageUrl = "/static/images/influencer.png",
                             )
                         }
                     }

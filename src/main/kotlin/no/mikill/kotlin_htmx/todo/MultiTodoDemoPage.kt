@@ -33,21 +33,33 @@ import kotlin.time.Duration.Companion.seconds
  * comparison of different approaches to the same problem.
  */
 class MultiTodoDemoPage {
-
     /**
      * Renders the multi-framework demo page with all four implementations.
      *
      * @param context The routing context for the request
      */
-    suspend fun renderMultiJsPage(context: RoutingContext, todoListItems: List<TodoListItem>) {
+    suspend fun renderMultiJsPage(
+        context: RoutingContext,
+        todoListItems: List<TodoListItem>,
+    ) {
         with(context) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Multi frameworks demo")) {
                 headerContent {
                     p {
                         +"This is a small test. You can see the source at: "
                         ul {
-                            li { a(href = "https://github.com/anderssv/web-playground/tree/main/combined") { +"Pure HTML source (same as view source)" } }
-                            li { a(href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/todo/MultiTodoDemoPage.kt") { +"Kotlin + KTor source" } }
+                            li {
+                                a(
+                                    href = "https://github.com/anderssv/web-playground/tree/main/combined",
+                                ) { +"Pure HTML source (same as view source)" }
+                            }
+                            li {
+                                a(
+                                    href = "https://github.com/anderssv/kotlin-htmx/blob/main/src/main/kotlin/no/mikill/kotlin_htmx/todo/MultiTodoDemoPage.kt",
+                                ) {
+                                    +"Kotlin + KTor source"
+                                }
+                            }
                         }
                         +"Or just hit view source. 😃"
                     }

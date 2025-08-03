@@ -15,7 +15,6 @@ import kotlin.time.Duration.Companion.seconds
  * that uses HTMX for dynamic content loading and interaction.
  */
 class HtmxTodolistDemoPage {
-
     /**
      * Renders the HTMX todolist page with header and main content.
      *
@@ -36,12 +35,11 @@ class HtmxTodolistDemoPage {
                         // - backendDelay: 5 seconds simulated delay on the backend to demonstrate loading states
                         htmxTodolistSectionContent(
                             loadDelay = null,
-                            backendDelay = 5.seconds
+                            backendDelay = 5.seconds,
                         )
                     }
                 }
             }
         }
     }
-
 }

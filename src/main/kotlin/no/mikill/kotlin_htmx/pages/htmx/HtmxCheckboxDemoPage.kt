@@ -48,7 +48,9 @@ import kotlin.random.Random
  * - Batch updates for performance optimization
  * - Implement infinite scrolling for large datasets
  */
-class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
+class HtmxCheckboxDemoPage(
+    val numberOfBoxes: Int,
+) {
     private val logger = LoggerFactory.getLogger(HtmxCheckboxDemoPage::class.java)
 
     private val initialBoxes = 2000.let { if (numberOfBoxes > it) it else numberOfBoxes / 2 }
@@ -86,7 +88,6 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                 +"Loaded in browser: 0"
             }
         }
-
 
         div(classes = "checkbox-container") {
             // Use sequences for efficient streaming of large datasets to the client
@@ -137,7 +138,10 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
     /**
      * Renders a single checkbox with the appropriate HTMX attributes.
      */
-    private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
+    private fun HtmlBlockTag.renderCheckbox(
+        boxNumber: Int,
+        checkedState: Boolean,
+    ) {
         input(type = InputType.checkBox) {
             // Fall back to manual. Put not in DSL.
             attributes["hx-put"] = "checkboxes/$boxNumber"
@@ -187,7 +191,7 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                         renderBoxesForBatch(batchNumber)
                     },
                     "update-$batchNumber",
-                    UUID.randomUUID().toString()
+                    UUID.randomUUID().toString(),
                 )
             } catch (e: IOException) {
                 logger.info("Dead connection detected, unregistering", e)
@@ -204,7 +208,9 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "HTMX + SSE Checkboxes demo")) {
                 headerContent {
                     section {
-                        img(src = "https://api.qrserver.com/v1/create-qr-code/?data=https://kotlin-htmx.fly.dev/demo/htmx/checkboxes&amp;size=200x200") {
+                        img(
+                            src = "https://api.qrserver.com/v1/create-qr-code/?data=https://kotlin-htmx.fly.dev/demo/htmx/checkboxes&amp;size=200x200",
+                        ) {
                             style = "float: right; margin-left: 20px;"
                             classes = setOf("qr-code-image")
                             width = "200"
@@ -215,7 +221,9 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                             strong { +"Open multiple windows to this URL to see it in action." }
                         }
                         p {
-                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Go here for a lengthy blogpost about the implementation" }
+                            a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") {
+                                +"Go here for a lengthy blogpost about the implementation"
+                            }
                             +" and links to code. I use HTMX, SSE and KTor to do this. "
                             +"It is inspired by "
                             a(href = "https://hamy.xyz/labs/1000-checkboxes") {
@@ -297,7 +305,7 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                                     // Also update when HTMX completes a request (for infinite scrolling)
                                     document.body.addEventListener('htmx:afterOnLoad', updateCheckboxCounter);
                                     document.body.addEventListener('htmx:afterSettle', updateCheckboxCounter);
-                                    """.trimIndent()
+                                    """.trimIndent(),
                                 )
                             }
                         }

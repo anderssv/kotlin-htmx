@@ -28,8 +28,9 @@ class DataHandlingTest {
 
     @Test
     fun shouldParseJson() {
-        val applicationJson = Application.valid().let {
-            """
+        val applicationJson =
+            Application.valid().let {
+                """
                 {
                     "id": "${UUID.randomUUID()}",
                     "person": {
@@ -38,9 +39,8 @@ class DataHandlingTest {
                     },
                     "comments": "${it.comments}"
                 }
-            """.trimIndent()
-
-        }
+                """.trimIndent()
+            }
         val application = objectMapper.readValue(applicationJson, Application::class.java)
         assertThat(application.person.firstName).isEqualTo("Ola")
     }
@@ -49,7 +49,9 @@ class DataHandlingTest {
     fun shouldGenerateJson() {
         val application = Application.valid()
         val applicationJson = objectMapper.writeValueAsString(application)
-        assertThat(applicationJson).isEqualTo("""{"id":"${application.id}","person":{"firstName":"Ola","lastName":"Nordmann"},"comments":"Comment"}""")
+        assertThat(
+            applicationJson,
+        ).isEqualTo("""{"id":"${application.id}","person":{"firstName":"Ola","lastName":"Nordmann"},"comments":"Comment"}""")
     }
 
     @Test
@@ -61,7 +63,6 @@ class DataHandlingTest {
         val value = getValueFromPath(application, "person.firstName")
         assertThat(value).isEqualTo("Ola")
     }
-
 
     @Test
     fun shouldUpdatePropertyOnObject() {
@@ -75,6 +76,4 @@ class DataHandlingTest {
     }
 }
 
-private fun Application.Companion.valid(): Application {
-    return Application(UUID.randomUUID(), Person("Ola", "Nordmann"), "Comment")
-}
+private fun Application.Companion.valid(): Application = Application(UUID.randomUUID(), Person("Ola", "Nordmann"), "Comment")

@@ -10,13 +10,14 @@ import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test
-    fun testRoot() = testApplication {
-        application {
-            module()
+    fun testRoot() =
+        testApplication {
+            application {
+                module()
+            }
+            client.get("/select").apply {
+                assertEquals(HttpStatusCode.OK, status)
+                assertThat(bodyAsText()).contains("Three")
+            }
         }
-        client.get("/select").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertThat(bodyAsText()).contains("Three")
-        }
-    }
 }

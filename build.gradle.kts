@@ -9,6 +9,7 @@ plugins {
     id("io.ktor.plugin") version "3.2.3"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("com.gradleup.shadow") version "8.3.8"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     application
 }
 
@@ -60,7 +61,7 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
     implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
-    
+
     // HTMX support (commented out - modules may not be available in this Ktor version)
     implementation("io.ktor:ktor-htmx:$ktorVersion")
     implementation("io.ktor:ktor-htmx-html:$ktorVersion")
@@ -89,7 +90,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${kotlinVersion}")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
@@ -114,4 +115,26 @@ tasks.withType<DependencyUpdatesTask> {
 
 kotlin {
     jvmToolchain(21)
+}
+
+ktlint {
+    version.set("1.5.0")
+    verbose.set(true)
+    outputToConsole.set(true)
+    coloredOutput.set(true)
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.JSON)
+    }
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
+    additionalEditorconfig =
+        mapOf(
+            "ktlint_standard_package-name" to "disabled",
+            "ktlint_standard_max-line-length" to "disabled",
+            "ktlint_standard_value-parameter-comment" to "disabled",
+            "ktlint_standard_property-naming" to "disabled",
+        )
 }

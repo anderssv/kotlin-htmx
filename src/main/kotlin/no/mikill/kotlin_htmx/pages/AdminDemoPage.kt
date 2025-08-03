@@ -18,7 +18,6 @@ import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import kotlin.time.Duration.Companion.seconds
 
 class AdminDemoPage {
-
     suspend fun renderAdminPage(pipelineContext: RoutingContext) {
         with(pipelineContext) {
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Admin")) {
@@ -32,13 +31,13 @@ class AdminDemoPage {
                         style {
                             rawCss(
                                 """
-                                    /* Grid item styling with picocss-friendly colors */
-                                    .grid > div {
-                                        border: 1px solid #ced4da;
-                                        padding: 1em;
-                                        border-radius: 8px;
-                                    }                                
-                                """.trimIndent()
+                                /* Grid item styling with picocss-friendly colors */
+                                .grid > div {
+                                    border: 1px solid #ced4da;
+                                    padding: 1em;
+                                    border-radius: 8px;
+                                }                                
+                                """.trimIndent(),
                             )
                         }
                         div(classes = "grid") {
@@ -70,7 +69,10 @@ class AdminDemoPage {
         }
     }
 
-    suspend fun renderItemResponse(pipelineContext: RoutingContext, itemId: Int) {
+    suspend fun renderItemResponse(
+        pipelineContext: RoutingContext,
+        itemId: Int,
+    ) {
         delay(5.seconds)
         with(pipelineContext) {
             call.respondHtmlFragment {
@@ -80,5 +82,4 @@ class AdminDemoPage {
             }
         }
     }
-
 }

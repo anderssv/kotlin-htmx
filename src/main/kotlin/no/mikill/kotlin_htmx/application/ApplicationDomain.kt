@@ -12,7 +12,7 @@ data class Application(
     @field:JsonMerge
     @field:Valid
     val person: Person,
-    val comments: String
+    val comments: String,
 ) {
     companion object
 }
@@ -24,5 +24,5 @@ data class Person(
     val firstName: String,
     @field:NotEmpty
     @field:Size(min = 3)
-    val lastName: String
+    val lastName: String,
 )

@@ -23,8 +23,7 @@ import java.util.logging.LogRecord
  * This might be slow, but you should set a reasonable caching policy for CSS files.
  * If that is too slow, use a in memory cache or a file cache to store the processed CSS.
  */
-class PostCssTransformer() {
-
+class PostCssTransformer {
     private val log = LoggerFactory.getLogger(PostCssTransformer::class.java)
 
     // Pool contexts to avoid the slow process of creating one
@@ -40,25 +39,33 @@ class PostCssTransformer() {
             var processedCss: String? = null
             var error: String? = null
 
-            resultPromise.invokeMember("then", ProxyExecutable { args ->
-                processedCss = args[0].asString()
-                null
-            }).invokeMember("catch", ProxyExecutable { args ->
-                val errorArg = args[0]
-                error = if (errorArg.isString) {
-                    errorArg.asString()
-                } else {
-                    val errorObj = Value.asValue(errorArg)
-                    if (errorObj.hasMember("stack")) {
-                        errorObj.getMember("stack").asString()
-                    } else if (errorObj.hasMember("message")) {
-                        errorObj.getMember("message").asString()
-                    } else {
-                        errorObj.toString()
-                    }
-                }
-                null
-            })
+            resultPromise
+                .invokeMember(
+                    "then",
+                    ProxyExecutable { args ->
+                        processedCss = args[0].asString()
+                        null
+                    },
+                ).invokeMember(
+                    "catch",
+                    ProxyExecutable { args ->
+                        val errorArg = args[0]
+                        error =
+                            if (errorArg.isString) {
+                                errorArg.asString()
+                            } else {
+                                val errorObj = Value.asValue(errorArg)
+                                if (errorObj.hasMember("stack")) {
+                                    errorObj.getMember("stack").asString()
+                                } else if (errorObj.hasMember("message")) {
+                                    errorObj.getMember("message").asString()
+                                } else {
+                                    errorObj.toString()
+                                }
+                            }
+                        null
+                    },
+                )
 
             if (error != null) {
                 throw RuntimeException("PostCSS processing error from JS: $error")
@@ -70,38 +77,38 @@ class PostCssTransformer() {
         }
     }
 
-    fun process(css: String): String {
-        return getNextContext().process(css)
-    }
+    fun process(css: String): String = getNextContext().process(css)
 
     private fun getNextContext(): Value {
         val index = nextContextIndex.getAndIncrement() % contextPool.size
         return contextPool[index]
     }
 
-    private fun createContextPool(size: Int): List<Value> {
-        return (0 until size).map { createPostcssProcessFunction() }
-    }
+    private fun createContextPool(size: Int): List<Value> = (0 until size).map { createPostcssProcessFunction() }
 
     private fun createPostcssProcessFunction(): Value {
-        val context = Context.newBuilder("js")
-            .allowExperimentalOptions(true)
-            .allowIO(IOAccess.ALL)
-            .allowCreateThread(false)
-            .options(
-                mutableMapOf(
-                    "js.print" to "true",
-                    "engine.WarnInterpreterOnly" to "false"
-                )
-            )
-            .logHandler(HandlerSLF4JBridge(log))
-            .build()
+        val context =
+            Context
+                .newBuilder("js")
+                .allowExperimentalOptions(true)
+                .allowIO(IOAccess.ALL)
+                .allowCreateThread(false)
+                .options(
+                    mutableMapOf(
+                        "js.print" to "true",
+                        "engine.WarnInterpreterOnly" to "false",
+                    ),
+                ).logHandler(HandlerSLF4JBridge(log))
+                .build()
 
         val bundleScriptContent =
-            PostCssTransformer::class.java.classLoader.getResourceAsStream("postcss/dist/bundle.js")
+            PostCssTransformer::class.java.classLoader
+                .getResourceAsStream("postcss/dist/bundle.js")
                 ?.bufferedReader(UTF_8)
                 ?.readText()
-                ?: throw IllegalArgumentException("Cannot find resource file: ${"postcss/dist/bundle.js"}. Make sure 'npm run build' was executed.")
+                ?: throw IllegalArgumentException(
+                    "Cannot find resource file: ${"postcss/dist/bundle.js"}. Make sure 'npm run build' was executed.",
+                )
         context.eval("js", bundleScriptContent)
 
         val postCssProcessorGlobal = context.getBindings("js").getMember("PostCssProcessorGlobal")
@@ -110,9 +117,9 @@ class PostCssTransformer() {
     }
 }
 
-
-private class HandlerSLF4JBridge(val slf4jLogger: Logger) : Handler() {
-
+private class HandlerSLF4JBridge(
+    val slf4jLogger: Logger,
+) : Handler() {
     override fun publish(record: LogRecord) {
         if (!isLoggable(record)) {
             return
@@ -121,7 +128,6 @@ private class HandlerSLF4JBridge(val slf4jLogger: Logger) : Handler() {
         val message = if (formatter != null) formatter.format(record) else record.message
 
         val thrown = record.thrown
-
 
         if (record.level.intValue() >= Level.SEVERE.intValue()) {
             if (thrown != null) {

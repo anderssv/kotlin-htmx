@@ -66,7 +66,7 @@ private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes
 fun Application.configurePageRoutes(
     lookupClient: LookupClient,
     applicationRepository: ApplicationRepository,
-    numberOfCheckboxes: Int
+    numberOfCheckboxes: Int,
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validator = Validation.buildDefaultValidatorFactory().validator
@@ -85,7 +85,10 @@ fun Application.configurePageRoutes(
 
         route("/demo") {
             configureDemoRoutes(
-                applicationRepository, mapper, validator, numberOfCheckboxes
+                applicationRepository,
+                mapper,
+                validator,
+                numberOfCheckboxes,
             )
         }
 
@@ -105,7 +108,7 @@ private fun Route.configureStaticRoutes() {
             # Allow all crawlers
             User-agent: *
             Allow: /
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }
@@ -152,7 +155,9 @@ private fun Route.configureMainPageRoute() {
                                     li {
                                         a(href = "/demo/htmx/checkboxes") { +"Checkboxes: Synchronization across browser windows" }
                                         +" - "
-                                        a(href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/") { +"Blog entry with description" }
+                                        a(
+                                            href = "https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/",
+                                        ) { +"Blog entry with description" }
                                     }
                                     li {
                                         a(href = "/demo/htmx/questions") { +"Questions page: Submit and view questions" }
@@ -173,7 +178,7 @@ private fun Route.configureMainPageRoute() {
 
 /**
  * Configures routes for the selection demo
- * 
+ *
  * @param lookupClient Client for external lookup services
  */
 private fun Route.configureSelectionRoutes(lookupClient: LookupClient) {
@@ -196,7 +201,7 @@ private fun Route.configureSelectionRoutes(lookupClient: LookupClient) {
 
 /**
  * Configures all demo routes including HTML, HTMX, and form demos
- * 
+ *
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
  * @param validator Bean validator for form validation
@@ -290,7 +295,7 @@ private fun Route.configureHtmxRoutes(numberOfCheckboxes: Int) {
 
 /**
  * Handles Server-Sent Events (SSE) connection for the checkbox demo
- * 
+ *
  * @param htmxCheckboxDemoPage The checkbox demo page handler
  */
 private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: HtmxCheckboxDemoPage) {
@@ -322,13 +327,15 @@ private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: H
 
 /**
  * Configures form handling demo routes
- * 
+ *
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
  * @param validator Bean validator for form validation
  */
 private fun Route.configureFormRoutes(
-    applicationRepository: ApplicationRepository, mapper: ObjectMapper, validator: Validator
+    applicationRepository: ApplicationRepository,
+    mapper: ObjectMapper,
+    validator: Validator,
 ) {
     val formDemoPage = FormDemoPage()
 
@@ -350,28 +357,31 @@ private fun Route.configureFormRoutes(
 
 /**
  * Handles form submission, validation, and persistence
- * 
+ *
  * Note: In a larger application, this logic would typically be moved to a dedicated controller class
  * to better separate concerns and improve testability.
- * 
+ *
  * @param formDemoPage The form demo page handler
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
  * @param validator Bean validator for form validation
  */
 private suspend fun RoutingContext.handleFormSubmission(
-    formDemoPage: FormDemoPage, 
-    applicationRepository: ApplicationRepository, 
-    mapper: ObjectMapper, 
-    validator: Validator
+    formDemoPage: FormDemoPage,
+    applicationRepository: ApplicationRepository,
+    mapper: ObjectMapper,
+    validator: Validator,
 ) {
     val form = call.receiveParameters()
     routesLogger.info("Received form data: $form")
 
     // Create a new application instance with default values
-    val application = no.mikill.kotlin_htmx.application.Application(
-        UUID.randomUUID(), Person("", ""), ""
-    )
+    val application =
+        no.mikill.kotlin_htmx.application.Application(
+            UUID.randomUUID(),
+            Person("", ""),
+            "",
+        )
 
     // Update the application with form data
     val updatedApplication: no.mikill.kotlin_htmx.application.Application =

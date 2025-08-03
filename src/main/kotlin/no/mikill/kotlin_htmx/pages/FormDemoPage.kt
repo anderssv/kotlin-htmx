@@ -18,11 +18,10 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.pages.FormUtils.inputFieldWithValidationAndErrors
 
 class FormDemoPage {
-
     suspend fun renderInputForm(
         context: RoutingContext,
         existingApplication: Application?,
-        errors: Set<ConstraintViolation<Application>>
+        errors: Set<ConstraintViolation<Application>>,
     ) {
         context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Form input")) {
             headerContent {
@@ -42,13 +41,13 @@ class FormDemoPage {
                             existingApplication,
                             "person.firstName",
                             "First name",
-                            errors
+                            errors,
                         )
                         inputFieldWithValidationAndErrors(
                             existingApplication,
                             "person.lastName",
                             "Last name",
-                            errors
+                            errors,
                         )
                         submitInput { name = "ok" }
                     }
@@ -59,7 +58,7 @@ class FormDemoPage {
 
     suspend fun renderFormSaved(
         context: RoutingContext,
-        existingApplication: Application
+        existingApplication: Application,
     ) {
         context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Form saved")) {
             mainSectionTemplate {

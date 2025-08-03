@@ -27,7 +27,7 @@ import java.io.File
  * @property lookupApiKey API key for the lookup service
  */
 data class ApplicationConfig(
-    val lookupApiKey: String
+    val lookupApiKey: String,
 ) {
     companion object {
         /**
@@ -46,22 +46,25 @@ data class ApplicationConfig(
              * @return The value for the key
              * @throws IllegalStateException if the key is not found in either source
              */
-            fun Map<String, String>.envOrLookup(key: String): String {
-                return System.getenv(key) ?: this[key]
-                ?: throw IllegalStateException("Missing '$key' in either env or env file")
-            }
+            fun Map<String, String>.envOrLookup(key: String): String =
+                System.getenv(key) ?: this[key]
+                    ?: throw IllegalStateException("Missing '$key' in either env or env file")
 
-            val envVars: Map<String, String> = envFile().let { envFile ->
-                if (envFile?.exists() == true) {
-                    envFile.readLines()
-                        .map { it.split("=") }
-                        .filter { it.size == 2 }
-                        .associate { it.first().trim() to it.last().trim() }
-                } else emptyMap()
-            }
+            val envVars: Map<String, String> =
+                envFile().let { envFile ->
+                    if (envFile?.exists() == true) {
+                        envFile
+                            .readLines()
+                            .map { it.split("=") }
+                            .filter { it.size == 2 }
+                            .associate { it.first().trim() to it.last().trim() }
+                    } else {
+                        emptyMap()
+                    }
+                }
 
             return ApplicationConfig(
-                lookupApiKey = envVars.envOrLookup("LOOKUP_API_KEY")
+                lookupApiKey = envVars.envOrLookup("LOOKUP_API_KEY"),
             )
         }
     }
@@ -76,9 +79,7 @@ data class ApplicationConfig(
  *
  * @return The first existing environment file, or null if none exists
  */
-fun envFile(): File? {
-    return listOf(".env.local", ".env.default").map { File(it) }.firstOrNull { it.exists() }
-}
+fun envFile(): File? = listOf(".env.local", ".env.default").map { File(it) }.firstOrNull { it.exists() }
 
 val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.ApplicationKt")!!
 
@@ -104,7 +105,7 @@ fun main() {
         Netty,
         port = 8080,
         host = "0.0.0.0",
-        module = Application::module
+        module = Application::module,
     ).start(wait = true)
 }
 
@@ -138,6 +139,6 @@ fun Application.module() {
     configurePageRoutes(
         LookupClient(config.lookupApiKey),
         ApplicationRepository(),
-        numberOfCheckboxes
+        numberOfCheckboxes,
     )
 }

@@ -32,14 +32,15 @@ import java.lang.Thread.sleep
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
-
 class SelectMainPage(
     private val lookupClient: LookupClient,
 ) {
     private val logger = LoggerFactory.getLogger(SelectMainPage::class.java)
     private val routePath = "/select"
 
-    private data class Search(val lookupValue: String)
+    private data class Search(
+        val lookupValue: String,
+    )
 
     suspend fun renderMainPage(routingHandler: RoutingContext) {
         with(routingHandler) {
@@ -92,7 +93,7 @@ class SelectMainPage(
                                 selectBox(
                                     name = item.name,
                                     linkUrl = listOf(routePath, item.name).joinToString("/"),
-                                    imageUrl = item.image
+                                    imageUrl = item.image,
                                 )
                             }
                         }
@@ -138,13 +139,11 @@ class SelectMainPage(
                             a(href = routePath) { +"Try again" }
                         }
 
-
                     is LookupResult.InvalidInput ->
                         div(classes = "text-red-800") {
                             p { +lookupResult.message }
                             a(href = routePath) { +"Try again" }
                         }
-
 
                     is LookupResult.Failure -> {
                         logger.error("Lookup failed. Reason: ${lookupResult.reason}")
@@ -157,5 +156,4 @@ class SelectMainPage(
             }
         }
     }
-
 }

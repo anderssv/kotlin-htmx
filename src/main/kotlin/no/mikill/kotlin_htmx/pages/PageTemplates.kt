@@ -31,21 +31,23 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
 /**
  * Main template for all pages in the application.
- * 
+ *
  * This template provides the common HTML structure including:
  * - HTML head with meta tags, CSS, and JavaScript
  * - Header with navigation
  * - Main content area
  * - Footer
- * 
+ *
  * For more information on Ktor HTML templates, see:
  * https://ktor.io/docs/server-html-dsl.html#templates
  *
  * @param template The content template to insert in the main section
  * @param pageTitle The title of the page to display in the browser tab
  */
-class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageTitle: String) : Template<HTML> {
-
+class MainTemplate<T : Template<FlowContent>>(
+    private val template: T,
+    val pageTitle: String,
+) : Template<HTML> {
     val mainSectionTemplate = TemplatePlaceholder<T>()
     val headerContent = Placeholder<FlowContent>()
 
@@ -89,12 +91,12 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 unsafe {
                     raw(
                         """
-                          window.dataLayer = window.dataLayer || [];
-                          function gtag(){dataLayer.push(arguments);}
-                          gtag('js', new Date());
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
 
-                          gtag('config', 'G-30QSF4X9PW');
-                        """.trimIndent()
+                        gtag('config', 'G-30QSF4X9PW');
+                        """.trimIndent(),
                     )
                 }
             }
@@ -111,154 +113,154 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
             style {
                 rawCss(
                     """
-                        /* Custom font for better typography - works with picocss */
-                        body {
-                            font-family: 'Inter', sans-serif;
-                        }
+                    /* Custom font for better typography - works with picocss */
+                    body {
+                        font-family: 'Inter', sans-serif;
+                    }
 
-                        /* Primary color for headings to match our theme */
-                        h1 {
-                            color: #4361ee;
-                        }
+                    /* Primary color for headings to match our theme */
+                    h1 {
+                        color: #4361ee;
+                    }
 
-                        /* HTMX-specific styles for loading indicators */
-                        .htmx-indicator {
-                            opacity: 0;
-                            transition: opacity 500ms ease-in;
-                        }
+                    /* HTMX-specific styles for loading indicators */
+                    .htmx-indicator {
+                        opacity: 0;
+                        transition: opacity 500ms ease-in;
+                    }
 
-                        .htmx-request .htmx-indicator {
-                            opacity: 1;
-                        }
+                    .htmx-request .htmx-indicator {
+                        opacity: 1;
+                    }
 
-                        .htmx-request.htmx-indicator {
-                            opacity: 1;
-                        }
+                    .htmx-request.htmx-indicator {
+                        opacity: 1;
+                    }
 
-                        /* Custom box component with hover effect */
-                        .box {
-                            border: 1px solid #ced4da;
-                            border-radius: 8px;
-                            text-align: center;
-                            padding: 1.5em;
-                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                            transition: transform 0.3s ease, box-shadow 0.3s ease;
-                        }
+                    /* Custom box component with hover effect */
+                    .box {
+                        border: 1px solid #ced4da;
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 1.5em;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    }
 
-                        .box:hover {
-                            transform: translateY(-3px);
-                            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                        }
+                    .box:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                    }
 
-                        /* Section styling for card-like appearance */
-                        section {
-                            margin-bottom: 2.5em;
-                            padding: 1.5em;
-                            border-radius: 8px;
-                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        }
+                    /* Section styling for card-like appearance */
+                    section {
+                        margin-bottom: 2.5em;
+                        padding: 1.5em;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
 
-                        /* Custom navigation styling */
-                        nav {
-                            background: linear-gradient(135deg, #4361ee, #3f37c9);
+                    /* Custom navigation styling */
+                    nav {
+                        background: linear-gradient(135deg, #4361ee, #3f37c9);
+                        width: 100%;
+                        border-radius: 8px;
+                        font-size: 0.9em;
+                        padding: 0.8em 1.5em;
+                        margin-bottom: 1.5em;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+                        & ul {
+                            list-style: none;
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: space-evenly;
+                            align-items: center;
+                            margin: 0.5em auto;
+                            padding: 0;
                             width: 100%;
+                            gap: 1em;
+                        }
+
+                        & li {
+                            display: flex;
+                            align-items: center;
+                            margin: 0;
+                            padding: 0;
+                        }
+
+                        & .separator {
+                            color: rgba(255, 255, 255, 0.5);
+                        }
+
+                        & a {
+                            color: white;
+                            text-decoration: none;
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                            padding: 0.5em 0.8em;
                             border-radius: 8px;
-                            font-size: 0.9em;
-                            padding: 0.8em 1.5em;
-                            margin-bottom: 1.5em;
-                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-                            & ul {
-                                list-style: none;
-                                display: flex;
-                                flex-wrap: wrap;
-                                justify-content: space-evenly;
-                                align-items: center;
-                                margin: 0.5em auto;
-                                padding: 0;
-                                width: 100%;
-                                gap: 1em;
-                            }
-
-                            & li {
-                                display: flex;
-                                align-items: center;
-                                margin: 0;
-                                padding: 0;
-                            }
-
-                            & .separator {
-                                color: rgba(255, 255, 255, 0.5);
-                            }
-
-                            & a {
-                                color: white;
-                                text-decoration: none;
-                                font-weight: 500;
-                                transition: all 0.3s ease;
-                                padding: 0.5em 0.8em;
-                                border-radius: 8px;
-                            }
-
-                            & a:hover {
-                                background-color: rgba(255, 255, 255, 0.1);
-                                transform: translateY(-2px);
-                                text-decoration: none;
-                            }
                         }
 
-                        /* Form validation error styling */
-                        .form-error {
-                            color: #f44336;
-                            font-size: 0.9em;
-                            margin-top: 0.3em;
+                        & a:hover {
+                            background-color: rgba(255, 255, 255, 0.1);
+                            transform: translateY(-2px);
+                            text-decoration: none;
                         }
+                    }
 
-                        /* HTMX content update highlight effect */
-                        .htmx-modified {
-                            animation: highlight-fade 2s ease-out;
-                        }
+                    /* Form validation error styling */
+                    .form-error {
+                        color: #f44336;
+                        font-size: 0.9em;
+                        margin-top: 0.3em;
+                    }
 
-                        @keyframes highlight-fade {
-                            from {
-                                background-color: rgba(240,76,180,0.86);
-                            }
-                            to {
-                                background-color: transparent;
-                            }
-                        }
+                    /* HTMX content update highlight effect */
+                    .htmx-modified {
+                        animation: highlight-fade 2s ease-out;
+                    }
 
-                        /* Page transition animation */
-                        @keyframes fadeIn {
-                            from { opacity: 0; transform: translateY(10px); }
-                            to { opacity: 1; transform: translateY(0); }
+                    @keyframes highlight-fade {
+                        from {
+                            background-color: rgba(240,76,180,0.86);
                         }
+                        to {
+                            background-color: transparent;
+                        }
+                    }
 
-                        /* Floating checkbox counter box */
-                        .checkbox-counter {
-                            & p {
-                                margin: 0;
-                                pointer-events: none; /* Ensure paragraphs also don't intercept clicks */
-                            }
-                            position: fixed;
-                            bottom: 20px;
-                            right: 20px;
-                            border-color: #005e7d;
-                            padding: 10px 15px;
-                            border-radius: 8px;
-                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                            z-index: 1000;
-                            font-size: 0.8rem;
-                            pointer-events: none; /* Allow clicks to pass through to elements underneath */
-                        }
+                    /* Page transition animation */
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: translateY(10px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
 
-                        /* Responsive styles - hide QR code image */
-                        @media (max-width: 800px) {
-                            .qr-code-image {
-                                display: none;
-                            }
+                    /* Floating checkbox counter box */
+                    .checkbox-counter {
+                        & p {
+                            margin: 0;
+                            pointer-events: none; /* Ensure paragraphs also don't intercept clicks */
                         }
-                    """.trimIndent()
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        border-color: #005e7d;
+                        padding: 10px 15px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                        z-index: 1000;
+                        font-size: 0.8rem;
+                        pointer-events: none; /* Allow clicks to pass through to elements underneath */
+                    }
+
+                    /* Responsive styles - hide QR code image */
+                    @media (max-width: 800px) {
+                        .qr-code-image {
+                            display: none;
+                        }
+                    }
+                    """.trimIndent(),
                 )
             }
         }
@@ -302,10 +304,11 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                 // Main content area
                 main {
                     id = "mainContent"
-                    style = """
-                            min-height: 60vh; 
-                            /* Uncomment to enable page transition animation:
-                               animation: fadeIn 0.5s ease-in-out; */
+                    style =
+                        """
+                        min-height: 60vh; 
+                        /* Uncomment to enable page transition animation:
+                           animation: fadeIn 0.5s ease-in-out; */
                         """.trimIndent()
                     insert(template, mainSectionTemplate)
                 }
@@ -333,7 +336,7 @@ class MainTemplate<T : Template<FlowContent>>(private val template: T, val pageT
                                     updatedElement.classList.remove('htmx-modified');
                                 }, { once: true });
                             });
-                        """.trimIndent()
+                            """.trimIndent(),
                         )
                     }
                 }
@@ -353,17 +356,17 @@ class SelectionTemplate : Template<FlowContent> {
         style {
             rawCss(
                 """
-                    /* Responsive grid layout for selection choices - works well with picocss */
-                    #choices {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); 
-                        gap: 20px;
+                /* Responsive grid layout for selection choices - works well with picocss */
+                #choices {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); 
+                    gap: 20px;
 
-                        a {
-                            display: block;
-                        }
-                    }                    
-                """.trimIndent()
+                    a {
+                        display: block;
+                    }
+                }                    
+                """.trimIndent(),
             )
         }
         insert(selectionPagesContent)
@@ -372,7 +375,7 @@ class SelectionTemplate : Template<FlowContent> {
 
 /**
  * An empty template that serves as a placeholder for content.
- * 
+ *
  * This template is used to enforce the template pattern even when a page
  * doesn't need specific template functionality beyond the main template.
  * It provides a consistent way to insert content into the main template.

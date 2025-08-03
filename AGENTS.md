@@ -32,6 +32,12 @@ This is a demo application for showcasing plain HTML, CSS, HTMX and Kotlin.
 
 # Update the npm dependencies for postcss
 cd src/main/resources/postcss && npm run build
+
+# Check code formatting with ktlint
+./gradlew ktlintCheck
+
+# Auto-format code with ktlint
+./gradlew ktlintFormat
 ```
 
 
@@ -56,6 +62,7 @@ cd src/main/resources/postcss && npm run build
     - Follow Arrange-Act-Assert pattern
     - Use test data builders (usually objects with valid() methods, a variant of the Object Mother pattern)
     - Run all tests after finishing a task
+    - Verify code formatting with `./gradlew ktlintCheck` before considering a task complete
 
 2. **Code Organization**
     - Follow domain-driven package structure

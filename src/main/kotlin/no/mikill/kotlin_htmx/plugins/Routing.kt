@@ -28,18 +28,21 @@ fun Application.configureRouting(postCssTransformer: PostCssTransformer) {
             fun locateAndReadCssFile(fileName: String): String? {
                 // Supporting both .css and .scss files for convenience and correct interpretation in IDEs
                 // The browser requests .css, but we can also process .scss files
-                val resourcePaths = listOf(
-                    "css/$fileName",
-                    "css/${fileName.replace(".css", ".scss", true)}"
-                )
+                val resourcePaths =
+                    listOf(
+                        "css/$fileName",
+                        "css/${fileName.replace(".css", ".scss", true)}",
+                    )
 
                 // Find the first existing resource and read its content
-                val resourcePath = resourcePaths.firstOrNull {
-                    call::class.java.classLoader.getResource(it) != null
-                }
+                val resourcePath =
+                    resourcePaths.firstOrNull {
+                        call::class.java.classLoader.getResource(it) != null
+                    }
 
                 return resourcePath?.let {
-                    call::class.java.classLoader.getResourceAsStream(resourcePath)
+                    call::class.java.classLoader
+                        .getResourceAsStream(resourcePath)
                         ?.bufferedReader(Charsets.UTF_8)
                         ?.readText()
                 }

@@ -10,13 +10,15 @@ class LookupClientTest {
     private val client = LookupClient(config.lookupApiKey)
 
     @Test
-    fun shouldLookupCorrect() = testSuspend {
-        val result = client.lookup("One") as LookupResult.Success
-        assertThat(result.response).isEqualToIgnoringCase("One")
-    }
+    fun shouldLookupCorrect() =
+        testSuspend {
+            val result = client.lookup("One") as LookupResult.Success
+            assertThat(result.response).isEqualToIgnoringCase("One")
+        }
 
     @Test
-    fun shouldHandleBadCharactersValue() = testSuspend {
-        client.lookup("Invalid") as LookupResult.InvalidInput
-    }
+    fun shouldHandleBadCharactersValue() =
+        testSuspend {
+            client.lookup("Invalid") as LookupResult.InvalidInput
+        }
 }

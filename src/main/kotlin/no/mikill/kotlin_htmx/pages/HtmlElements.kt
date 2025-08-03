@@ -56,21 +56,21 @@ object Styles {
 object HtmlRenderUtils {
     suspend fun ApplicationCall.respondHtmlFragment(
         status: HttpStatusCode = HttpStatusCode.OK,
-        block: BODY.() -> Unit
+        block: BODY.() -> Unit,
     ) {
         val text = partialHtml(block)
         respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
     }
 
-    fun partialHtml(block: BODY.() -> Unit): String = buildString {
-        appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
-            body {
-                block(this)
+    fun partialHtml(block: BODY.() -> Unit): String =
+        buildString {
+            appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
+                body {
+                    block(this)
+                }
             }
         }
-    }
 }
-
 
 object FormUtils {
     fun INPUT.setConstraints(annotations: Array<Annotation>) {
@@ -90,7 +90,7 @@ object FormUtils {
         existingObject: Any?,
         propertyPath: String,
         text: String,
-        errors: Set<ConstraintViolation<Application>>
+        errors: Set<ConstraintViolation<Application>>,
     ) {
         val objectProperty = getProperty<Application>(propertyPath)
         val objectValue = existingObject?.let { getValueFromPath(it, propertyPath) }
@@ -115,8 +115,10 @@ object FormUtils {
 }
 
 object HtmlElements {
-
-    fun FlowContent.htmxTodolistSectionContent(loadDelay: Duration?, backendDelay: Duration) {
+    fun FlowContent.htmxTodolistSectionContent(
+        loadDelay: Duration?,
+        backendDelay: Duration,
+    ) {
         section {
             h1 { +"HTMX Element" }
             div {
@@ -154,7 +156,7 @@ object HtmlElements {
 
     fun HtmlBlockTag.todoListHtmlContent(
         blockIdPrefix: String, // Sometimes included twice in a page, so this gives isloation
-        todoListItems: List<TodoListItem> // The items to display
+        todoListItems: List<TodoListItem>, // The items to display
     ) {
         h1 { +"Todo List" }
         ul {
@@ -169,11 +171,15 @@ object HtmlElements {
             }
         }
         script {
-            unsafe { +"document.getElementById('${blockIdPrefix}-date').innerHTML = new Date().toLocaleString();" }
+            unsafe { +"document.getElementById('$blockIdPrefix-date').innerHTML = new Date().toLocaleString();" }
         }
     }
 
-    fun HtmlBlockTag.selectBox(name: String, linkUrl: String, imageUrl: String) {
+    fun HtmlBlockTag.selectBox(
+        name: String,
+        linkUrl: String,
+        imageUrl: String,
+    ) {
         a(href = linkUrl, classes = "box") {
             boostAndPreload()
 
@@ -199,10 +205,11 @@ object HtmlElements {
         attributes["hx-select"] = "#mainContent"
     }
 
-    fun STYLE.rawCss(@Language("CSS") css: String) {
+    fun STYLE.rawCss(
+        @Language("CSS") css: String,
+    ) {
         unsafe {
             raw(css)
         }
     }
-
 }

@@ -4,12 +4,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class PostCssTransformerTest {
-
     @Test
     fun `should process CSS with PostCSS plugins`() {
         val transformer = PostCssTransformer()
-        
-        val inputCss = """
+
+        val inputCss =
+            """
             ${'$'}primary-color: #007bff;
             ${'$'}border-radius: 4px;
             
@@ -23,7 +23,7 @@ class PostCssTransformerTest {
                     user-select: none;
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val processedCss = transformer.process(inputCss)
 
@@ -42,22 +42,23 @@ class PostCssTransformerTest {
     @Test
     fun `should handle empty CSS input`() {
         val transformer = PostCssTransformer()
-        
+
         val result = transformer.process("")
-        
+
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `should handle CSS without PostCSS features`() {
         val transformer = PostCssTransformer()
-        
-        val inputCss = """
+
+        val inputCss =
+            """
             .simple {
                 color: red;
                 margin: 10px;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val processedCss = transformer.process(inputCss)
 
@@ -70,8 +71,9 @@ class PostCssTransformerTest {
     @Test
     fun `should process nested selectors correctly`() {
         val transformer = PostCssTransformer()
-        
-        val inputCss = """
+
+        val inputCss =
+            """
             .parent {
                 color: blue;
                 
@@ -83,7 +85,7 @@ class PostCssTransformerTest {
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val processedCss = transformer.process(inputCss)
 
@@ -97,14 +99,15 @@ class PostCssTransformerTest {
     @Test
     fun `should process calc expressions`() {
         val transformer = PostCssTransformer()
-        
-        val inputCss = """
+
+        val inputCss =
+            """
             .container {
                 width: calc(100% - 20px);
                 height: calc(50px + 10px);
                 margin: calc(5px * 2);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val processedCss = transformer.process(inputCss)
 
