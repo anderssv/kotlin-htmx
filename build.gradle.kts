@@ -60,6 +60,11 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
     implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
+    
+    // HTMX support (commented out - modules may not be available in this Ktor version)
+    implementation("io.ktor:ktor-htmx:$ktorVersion")
+    implementation("io.ktor:ktor-htmx-html:$ktorVersion")
+    implementation("io.ktor:ktor-server-htmx:$ktorVersion")
 
     implementation("org.hibernate.validator:hibernate-validator:9.0.1.Final")
     implementation("org.glassfish.expressly:expressly:6.0.0")

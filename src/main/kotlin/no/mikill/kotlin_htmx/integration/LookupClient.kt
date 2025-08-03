@@ -1,7 +1,7 @@
 package no.mikill.kotlin_htmx.integration
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
 import no.mikill.kotlin_htmx.selection.items
 
 sealed class LookupResult {

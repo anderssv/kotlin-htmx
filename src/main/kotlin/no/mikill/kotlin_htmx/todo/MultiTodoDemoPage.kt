@@ -1,14 +1,23 @@
 package no.mikill.kotlin_htmx.todo
 
-import io.ktor.server.html.*
-import io.ktor.server.routing.*
-import kotlinx.html.*
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
+import kotlinx.html.a
+import kotlinx.html.div
+import kotlinx.html.h1
+import kotlinx.html.id
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.section
+import kotlinx.html.style
+import kotlinx.html.ul
+import kotlinx.html.unsafe
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmlTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
-import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
 
 /**

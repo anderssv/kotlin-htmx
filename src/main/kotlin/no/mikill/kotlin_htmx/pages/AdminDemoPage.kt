@@ -1,13 +1,20 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.html.*
-import io.ktor.server.routing.*
+import io.ktor.htmx.html.hx
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.coroutines.delay
-import kotlinx.html.*
+import kotlinx.html.a
+import kotlinx.html.div
+import kotlinx.html.h1
+import kotlinx.html.id
+import kotlinx.html.p
+import kotlinx.html.style
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
-import kotlin.collections.forEach
-import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
 
 class AdminDemoPage {
@@ -40,8 +47,12 @@ class AdminDemoPage {
                                 (0..10).forEach { item ->
                                     p {
                                         a(href = "item/$item") {
-                                            attributes["hx-get"] = "item/$item"
-                                            attributes["hx-target"] = "#itemPanel"
+                                            attributes.hx {
+                                                get = "item/$item"
+                                                target = "#itemPanel"
+                                                // indicator = "#loader"  // May not be available in DSL
+                                            }
+                                            // Fall back to manual attribute for indicator
                                             attributes["hx-indicator"] = "#loader"
                                             +"Item $item"
                                         }

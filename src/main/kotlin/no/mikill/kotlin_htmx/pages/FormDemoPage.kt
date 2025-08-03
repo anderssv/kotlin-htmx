@@ -1,13 +1,21 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.html.*
-import io.ktor.server.routing.*
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
 import jakarta.validation.ConstraintViolation
-import kotlinx.html.*
+import kotlinx.html.FormMethod
+import kotlinx.html.dd
+import kotlinx.html.div
+import kotlinx.html.dl
+import kotlinx.html.dt
+import kotlinx.html.form
+import kotlinx.html.h1
+import kotlinx.html.script
+import kotlinx.html.section
+import kotlinx.html.span
+import kotlinx.html.submitInput
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.pages.FormUtils.inputFieldWithValidationAndErrors
-import kotlin.collections.Set
-import kotlin.collections.set
 
 class FormDemoPage {
 

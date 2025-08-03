@@ -1,7 +1,8 @@
 package no.mikill.kotlin_htmx
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

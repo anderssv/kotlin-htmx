@@ -1,6 +1,6 @@
 package no.mikill.kotlin_htmx.application
 
-import java.util.*
+import java.util.UUID
 
 class ApplicationRepository {
     private val applications = mutableMapOf<UUID, Application>()

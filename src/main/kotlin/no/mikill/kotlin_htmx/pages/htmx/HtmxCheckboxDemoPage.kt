@@ -1,9 +1,28 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.pages.htmx
 
-import io.ktor.server.html.*
-import io.ktor.server.routing.*
-import io.ktor.server.sse.*
-import kotlinx.html.*
+import io.ktor.htmx.HxSwap
+import io.ktor.htmx.html.hx
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
+import io.ktor.server.sse.ServerSSESession
+import io.ktor.utils.io.ExperimentalKtorApi
+import kotlinx.html.HtmlBlockTag
+import kotlinx.html.InputType
+import kotlinx.html.a
+import kotlinx.html.classes
+import kotlinx.html.div
+import kotlinx.html.id
+import kotlinx.html.img
+import kotlinx.html.input
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.section
+import kotlinx.html.span
+import kotlinx.html.strong
+import kotlinx.html.style
+import kotlinx.html.unsafe
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.partialHtml
@@ -13,7 +32,9 @@ import org.slf4j.LoggerFactory
 import java.text.NumberFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Collections
+import java.util.Locale
+import java.util.UUID
 import kotlin.random.Random
 
 /**
@@ -118,6 +139,7 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
      */
     private fun HtmlBlockTag.renderCheckbox(boxNumber: Int, checkedState: Boolean) {
         input(type = InputType.checkBox) {
+            // Fall back to manual. Put not in DSL.
             attributes["hx-put"] = "checkboxes/$boxNumber"
             checked = checkedState
             id = "$boxNumber"
@@ -144,9 +166,11 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
     private fun HtmlBlockTag.endOfListTrigger(batchNumber: Int) {
         span {
             id = "end-of-list"
-            attributes["hx-get"] = "checkboxes/batch/${batchNumber + 1}"
-            attributes["hx-trigger"] = "revealed"
-            attributes["hx-swap"] = "outerHTML"
+            attributes.hx {
+                get = "checkboxes/batch/${batchNumber + 1}"
+                trigger = "revealed"
+                swap = HxSwap.outerHtml
+            }
         }
     }
 
@@ -212,8 +236,10 @@ class HtmxCheckboxDemoPage(val numberOfBoxes: Int) {
                             attributes["hx-ext"] = "sse"
                             attributes["sse-connect"] = "checkboxes/events"
                             section {
-                                attributes["hx-get"] = "checkboxes/all"
-                                attributes["hx-trigger"] = "sse:update-all"
+                                attributes.hx {
+                                    get = "checkboxes/all"
+                                    trigger = "sse:update-all"
+                                }
 
                                 renderBoxGridHtml()
                             }

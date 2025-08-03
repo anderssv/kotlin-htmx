@@ -1,7 +1,32 @@
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.server.html.*
-import kotlinx.html.*
+import io.ktor.server.html.Placeholder
+import io.ktor.server.html.Template
+import io.ktor.server.html.TemplatePlaceholder
+import io.ktor.server.html.insert
+import kotlinx.html.FlowContent
+import kotlinx.html.HTML
+import kotlinx.html.a
+import kotlinx.html.body
+import kotlinx.html.classes
+import kotlinx.html.div
+import kotlinx.html.footer
+import kotlinx.html.h1
+import kotlinx.html.head
+import kotlinx.html.header
+import kotlinx.html.id
+import kotlinx.html.lang
+import kotlinx.html.li
+import kotlinx.html.link
+import kotlinx.html.main
+import kotlinx.html.meta
+import kotlinx.html.nav
+import kotlinx.html.script
+import kotlinx.html.span
+import kotlinx.html.style
+import kotlinx.html.title
+import kotlinx.html.ul
+import kotlinx.html.unsafe
 import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
 /**

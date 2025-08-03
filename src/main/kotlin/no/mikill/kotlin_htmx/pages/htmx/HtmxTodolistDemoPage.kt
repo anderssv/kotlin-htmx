@@ -1,7 +1,7 @@
 package no.mikill.kotlin_htmx.pages.htmx
 
-import io.ktor.server.html.*
-import io.ktor.server.routing.*
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
 import kotlinx.html.div
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent

@@ -1,10 +1,25 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.selection.pages
 
-import io.ktor.server.html.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.html.*
+import io.ktor.htmx.HxSwap
+import io.ktor.htmx.html.hx
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.request.receive
+import io.ktor.server.response.header
+import io.ktor.server.routing.RoutingContext
+import io.ktor.utils.io.ExperimentalKtorApi
+import kotlinx.html.InputType
+import kotlinx.html.a
+import kotlinx.html.button
+import kotlinx.html.div
+import kotlinx.html.form
+import kotlinx.html.id
+import kotlinx.html.input
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.section
+import kotlinx.html.ul
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.integration.LookupResult
 import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
@@ -14,7 +29,6 @@ import no.mikill.kotlin_htmx.pages.SelectionTemplate
 import no.mikill.kotlin_htmx.selection.items
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
-import kotlin.collections.set
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
@@ -35,9 +49,13 @@ class SelectMainPage(
                         section {
                             div {
                                 form {
+                                    attributes.hx {
+                                        // ext = "json-enc"  // May not be available in DSL
+                                        post = "/select/search"
+                                        swap = HxSwap.outerHtml
+                                    }
+                                    // Fall back to manual attribute for ext
                                     attributes["hx-ext"] = "json-enc"
-                                    attributes["hx-post"] = "/select/search"
-                                    attributes["hx-swap"] = "outerHTML"
 
                                     div(classes = "htmx-indicator") {
                                         id = "formLoading"
