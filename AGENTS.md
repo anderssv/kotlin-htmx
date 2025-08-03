@@ -93,5 +93,12 @@ cd src/main/resources/postcss && npm run build
     - Keep README.md updated
     - Document complex business rules in code
 
-6. **Operations**
+6. **Task Management**
+    - Always update improvement-tasks.md when completing tasks
+    - Mark completed tasks with ✅ COMPLETED status
+    - Strike through completed action items
+    - Add status notes explaining what was accomplished
+    - This provides clear audit trail of work done
+
+7. **Operations**
     - When refactoring make sure to delete the old code
