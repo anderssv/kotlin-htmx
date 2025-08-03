@@ -111,9 +111,12 @@ class HtmxQuestionsPage {
                                     id = "question-form"
                                     // HTMX event handler to reset the form after successful submission
                                     // This allows users to submit multiple questions without manually clearing the form
+                                    attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
+                                    /*
+                                    //This isn't working for some reason
                                     attributes.hx {
                                         on("after-request", "if(event.detail.successful) this.reset()")
-                                    }
+                                    }*/
 
                                     div {
                                         style = "display: flex; gap: 10px;"

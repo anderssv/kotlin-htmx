@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
 class HtmxQuestionsPageTest : BaseSeleniumTest() {
+    override val headless = true
     private lateinit var driver: WebDriver
     private val questionsPageUrl = "/demo/htmx/questions"
 
