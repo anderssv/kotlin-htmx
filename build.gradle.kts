@@ -5,10 +5,10 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.1.20"
-    id("io.ktor.plugin") version "3.1.2"
+    kotlin("jvm") version "2.2.0"
+    id("io.ktor.plugin") version "3.2.3"
     id("com.github.ben-manes.versions") version "0.52.0"
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "8.3.8"
     application
 }
 
@@ -61,8 +61,8 @@ dependencies {
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
     implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
 
-    implementation("org.hibernate.validator:hibernate-validator:8.0.2.Final")
-    implementation("org.glassfish.expressly:expressly:5.0.0")
+    implementation("org.hibernate.validator:hibernate-validator:9.0.1.Final")
+    implementation("org.glassfish.expressly:expressly:6.0.0")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
@@ -70,27 +70,27 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2")
 
-    implementation("org.graalvm.sdk:graal-sdk:24.2.1")
-    implementation("org.graalvm.js:js:24.2.1")
-    implementation("org.graalvm.js:js-scriptengine:24.2.1")
+    implementation("org.graalvm.sdk:graal-sdk:24.2.2")
+    implementation("org.graalvm.js:js:24.2.2")
+    implementation("org.graalvm.js:js-scriptengine:24.2.2")
 
     testImplementation("org.assertj:assertj-core:3.27.3")
 
     // JUnit 5 dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:${kotlinVersion}")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.31.0")
-    testImplementation("io.github.bonigarcia:webdrivermanager:6.0.1")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.34.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.2.0")
 }
 
 fun isNonStable(version: String): Boolean {
