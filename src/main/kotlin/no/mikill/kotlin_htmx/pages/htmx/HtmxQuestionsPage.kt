@@ -1,16 +1,35 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.pages.htmx
 
-import io.ktor.server.html.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
-import kotlinx.html.*
+import io.ktor.htmx.HxSwap
+import io.ktor.htmx.html.hx
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.routing.RoutingContext
+import io.ktor.utils.io.ExperimentalKtorApi
+import kotlinx.html.ButtonType
+import kotlinx.html.FlowContent
+import kotlinx.html.button
+import kotlinx.html.div
+import kotlinx.html.form
+import kotlinx.html.h1
+import kotlinx.html.h2
+import kotlinx.html.id
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.section
+import kotlinx.html.style
+import kotlinx.html.textArea
+import kotlinx.html.ul
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Collections
+import java.util.UUID
 
 /**
  * Demo page that showcases a simple question submission and display system using HTMX.
@@ -92,7 +111,9 @@ class HtmxQuestionsPage {
                                     id = "question-form"
                                     // HTMX event handler to reset the form after successful submission
                                     // This allows users to submit multiple questions without manually clearing the form
-                                    attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
+                                    attributes.hx {
+                                        on("after-request", "if(event.detail.successful) this.reset()")
+                                    }
 
                                     div {
                                         style = "display: flex; gap: 10px;"
@@ -106,14 +127,14 @@ class HtmxQuestionsPage {
                                         button(type = ButtonType.submit) {
                                             id = "submit-button"
                                             style = "padding: 8px 16px;"
-                                            // HTMX attributes for form submission:
-                                            // - hx-post: The endpoint to submit the form data to
-                                            // - hx-target: The element to update with the response
-                                            // - hx-swap: How to insert the response (replace the inner HTML)
-                                            // - hx-indicator: The element to show during the request (loading indicator)
-                                            attributes["hx-post"] = "questions/submit"
-                                            attributes["hx-target"] = "#questions-list"
-                                            attributes["hx-swap"] = "innerHTML"
+                                            // HTMX attributes for form submission using DSL
+                                            attributes.hx {
+                                                post = "questions/submit"
+                                                target = "#questions-list"
+                                                swap = HxSwap.innerHtml
+                                                // indicator = ".htmx-indicator"  // May not be available in DSL
+                                            }
+                                            // Fall back to manual attribute for indicator
                                             attributes["hx-indicator"] = ".htmx-indicator"
                                             +"Submit"
                                         }

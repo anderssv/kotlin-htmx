@@ -1,9 +1,15 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.compression.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.deflate
+import io.ktor.server.plugins.compression.gzip
+import io.ktor.utils.io.ExperimentalKtorApi
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.css.PostCssTransformer
 import no.mikill.kotlin_htmx.integration.LookupClient

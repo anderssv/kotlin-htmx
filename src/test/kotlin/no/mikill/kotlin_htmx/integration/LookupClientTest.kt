@@ -1,6 +1,6 @@
 package no.mikill.kotlin_htmx.integration
 
-import io.ktor.test.dispatcher.*
+import io.ktor.test.dispatcher.testSuspend
 import no.mikill.kotlin_htmx.ApplicationConfig
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test

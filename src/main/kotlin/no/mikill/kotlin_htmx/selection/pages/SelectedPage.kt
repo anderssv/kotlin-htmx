@@ -1,10 +1,13 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.selection.pages
 
 import io.ktor.http.CacheControl
 import io.ktor.http.HttpHeaders
-import io.ktor.server.html.*
+import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.response.header
-import io.ktor.server.routing.*
+import io.ktor.server.routing.RoutingContext
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.p
@@ -13,8 +16,6 @@ import no.mikill.kotlin_htmx.pages.HtmlElements.selectBox
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.SelectionTemplate
 import no.mikill.kotlin_htmx.selection.items
-import kotlin.collections.set
-import kotlin.collections.single
 
 
 class SelectedPage {
@@ -35,6 +36,7 @@ class SelectedPage {
                         }
                         section {
                             id = "choices"
+                            // Fall back to manual attribute for ext
                             attributes["hx-ext"] = "preload"
 
                             selectBox(

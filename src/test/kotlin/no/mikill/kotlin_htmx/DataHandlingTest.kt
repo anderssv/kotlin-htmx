@@ -8,7 +8,7 @@ import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.application.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 import kotlin.reflect.jvm.javaField
 
 class DataHandlingTest {

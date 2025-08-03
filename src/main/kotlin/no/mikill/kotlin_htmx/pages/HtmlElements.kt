@@ -1,15 +1,45 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx.pages
 
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
+import io.ktor.htmx.HxSwap
+import io.ktor.htmx.html.hx
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
+import io.ktor.http.withCharset
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.respond
+import io.ktor.utils.io.ExperimentalKtorApi
 import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
-import kotlinx.html.*
+import kotlinx.html.A
+import kotlinx.html.BODY
+import kotlinx.html.FORM
+import kotlinx.html.FlowContent
+import kotlinx.html.HtmlBlockTag
+import kotlinx.html.INPUT
+import kotlinx.html.STYLE
+import kotlinx.html.a
+import kotlinx.html.body
 import kotlinx.html.consumers.filter
+import kotlinx.html.div
+import kotlinx.html.h1
+import kotlinx.html.html
+import kotlinx.html.id
+import kotlinx.html.img
+import kotlinx.html.input
+import kotlinx.html.label
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.section
+import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
+import kotlinx.html.style
+import kotlinx.html.ul
+import kotlinx.html.unsafe
 import no.mikill.kotlin_htmx.application.Application
 import no.mikill.kotlin_htmx.getProperty
 import no.mikill.kotlin_htmx.getValueFromPath
@@ -90,12 +120,14 @@ object HtmlElements {
         section {
             h1 { +"HTMX Element" }
             div {
-                attributes["hx-get"] = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
-                loadDelay?.let {
-                    // Click is default
-                    attributes["hx-trigger"] = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                attributes.hx {
+                    get = "/data/todolist.html?delay=${backendDelay.inWholeSeconds}"
+                    loadDelay?.let {
+                        // Click is default
+                        trigger = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
+                    }
+                    swap = HxSwap.innerHtml
                 }
-                attributes["hx-swap"] = "innerHTML"
                 style = BOX_STYLE
                 // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
                 +"Click me! ${if (loadDelay != null) " (Will automatically load after ${loadDelay.inWholeSeconds} seconds)" else ""}"
@@ -155,12 +187,16 @@ object HtmlElements {
         attributes["preload"] = "mouseover"
         attributes["preload-images"] = true.toString()
 
-        // Boosting
-        attributes["hx-boost"] = true.toString()
-        attributes["hx-select"] = "#mainContent" // The DIV in the response that is inserted
-        attributes["hx-target"] = "#mainContent" // The DIV in the existing page that is replaced
-        //attributes["hx-swap"] = "outerHTML"
-        attributes["hx-swap"] = "outerHTML show:window:top" // Makes sure the window scrolls to the top
+        // Boosting using HTMX DSL
+        attributes.hx {
+            // boost = true  // May not be available in DSL
+            // select = "#mainContent" // The DIV in the response that is inserted
+            target = "#mainContent" // The DIV in the existing page that is replaced
+            swap = HxSwap.outerHtml + " show:window:top" // Makes sure the window scrolls to the top
+        }
+        // Fall back to manual attributes for unsupported properties
+        attributes["hx-boost"] = "true"
+        attributes["hx-select"] = "#mainContent"
     }
 
     fun STYLE.rawCss(@Language("CSS") css: String) {

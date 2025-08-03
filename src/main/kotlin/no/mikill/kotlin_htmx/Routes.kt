@@ -1,19 +1,37 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package no.mikill.kotlin_htmx
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.CacheControl
 import io.ktor.http.HttpHeaders
-import io.ktor.server.application.*
-import io.ktor.server.html.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sse.*
+import io.ktor.server.application.Application
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.htmx.hx
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.header
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
+import io.ktor.server.sse.ServerSSESession
+import io.ktor.server.sse.sse
+import io.ktor.utils.io.ExperimentalKtorApi
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import kotlinx.coroutines.delay
-import kotlinx.html.*
+import kotlinx.html.a
+import kotlinx.html.h1
+import kotlinx.html.li
+import kotlinx.html.p
+import kotlinx.html.section
+import kotlinx.html.ul
 import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.application.Person
@@ -33,7 +51,7 @@ import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
 import no.mikill.kotlin_htmx.todo.todoListItems
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes")
@@ -166,7 +184,8 @@ private fun Route.configureSelectionRoutes(lookupClient: LookupClient) {
         selectMainPage.renderMainPage(this)
     }
 
-    post("/search") {
+    // Use HTMX-specific routing for search
+    hx.post("/search") {
         selectMainPage.search(this)
     }
 
@@ -206,7 +225,8 @@ private fun Route.configureDemoRoutes(
         adminDemoPage.renderAdminPage(this)
     }
 
-    get("/item/{itemId}") {
+    // Use HTMX-specific routing for admin item updates
+    hx.get("/item/{itemId}") {
         call.response.header(HttpHeaders.CacheControl, CacheControl.MaxAge(maxAgeSeconds = 30).toString())
         val itemId = call.parameters["itemId"]!!.toInt()
         adminDemoPage.renderItemResponse(this, itemId)
@@ -235,7 +255,8 @@ private fun Route.configureHtmxRoutes(numberOfCheckboxes: Int) {
             get {
                 htmxQuestionsPage.renderQuestionsPage(this)
             }
-            post("/submit") {
+            // Use HTMX-specific routing for form submission
+            hx.post("/submit") {
                 htmxQuestionsPage.handleQuestionSubmission(this)
             }
         }
@@ -246,15 +267,16 @@ private fun Route.configureHtmxRoutes(numberOfCheckboxes: Int) {
                 htmxCheckboxDemoPage.renderCheckboxesPage(this)
             }
 
-            get("/all") {
+            // Use HTMX-specific routing for dynamic content updates
+            hx.get("/all") {
                 htmxCheckboxDemoPage.renderBoxGridFragment(this)
             }
 
-            get("/batch/{batchNumber}") {
+            hx.get("/batch/{batchNumber}") {
                 htmxCheckboxDemoPage.renderBoxBatch(this)
             }
 
-            put("{boxNumber}") {
+            hx.put("{boxNumber}") {
                 htmxCheckboxDemoPage.handleCheckboxToggle(this)
             }
 
@@ -376,8 +398,8 @@ private fun Route.configureDataRoutes() {
         call.respond(todoListItems)
     }
 
-    // HTML fragment endpoint with simulated delay
-    get("/todolist.html") {
+    // HTML fragment endpoint with simulated delay - use HTMX-specific routing
+    hx.get("/todolist.html") {
         val delaySeconds = call.parameters["delay"]?.toInt() ?: 1
         delay(delaySeconds.seconds)
         call.respondHtmlFragment {
