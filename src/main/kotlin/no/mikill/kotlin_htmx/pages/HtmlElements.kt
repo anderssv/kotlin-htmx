@@ -200,7 +200,7 @@ object HtmlElements {
             target = "#mainContent" // The DIV in the existing page that is replaced
             swap = HxSwap.outerHtml + " show:window:top" // Makes sure the window scrolls to the top
         }
-        // Fall back to manual attributes for unsupported properties
+        // NOT-IN-DSL:  attributes for unsupported properties
         attributes["hx-boost"] = "true"
         attributes["hx-select"] = "#mainContent"
     }

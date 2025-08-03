@@ -55,7 +55,7 @@ class SelectMainPage(
                                         post = "/select/search"
                                         swap = HxSwap.outerHtml
                                     }
-                                    // Fall back to manual attribute for ext
+                                    // NOT-IN-DSL:  attribute for ext
                                     attributes["hx-ext"] = "json-enc"
 
                                     div(classes = "htmx-indicator") {

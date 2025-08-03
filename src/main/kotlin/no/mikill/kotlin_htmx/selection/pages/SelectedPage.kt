@@ -35,7 +35,7 @@ class SelectedPage {
                         }
                         section {
                             id = "choices"
-                            // Fall back to manual attribute for ext
+                            // NOT-IN-DSL:  attribute for ext
                             attributes["hx-ext"] = "preload"
 
                             selectBox(

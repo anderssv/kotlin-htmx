@@ -51,7 +51,7 @@ class AdminDemoPage {
                                                 target = "#itemPanel"
                                                 // indicator = "#loader"  // May not be available in DSL
                                             }
-                                            // Fall back to manual attribute for indicator
+                                            // NOT-IN-DSL:  attribute for indicator
                                             attributes["hx-indicator"] = "#loader"
                                             +"Item $item"
                                         }

@@ -113,7 +113,7 @@ class HtmxQuestionsPage {
                                     // This allows users to submit multiple questions without manually clearing the form
                                     attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
                                     /*
-                                    //This isn't working for some reason
+                                    // NOT-IN-DSL: This is supported in the API, but isn't working for some reason
                                     attributes.hx {
                                         on("after-request", "if(event.detail.successful) this.reset()")
                                     }*/
@@ -138,7 +138,7 @@ class HtmxQuestionsPage {
                                                 swap = HxSwap.innerHtml
                                                 // indicator = ".htmx-indicator"  // May not be available in DSL
                                             }
-                                            // Fall back to manual attribute for indicator
+                                            // NOT-IN-DSL:  attribute for indicator
                                             attributes["hx-indicator"] = ".htmx-indicator"
                                             +"Submit"
                                         }

@@ -143,7 +143,7 @@ class HtmxCheckboxDemoPage(
         checkedState: Boolean,
     ) {
         input(type = InputType.checkBox) {
-            // Fall back to manual. Put not in DSL.
+            // NOT-IN-DSL: . Put not in DSL.
             attributes["hx-put"] = "checkboxes/$boxNumber"
             checked = checkedState
             id = "$boxNumber"
