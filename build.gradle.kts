@@ -9,7 +9,7 @@ plugins {
     id("io.ktor.plugin") version "3.2.3"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("com.gradleup.shadow") version "8.3.8"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
     application
 }
 
@@ -118,7 +118,7 @@ kotlin {
 }
 
 ktlint {
-    version.set("1.5.0")
+    version.set("1.7.1")
     verbose.set(true)
     outputToConsole.set(true)
     coloredOutput.set(true)
