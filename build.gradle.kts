@@ -130,11 +130,4 @@ ktlint {
         exclude("**/generated/**")
         include("**/kotlin/**")
     }
-    additionalEditorconfig =
-        mapOf(
-            "ktlint_standard_package-name" to "disabled",
-            "ktlint_standard_max-line-length" to "disabled",
-            "ktlint_standard_value-parameter-comment" to "disabled",
-            "ktlint_standard_property-naming" to "disabled",
-        )
 }
