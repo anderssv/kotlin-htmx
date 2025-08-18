@@ -22,6 +22,8 @@ import java.util.logging.LogRecord
  *
  * This might be slow, but you should set a reasonable caching policy for CSS files.
  * If that is too slow, use a in memory cache or a file cache to store the processed CSS.
+ *
+ * See perfomance and multithreading notes for GraalJS here: https://www.graalvm.org/latest/reference-manual/js/Multithreading/
  */
 class PostCssTransformer {
     private val log = LoggerFactory.getLogger(PostCssTransformer::class.java)
@@ -30,11 +32,10 @@ class PostCssTransformer {
     private val contextPool: List<Value> = createContextPool(2)
     private val nextContextIndex = AtomicInteger(0)
 
-    @Synchronized
+    @Synchronized // Ensure only one thread accesses the specific context at a time
     fun Value.process(css: String): String {
         try {
-            val processFn = getNextContext()
-            val resultPromise = processFn.execute(css)
+            val resultPromise = execute(css)
 
             var processedCss: String? = null
             var error: String? = null
