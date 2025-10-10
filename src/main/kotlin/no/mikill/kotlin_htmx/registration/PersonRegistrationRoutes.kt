@@ -8,6 +8,7 @@ import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import no.mikill.kotlin_htmx.forms.bindTo
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.validation.ValidationResult
@@ -32,17 +33,7 @@ fun Application.configurePersonRegistrationRoutes(
 
         post("/person/register") {
             val parameters = call.receiveParameters()
-            val firstName = parameters["firstName"] ?: ""
-            val lastName = parameters["lastName"] ?: ""
-            val email = parameters["email"] ?: ""
-
-            val person =
-                Person(
-                    firstName = firstName,
-                    lastName = lastName,
-                    email = email,
-                    addresses = emptyList(),
-                )
+            val person = parameters.bindTo<Person>()
 
             when (val result = validationService.validate(person)) {
                 is ValidationResult.Valid -> {
