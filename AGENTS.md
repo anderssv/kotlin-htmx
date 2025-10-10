@@ -14,9 +14,11 @@ When the user says "go":
 3. Implement only enough code to make that test pass
 4. Mark the test as completed in `docs/plan.md`
 5. Run all tests to ensure nothing is broken
-6. Verify code formatting with `./gradlew ktlintCheck`
+6. Format and verify code with `./gradlew ktlintFormat` (this both formats and checks in one step)
 
 This ensures systematic, incremental progress through planned features.
+
+**TDD Note**: Compile errors are NOT a proxy for failing tests. A test must compile and execute, then fail with a meaningful assertion error to be considered a proper "Red" phase in TDD. Add necessary dependencies and imports first to get a proper failing test.
 
 ## Tech Stack
 
@@ -47,12 +49,14 @@ This ensures systematic, incremental progress through planned features.
 # Update the npm dependencies for postcss
 cd src/main/resources/postcss && npm run build
 
-# Check code formatting with ktlint
-./gradlew ktlintCheck
-
-# Auto-format code with ktlint
+# Format and check code with ktlint (recommended - does both formatting and checking)
 ./gradlew ktlintFormat
+
+# Check code formatting with ktlint only (without auto-formatting)
+./gradlew ktlintCheck
 ```
+
+**Note**: Prefer `ktlintFormat` over `ktlintCheck` as it both formats the code and verifies it in one step.
 
 
 ## Development Setup
@@ -76,7 +80,7 @@ cd src/main/resources/postcss && npm run build
     - Follow Arrange-Act-Assert pattern
     - Use test data builders (usually objects with valid() methods, a variant of the Object Mother pattern)
     - Run all tests after finishing a task
-    - Verify code formatting with `./gradlew ktlintCheck` before considering a task complete
+    - Format and verify code with `./gradlew ktlintFormat` before considering a task complete (this both formats and checks)
 
 2. **Code Organization**
     - Follow domain-driven package structure
