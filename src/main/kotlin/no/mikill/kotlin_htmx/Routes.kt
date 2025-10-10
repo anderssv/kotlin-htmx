@@ -7,12 +7,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
 import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.htmx.hx
-import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
@@ -46,7 +43,6 @@ import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
 import no.mikill.kotlin_htmx.todo.todoListItems
-import no.mikill.kotlin_htmx.validation.ValidationResult
 import no.mikill.kotlin_htmx.validation.ValidationService
 import org.slf4j.LoggerFactory
 import java.util.UUID

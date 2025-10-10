@@ -2,7 +2,6 @@ package no.mikill.kotlin_htmx.registration
 
 import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
-import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
@@ -53,7 +52,7 @@ class AddAddressPage {
                         +"Address Type"
                         select {
                             name = Person::addresses.at(nextIndex, Address::type).path
-                            AddressType.values().forEach { type ->
+                            AddressType.entries.forEach { type ->
                                 option {
                                     value = type.name
                                     if (type == newAddress.type) {

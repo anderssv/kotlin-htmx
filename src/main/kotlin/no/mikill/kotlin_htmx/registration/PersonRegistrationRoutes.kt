@@ -1,7 +1,6 @@
 package no.mikill.kotlin_htmx.registration
 
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respondRedirect

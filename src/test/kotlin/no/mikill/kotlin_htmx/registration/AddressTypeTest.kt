@@ -7,7 +7,7 @@ class AddressTypeTest {
     @Test
     fun `AddressType enum should have HOME WORK OTHER values`() {
         // Arrange & Act
-        val values = AddressType.values()
+        val values = AddressType.entries.toTypedArray()
 
         // Assert
         assertThat(values).containsExactlyInAnyOrder(

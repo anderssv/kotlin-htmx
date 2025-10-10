@@ -11,14 +11,10 @@ import io.ktor.http.withCharset
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import io.ktor.utils.io.ExperimentalKtorApi
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.Size
 import kotlinx.html.A
 import kotlinx.html.BODY
-import kotlinx.html.FORM
 import kotlinx.html.FlowContent
 import kotlinx.html.HtmlBlockTag
-import kotlinx.html.INPUT
 import kotlinx.html.STYLE
 import kotlinx.html.a
 import kotlinx.html.body
@@ -28,8 +24,6 @@ import kotlinx.html.h1
 import kotlinx.html.html
 import kotlinx.html.id
 import kotlinx.html.img
-import kotlinx.html.input
-import kotlinx.html.label
 import kotlinx.html.li
 import kotlinx.html.p
 import kotlinx.html.script
@@ -42,7 +36,6 @@ import kotlinx.html.unsafe
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import no.mikill.kotlin_htmx.todo.TodoListItem
 import org.intellij.lang.annotations.Language
-import kotlin.reflect.jvm.javaField
 import kotlin.time.Duration
 
 object Styles {

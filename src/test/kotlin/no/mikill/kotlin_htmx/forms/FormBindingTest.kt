@@ -1,6 +1,5 @@
 package no.mikill.kotlin_htmx.forms
 
-import io.ktor.http.Parameters
 import io.ktor.http.parametersOf
 import no.mikill.kotlin_htmx.registration.Person
 import org.assertj.core.api.Assertions.assertThat
