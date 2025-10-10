@@ -886,15 +886,960 @@ fun Parameters.getUUID(name: String): UUID {
 ---
 ---
 
+# TDD Plan: PropertyPath - Type-Safe Nested Property References
+
+## Feature Description
+Create a type-safe way to reference nested properties including indexed collections. This enables compile-time checking for paths like `person.addresses[1].streetAddress` while generating correct validation path strings.
+
+## Implementation Approach
+- Create `PropertyPath<T, R>` sealed class with variants for Direct, Nested, and Indexed properties
+- Add extension functions for fluent API: `toPath()`, `then()`, `at()`
+- Ensure path string matches Jakarta validation output format
+- Extract HTML constraints from the final property in the chain
+
+## Benefits
+- Compile-time type safety for nested properties
+- Refactoring support across all property references
+- Clear API for working with collections
+- Matches validation path format exactly
+- Shows advanced Kotlin type system usage
+
+---
+
+## Tests (TDD Order)
+
+### [ ] Test 1: PropertyPath.Direct represents simple property
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: `PropertyPath.Direct` should hold a `KProperty1` and generate correct path string.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/validation/PropertyPath.kt
+package no.mikill.kotlin_htmx.validation
+
+import kotlin.reflect.KProperty1
+
+sealed class PropertyPath<T, R> {
+    abstract val path: String
+
+    data class Direct<T, R>(
+        val property: KProperty1<T, R>
+    ) : PropertyPath<T, R>() {
+        override val path: String = property.name
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 2: PropertyPath.Nested chains two properties
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: `PropertyPath.Nested` should combine parent and child paths with a dot.
+
+**Implementation**:
+```kotlin
+data class Nested<T, M, R>(
+    val parent: PropertyPath<T, M>,
+    val property: KProperty1<M, R>
+) : PropertyPath<T, R>() {
+    override val path: String = "${parent.path}.${property.name}"
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 3: PropertyPath.Indexed handles collection element
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: `PropertyPath.Indexed` should generate path like `addresses[1].city`.
+
+**Implementation**:
+```kotlin
+data class Indexed<T, E, R>(
+    val listProperty: KProperty1<T, List<E>>,
+    val index: Int,
+    val elementProperty: KProperty1<E, R>
+) : PropertyPath<T, R>() {
+    override val path: String = "${listProperty.name}[$index].${elementProperty.name}"
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 4: KProperty1.toPath() extension creates Direct path
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: Calling `SomeClass::property.toPath()` should create `PropertyPath.Direct`.
+
+**Implementation**:
+```kotlin
+fun <T, R> KProperty1<T, R>.toPath(): PropertyPath<T, R> =
+    PropertyPath.Direct(this)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 5: PropertyPath.then() chains nested properties
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: Calling `parent.then(Child::property)` should create `PropertyPath.Nested`.
+
+**Implementation**:
+```kotlin
+fun <T, M, R> PropertyPath<T, M>.then(property: KProperty1<M, R>): PropertyPath<T, R> =
+    PropertyPath.Nested(this, property)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 6: KProperty1.at() creates indexed path
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: Calling `Person::addresses.at(0, Address::city)` should create `PropertyPath.Indexed` with path "addresses[0].city".
+
+**Implementation**:
+```kotlin
+fun <T, E, R> KProperty1<T, List<E>>.at(
+    index: Int,
+    property: KProperty1<E, R>
+): PropertyPath<T, R> =
+    PropertyPath.Indexed(this, index, property)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 7: PropertyPath works with real domain classes
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
+
+**Test**: Create test Person and Address classes, verify all path types work correctly.
+
+**Implementation**: Integration test with actual data classes.
+
+**Status**: PENDING
+
+---
+
+## Notes
+- PropertyPath maintains full type information throughout the chain
+- The `path` property generates strings matching Jakarta validation format
+- Index is runtime value (unavoidable for forms)
+- Can be extended for more complex scenarios (nested indexed, etc.)
+- Works seamlessly with existing HtmlConstraints
+
+---
+---
+
+# TDD Plan: Person Registration - Nested Domain Models
+
+## Feature Description
+Create a complete person registration system demonstrating three-level nesting: `person.addresses[0].streetAddress`. This shows aggregate root pattern, collection validation, and type-safe form handling.
+
+## Implementation Approach
+- Create Person and Address domain models with full validation annotations
+- Create AddressType enum
+- Create PersonRepository for in-memory storage
+- Build two-form registration flow: person details then addresses
+- Use PropertyPath for all form fields
+- Validate complete aggregate on save
+
+## Benefits
+- Real-world domain model example
+- Demonstrates aggregate root pattern
+- Shows collection validation with @Valid
+- Three-level property nesting showcase
+- Type-safe form handling at all levels
+
+---
+
+## Tests (TDD Order)
+
+### [ ] Test 1: AddressType enum
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTypeTest.kt`
+
+**Test**: `AddressType` enum should have HOME, WORK, OTHER values.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/AddressType.kt
+package no.mikill.kotlin_htmx.registration
+
+enum class AddressType {
+    HOME, WORK, OTHER
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 2: Address data class with validation
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTest.kt`
+
+**Test**: `Address` should have id, type, streetAddress, city, postalCode, country with appropriate validation annotations.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/RegistrationDomain.kt
+package no.mikill.kotlin_htmx.registration
+
+import jakarta.validation.constraints.*
+import java.util.UUID
+
+data class Address(
+    val id: UUID = UUID.randomUUID(),
+    @field:NotNull(message = "Address type is required")
+    val type: AddressType?,
+    @field:NotBlank(message = "Street address is required")
+    @field:Size(max = 100, message = "Street address must be 100 characters or less")
+    val streetAddress: String,
+    @field:NotBlank(message = "City is required")
+    @field:Size(max = 50, message = "City must be 50 characters or less")
+    val city: String,
+    @field:NotBlank(message = "Postal code is required")
+    @field:Pattern(regexp = "[0-9]{4,5}", message = "Postal code must be 4-5 digits")
+    val postalCode: String,
+    @field:NotBlank(message = "Country is required")
+    @field:Size(max = 50, message = "Country must be 50 characters or less")
+    val country: String
+)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 3: Address validation with ValidationService
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTest.kt`
+
+**Test**: Validate Address with ValidationService - verify violations for invalid fields.
+
+**Implementation**: Use existing ValidationService to test Address validation rules.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 4: Person data class with nested Address validation
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
+
+**Test**: `Person` should have id, firstName, lastName, email, addresses with @Valid annotation on addresses list.
+
+**Implementation**:
+```kotlin
+data class Person(
+    val id: UUID = UUID.randomUUID(),
+    @field:NotBlank(message = "First name is required")
+    @field:Size(max = 50, message = "First name must be 50 characters or less")
+    val firstName: String,
+    @field:NotBlank(message = "Last name is required")
+    @field:Size(max = 50, message = "Last name must be 50 characters or less")
+    val lastName: String,
+    @field:NotBlank(message = "Email is required")
+    @field:Email(message = "Must be a valid email address")
+    val email: String,
+    @field:Valid
+    @field:Size(min = 1, message = "At least one address is required")
+    val addresses: List<Address> = emptyList()
+)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 5: Person validates nested Address violations
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
+
+**Test**: When validating Person with invalid Address, violations should include paths like "addresses[0].city".
+
+**Implementation**: Create Person with invalid Address, validate with ValidationService, verify violation paths.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 6: Person requires at least one address
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
+
+**Test**: Person with empty addresses list should have violation on "addresses" property.
+
+**Implementation**: Verify @Size(min=1) validation on addresses list.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 7: Person.valid() test data builder
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
+
+**Test**: Create `Person.Companion.valid()` extension that returns valid Person with one valid Address.
+
+**Implementation**:
+```kotlin
+fun Person.Companion.valid(
+    firstName: String = "John",
+    lastName: String = "Doe",
+    email: String = "john.doe@example.com",
+    addresses: List<Address> = listOf(Address.valid())
+) = Person(
+    firstName = firstName,
+    lastName = lastName,
+    email = email,
+    addresses = addresses
+)
+
+fun Address.Companion.valid(
+    type: AddressType = AddressType.HOME,
+    streetAddress: String = "123 Main St",
+    city: String = "Springfield",
+    postalCode: String = "12345",
+    country: String = "USA"
+) = Address(
+    type = type,
+    streetAddress = streetAddress,
+    city = city,
+    postalCode = postalCode,
+    country = country
+)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 8: PersonRepository stores and retrieves Person
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
+
+**Test**: `PersonRepository.save()` stores Person, `findById()` retrieves it.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/PersonRepository.kt
+package no.mikill.kotlin_htmx.registration
+
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+
+class PersonRepository {
+    private val persons = ConcurrentHashMap<UUID, Person>()
+
+    fun save(person: Person): Person {
+        persons[person.id] = person
+        return person
+    }
+
+    fun findById(id: UUID): Person? = persons[id]
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 9: PersonRepository.update() modifies existing Person
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
+
+**Test**: Can update Person (e.g., add addresses) and retrieve updated version.
+
+**Implementation**: Update method replaces person in map.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 10: PersonRepository.findAll() returns all persons
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
+
+**Test**: `findAll()` should return list of all stored persons.
+
+**Implementation**:
+```kotlin
+fun findAll(): List<Person> = persons.values.toList()
+```
+
+**Status**: PENDING
+
+---
+
+## Notes
+- Person is the aggregate root - never save Address separately
+- All operations work on complete Person object
+- Repository is in-memory for demo purposes
+- Validation cascades from Person to Addresses via @Valid
+- Test data builders make tests more readable
+
+---
+---
+
+# TDD Plan: Person Registration Forms with PropertyPath
+
+## Feature Description
+Create form components and pages that use PropertyPath for type-safe rendering of nested properties. Implement two-form registration flow: person details first, then add addresses iteratively.
+
+## Implementation Approach
+- Update form components to accept PropertyPath
+- Create person registration page (first form)
+- Create add address page (second form, can be used multiple times)
+- Create person display page
+- Use PropertyPath throughout for type safety
+
+## Benefits
+- Type-safe form rendering at all nesting levels
+- Compile-time checking for all property references
+- Clean separation of concerns
+- Demonstrates complete registration flow
+- Shows aggregate root pattern in action
+
+---
+
+## Tests (TDD Order)
+
+### [ ] Test 1: validatedInput accepts PropertyPath
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponentsTest.kt`
+
+**Test**: Create new `validatedInput()` that accepts `PropertyPath<T, R>` and renders input with path as name.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponents.kt
+package no.mikill.kotlin_htmx.pages
+
+import kotlinx.html.*
+import no.mikill.kotlin_htmx.validation.PropertyPath
+import no.mikill.kotlin_htmx.validation.HtmlConstraints
+
+fun <T, R> DIV.validatedInput(
+    propertyPath: PropertyPath<T, R>,
+    value: String,
+    label: String,
+    inputType: InputType = InputType.text,
+    placeholder: String? = null
+) {
+    val pathString = propertyPath.path
+
+    label {
+        +label
+        input(type = inputType, name = pathString) {
+            this.value = value
+            placeholder?.let { this.placeholder = it }
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 2: validatedInput extracts HTML constraints from PropertyPath
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponentsTest.kt`
+
+**Test**: Input should have HTML attributes from validation annotations on the property.
+
+**Implementation**:
+```kotlin
+// Extract property for HtmlConstraints based on PropertyPath type
+val property = when (propertyPath) {
+    is PropertyPath.Direct -> propertyPath.property
+    is PropertyPath.Nested -> propertyPath.property
+    is PropertyPath.Indexed -> propertyPath.elementProperty
+}
+
+val constraints = HtmlConstraints.getAttributes(property)
+
+// Apply constraints to input element
+constraints.forEach { (attrName, attrValue) ->
+    when (attrName) {
+        "required" -> required = true
+        "maxlength" -> maxLength = attrValue
+        "minlength" -> minLength = attrValue
+        "pattern" -> pattern = attrValue
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 3: validatedInputWithErrors displays violations by path
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponentsTest.kt`
+
+**Test**: Add version that shows error messages from violations map using path string.
+
+**Implementation**:
+```kotlin
+fun <T, R> DIV.validatedInputWithErrors(
+    propertyPath: PropertyPath<T, R>,
+    value: String,
+    violations: Map<String, List<String>>,
+    label: String,
+    inputType: InputType = InputType.text,
+    placeholder: String? = null
+) {
+    validatedInput(propertyPath, value, label, inputType, placeholder)
+
+    violations[propertyPath.path]?.forEach { error ->
+        div(classes = "error-message") {
+            +error
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 4: Test with nested PropertyPath
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponentsTest.kt`
+
+**Test**: Create test with `Person::addresses.at(0, Address::city)` - verify name="addresses[0].city" and correct constraints.
+
+**Implementation**: Integration test verifying PropertyPath works with real nested properties.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 5: PersonRegistrationPage renders person form
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationPageTest.kt`
+
+**Test**: First form should render inputs for firstName, lastName, email using PropertyPath.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationPage.kt
+package no.mikill.kotlin_htmx.registration
+
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.RoutingContext
+import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.*
+import no.mikill.kotlin_htmx.validation.toPath
+
+class PersonRegistrationPage {
+    suspend fun renderPersonForm(
+        context: RoutingContext,
+        person: Person = Person(firstName = "", lastName = "", email = ""),
+        violations: Map<String, List<String>> = emptyMap()
+    ) {
+        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Register Person")) {
+            mainSectionTemplate {
+                emptyContentWrapper {
+                    h1 { +"Register Person" }
+                    form(method = FormMethod.post, action = "/person/register") {
+                        div {
+                            validatedInputWithErrors(
+                                Person::firstName.toPath(),
+                                person.firstName,
+                                violations,
+                                "First Name"
+                            )
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::lastName.toPath(),
+                                person.lastName,
+                                violations,
+                                "Last Name"
+                            )
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::email.toPath(),
+                                person.email,
+                                violations,
+                                "Email",
+                                InputType.email
+                            )
+                        }
+                        submitInput { value = "Continue to Addresses" }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 6: POST /person/register validates and saves Person
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationRoutesTest.kt`
+
+**Test**: Posting valid person data should create Person with empty addresses, save to repository, redirect to add address page.
+
+**Implementation**:
+```kotlin
+// In Routes.kt or PersonRegistrationRoutes.kt
+post("/person/register") {
+    val firstName = call.parameters["firstName"] ?: ""
+    val lastName = call.parameters["lastName"] ?: ""
+    val email = call.parameters["email"] ?: ""
+
+    val person = Person(
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
+        addresses = emptyList()
+    )
+
+    when (val result = validationService.validate(person)) {
+        is ValidationResult.Valid -> {
+            personRepository.save(result.value)
+            call.respondRedirect("/person/${result.value.id}/address/add")
+        }
+        is ValidationResult.Invalid -> {
+            personRegistrationPage.renderPersonForm(this, person, result.violations)
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 7: POST /person/register shows violations on invalid data
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationRoutesTest.kt`
+
+**Test**: Invalid person data should re-render form with error messages.
+
+**Implementation**: Already handled in Test 6 - verify with test.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 8: AddAddressPage renders address form with person context
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressPageTest.kt`
+
+**Test**: Address form should show person name (read-only), list existing addresses, and form for new address using PropertyPath with index.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/AddAddressPage.kt
+package no.mikill.kotlin_htmx.registration
+
+import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.*
+import no.mikill.kotlin_htmx.validation.at
+
+class AddAddressPage {
+    suspend fun renderAddAddressForm(
+        context: RoutingContext,
+        person: Person,
+        newAddress: Address = Address(type = null, streetAddress = "", city = "", postalCode = "", country = ""),
+        violations: Map<String, List<String>> = emptyMap()
+    ) {
+        val nextIndex = person.addresses.size
+
+        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Add Address")) {
+            mainSectionTemplate {
+                emptyContentWrapper {
+                    h1 { +"Add Address for ${person.firstName} ${person.lastName}" }
+
+                    if (person.addresses.isNotEmpty()) {
+                        h2 { +"Existing Addresses" }
+                        ul {
+                            person.addresses.forEach { address ->
+                                li {
+                                    +"${address.type}: ${address.streetAddress}, ${address.city}"
+                                }
+                            }
+                        }
+                    }
+
+                    h2 { +"New Address" }
+                    form(method = FormMethod.post, action = "/person/${person.id}/address/add") {
+                        div {
+                            label {
+                                +"Address Type"
+                                select {
+                                    name = Person::addresses.at(nextIndex, Address::type).path
+                                    AddressType.values().forEach { type ->
+                                        option {
+                                            value = type.name
+                                            +type.name
+                                            if (type == newAddress.type) selected = true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::addresses.at(nextIndex, Address::streetAddress),
+                                newAddress.streetAddress,
+                                violations,
+                                "Street Address"
+                            )
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::addresses.at(nextIndex, Address::city),
+                                newAddress.city,
+                                violations,
+                                "City"
+                            )
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::addresses.at(nextIndex, Address::postalCode),
+                                newAddress.postalCode,
+                                violations,
+                                "Postal Code"
+                            )
+                        }
+                        div {
+                            validatedInputWithErrors(
+                                Person::addresses.at(nextIndex, Address::country),
+                                newAddress.country,
+                                violations,
+                                "Country"
+                            )
+                        }
+                        submitInput { value = "Add Address" }
+                    }
+
+                    if (person.addresses.isNotEmpty()) {
+                        form(method = FormMethod.post, action = "/person/${person.id}/complete") {
+                            submitInput { value = "Complete Registration" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 9: POST /person/{id}/address/add validates and adds address
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressRoutesTest.kt`
+
+**Test**: Valid address data should be added to person, person re-saved, redirects back to add address page.
+
+**Implementation**:
+```kotlin
+post("/person/{id}/address/add") {
+    val personId = call.parameters.getUUID("id")
+    val person = personRepository.findById(personId) ?: throw NotFoundException()
+
+    val nextIndex = person.addresses.size
+    val typeParam = call.parameters["addresses[$nextIndex].type"]
+    val addressType = typeParam?.let { AddressType.valueOf(it) }
+
+    val newAddress = Address(
+        type = addressType,
+        streetAddress = call.parameters["addresses[$nextIndex].streetAddress"] ?: "",
+        city = call.parameters["addresses[$nextIndex].city"] ?: "",
+        postalCode = call.parameters["addresses[$nextIndex].postalCode"] ?: "",
+        country = call.parameters["addresses[$nextIndex].country"] ?: ""
+    )
+
+    // Validate the address
+    when (val addressResult = validationService.validate(newAddress)) {
+        is ValidationResult.Invalid -> {
+            // Re-map violations to include index
+            val remappedViolations = addressResult.violations.mapKeys { (key, _) ->
+                "addresses[$nextIndex].$key"
+            }
+            addAddressPage.renderAddAddressForm(this, person, newAddress, remappedViolations)
+        }
+        is ValidationResult.Valid -> {
+            val updatedPerson = person.copy(addresses = person.addresses + addressResult.value)
+            personRepository.save(updatedPerson)
+            call.respondRedirect("/person/${person.id}/address/add")
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 10: POST /person/{id}/address/add shows violations for invalid address
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressRoutesTest.kt`
+
+**Test**: Invalid address should re-render form with errors at correct paths (e.g., "addresses[0].city").
+
+**Implementation**: Already handled in Test 9 - verify with test.
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 11: POST /person/{id}/complete validates full Person
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/CompleteRegistrationRoutesTest.kt`
+
+**Test**: Completing registration should validate entire Person (including @Size(min=1) on addresses), redirect to person view if valid.
+
+**Implementation**:
+```kotlin
+post("/person/{id}/complete") {
+    val personId = call.parameters.getUUID("id")
+    val person = personRepository.findById(personId) ?: throw NotFoundException()
+
+    when (val result = validationService.validate(person)) {
+        is ValidationResult.Invalid -> {
+            // Show error - need at least one address
+            addAddressPage.renderAddAddressForm(
+                this,
+                person,
+                violations = result.violations
+            )
+        }
+        is ValidationResult.Valid -> {
+            call.respondRedirect("/person/${person.id}")
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 12: ViewPersonPage displays complete person with all addresses
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/ViewPersonPageTest.kt`
+
+**Test**: Person view page should display all person details and all addresses.
+
+**Implementation**:
+```kotlin
+// File: src/main/kotlin/no/mikill/kotlin_htmx/registration/ViewPersonPage.kt
+package no.mikill.kotlin_htmx.registration
+
+import kotlinx.html.*
+import no.mikill.kotlin_htmx.pages.*
+
+class ViewPersonPage {
+    suspend fun renderPerson(
+        context: RoutingContext,
+        person: Person
+    ) {
+        context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Person Details")) {
+            mainSectionTemplate {
+                emptyContentWrapper {
+                    h1 { +"Person Details" }
+                    dl {
+                        dt { +"Name" }
+                        dd { +"${person.firstName} ${person.lastName}" }
+                        dt { +"Email" }
+                        dd { +person.email }
+                    }
+
+                    h2 { +"Addresses" }
+                    person.addresses.forEachIndexed { index, address ->
+                        section {
+                            h3 { +"Address ${index + 1}: ${address.type}" }
+                            dl {
+                                dt { +"Street" }
+                                dd { +address.streetAddress }
+                                dt { +"City" }
+                                dd { +address.city }
+                                dt { +"Postal Code" }
+                                dd { +address.postalCode }
+                                dt { +"Country" }
+                                dd { +address.country }
+                            }
+                        }
+                    }
+
+                    a(href = "/person/${person.id}/address/add") {
+                        +"Add Another Address"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 13: GET /person/{id} displays person
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/ViewPersonRoutesTest.kt`
+
+**Test**: GET request should load person from repository and render view page.
+
+**Implementation**:
+```kotlin
+get("/person/{id}") {
+    val personId = call.parameters.getUUID("id")
+    val person = personRepository.findById(personId) ?: throw NotFoundException()
+    viewPersonPage.renderPerson(this, person)
+}
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 14: Integration test - complete registration flow
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationIntegrationTest.kt`
+
+**Test**: Full flow test:
+1. POST person registration → creates person
+2. GET add address page → shows form
+3. POST first address → adds address
+4. POST second address → adds another address
+5. POST complete → validates full person
+6. GET person view → shows all data
+
+**Implementation**: End-to-end integration test with test client.
+
+**Status**: PENDING
+
+---
+
+## Notes
+- PropertyPath provides type safety for all form fields
+- Index is calculated dynamically (person.addresses.size)
+- Aggregate root pattern: Always work with complete Person
+- Validation happens at two levels: individual Address and complete Person
+- Three-level nesting: person.addresses[1].streetAddress
+- Can add more addresses iteratively before completing registration
+- Form component reuse across all property types
+
+---
+---
+
 # Implementation Priority
 
 The plans above should be implemented in this order:
 
-1. **ValidationService** (Core infrastructure)
+1. **ValidationService** ✅ COMPLETED
 2. **HtmlConstraints** (Depends on ValidationService)
 3. **Type-Safe Form Components** (Depends on both above)
-4. **Context Pattern** (Independent structural improvement)
-5. **Routing Utilities** (Independent utilities)
-6. **Component Organization** (Independent structural improvement)
+4. **PropertyPath** (Foundation for nested properties)
+5. **Person Registration** (Depends on PropertyPath, ValidationService, HtmlConstraints)
+6. **Context Pattern** (Independent structural improvement)
+7. **Routing Utilities** (Independent utilities)
+8. **Component Organization** (Independent structural improvement)
 
 Each feature is designed to work independently, but they combine to show a complete architectural pattern.
