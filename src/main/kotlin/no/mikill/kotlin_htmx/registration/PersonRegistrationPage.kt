@@ -1,6 +1,6 @@
 package no.mikill.kotlin_htmx.registration
 
-import kotlinx.html.DIV
+import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
 import kotlinx.html.InputType
 import kotlinx.html.div
@@ -12,7 +12,7 @@ import no.mikill.kotlin_htmx.validation.toPath
 
 class PersonRegistrationPage {
     fun renderPersonFormContent(
-        container: DIV,
+        container: FlowContent,
         person: Person,
         violations: Map<String, List<String>>,
     ) {

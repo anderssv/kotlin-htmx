@@ -1,16 +1,15 @@
 package no.mikill.kotlin_htmx.registration
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.html.respondHtml
+import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import kotlinx.html.body
-import kotlinx.html.div
+import no.mikill.kotlin_htmx.pages.EmptyTemplate
+import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.validation.ValidationResult
 import no.mikill.kotlin_htmx.validation.ValidationService
 import java.util.UUID
@@ -22,9 +21,9 @@ fun Application.configurePersonRegistrationRoutes(
     routing {
         get("/person/register") {
             val person = Person(firstName = "", lastName = "", email = "", addresses = emptyList())
-            call.respondHtml(status = HttpStatusCode.OK) {
-                body {
-                    div {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Register Person")) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         PersonRegistrationPage().renderPersonFormContent(this, person, emptyMap())
                     }
                 }
@@ -51,9 +50,9 @@ fun Application.configurePersonRegistrationRoutes(
                     call.respondRedirect("/person/${result.value.id}/address/add")
                 }
                 is ValidationResult.Invalid -> {
-                    call.respondHtml(status = HttpStatusCode.OK) {
-                        body {
-                            div {
+                    call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Register Person")) {
+                        mainSectionTemplate {
+                            emptyContentWrapper {
                                 PersonRegistrationPage().renderPersonFormContent(this, person, result.violations)
                             }
                         }
@@ -67,9 +66,9 @@ fun Application.configurePersonRegistrationRoutes(
             val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
 
             val emptyAddress = Address(type = null, streetAddress = "", city = "", postalCode = "", country = "")
-            call.respondHtml(status = HttpStatusCode.OK) {
-                body {
-                    div {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Add Address")) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         AddAddressPage().renderAddAddressFormContent(this, person, emptyAddress, emptyMap())
                     }
                 }
@@ -115,9 +114,9 @@ fun Application.configurePersonRegistrationRoutes(
                         result.violations.mapKeys { (key, _) ->
                             "addresses[$nextIndex].$key"
                         }
-                    call.respondHtml(status = HttpStatusCode.OK) {
-                        body {
-                            div {
+                    call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Add Address")) {
+                        mainSectionTemplate {
+                            emptyContentWrapper {
                                 AddAddressPage().renderAddAddressFormContent(this, person, newAddress, remappedViolations)
                             }
                         }
@@ -133,9 +132,9 @@ fun Application.configurePersonRegistrationRoutes(
             // Validate that person has at least one address
             if (person.addresses.isEmpty()) {
                 val violations = mapOf("addresses" to listOf("At least one address is required"))
-                call.respondHtml(status = HttpStatusCode.OK) {
-                    body {
-                        div {
+                call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Add Address")) {
+                    mainSectionTemplate {
+                        emptyContentWrapper {
                             val emptyAddress =
                                 Address(type = null, streetAddress = "", city = "", postalCode = "", country = "")
                             AddAddressPage().renderAddAddressFormContent(this, person, emptyAddress, violations)
@@ -151,9 +150,9 @@ fun Application.configurePersonRegistrationRoutes(
             val personId = UUID.fromString(call.parameters["id"]!!)
             val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
 
-            call.respondHtml(status = HttpStatusCode.OK) {
-                body {
-                    div {
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Person Details")) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
                         ViewPersonPage().renderPersonDetails(this, person)
                     }
                 }

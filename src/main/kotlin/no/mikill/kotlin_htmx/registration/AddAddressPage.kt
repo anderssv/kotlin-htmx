@@ -1,6 +1,6 @@
 package no.mikill.kotlin_htmx.registration
 
-import kotlinx.html.DIV
+import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
 import kotlinx.html.InputType
 import kotlinx.html.div
@@ -18,7 +18,7 @@ import no.mikill.kotlin_htmx.validation.at
 
 class AddAddressPage {
     fun renderAddAddressFormContent(
-        container: DIV,
+        container: FlowContent,
         person: Person,
         newAddress: Address,
         violations: Map<String, List<String>>,
