@@ -44,6 +44,8 @@ import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxQuestionsPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
+import no.mikill.kotlin_htmx.registration.PersonRepository
+import no.mikill.kotlin_htmx.registration.configurePersonRegistrationRoutes
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
@@ -98,6 +100,10 @@ fun Application.configurePageRoutes(
             configureDataRoutes()
         }
     }
+
+    // Person registration routes
+    val personRepository = PersonRepository()
+    configurePersonRegistrationRoutes(personRepository, validationService)
 }
 
 /**

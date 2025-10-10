@@ -928,7 +928,7 @@ Create a type-safe way to reference nested properties including indexed collecti
 
 ## Tests (TDD Order)
 
-### [ ] Test 1: PropertyPath.Direct represents simple property
+### [✅] Test 1: PropertyPath.Direct represents simple property
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: `PropertyPath.Direct` should hold a `KProperty1` and generate correct path string.
@@ -951,11 +951,11 @@ sealed class PropertyPath<T, R> {
 }
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 2: PropertyPath.Nested chains two properties
+### [✅] Test 2: PropertyPath.Nested chains two properties
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: `PropertyPath.Nested` should combine parent and child paths with a dot.
@@ -970,11 +970,11 @@ data class Nested<T, M, R>(
 }
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 3: PropertyPath.Indexed handles collection element
+### [✅] Test 3: PropertyPath.Indexed handles collection element
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: `PropertyPath.Indexed` should generate path like `addresses[1].city`.
@@ -990,11 +990,11 @@ data class Indexed<T, E, R>(
 }
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 4: KProperty1.toPath() extension creates Direct path
+### [✅] Test 4: KProperty1.toPath() extension creates Direct path
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: Calling `SomeClass::property.toPath()` should create `PropertyPath.Direct`.
@@ -1005,11 +1005,11 @@ fun <T, R> KProperty1<T, R>.toPath(): PropertyPath<T, R> =
     PropertyPath.Direct(this)
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 5: PropertyPath.then() chains nested properties
+### [✅] Test 5: PropertyPath.then() chains nested properties
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: Calling `parent.then(Child::property)` should create `PropertyPath.Nested`.
@@ -1020,11 +1020,11 @@ fun <T, M, R> PropertyPath<T, M>.then(property: KProperty1<M, R>): PropertyPath<
     PropertyPath.Nested(this, property)
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 6: KProperty1.at() creates indexed path
+### [✅] Test 6: KProperty1.at() creates indexed path
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: Calling `Person::addresses.at(0, Address::city)` should create `PropertyPath.Indexed` with path "addresses[0].city".
@@ -1038,18 +1038,18 @@ fun <T, E, R> KProperty1<T, List<E>>.at(
     PropertyPath.Indexed(this, index, property)
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 7: PropertyPath works with real domain classes
+### [✅] Test 7: PropertyPath works with real domain classes
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/PropertyPathTest.kt`
 
 **Test**: Create test Person and Address classes, verify all path types work correctly.
 
 **Implementation**: Integration test with actual data classes.
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
@@ -1087,7 +1087,7 @@ Create a complete person registration system demonstrating three-level nesting: 
 
 ## Tests (TDD Order)
 
-### [ ] Test 1: AddressType enum
+### [✅] Test 1: AddressType enum
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTypeTest.kt`
 
 **Test**: `AddressType` enum should have HOME, WORK, OTHER values.
