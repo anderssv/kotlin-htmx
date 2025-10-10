@@ -78,18 +78,16 @@ class HtmxCheckboxDemoPage(
     private fun HtmlBlockTag.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
 
-        // Add the connected browsers counter at the top
-        div {
-            id = "client-counter"
-            attributes["sse-swap"] = "update-client-count"
-            span {
-                +"Connected browsers: ${connectedListeners.size}"
-            }
-        }
-
         // Add the checkbox counter that will always be visible
         div(classes = "checkbox-counter") {
             id = "checkbox-counter"
+            p {
+                id = "client-counter"
+                attributes["sse-swap"] = "update-client-count"
+                span {
+                    +"Connected browsers: ${connectedListeners.size}"
+                }
+            }
             p { +"Max boxes: $numberOfBoxes" }
             p { +"Batch size: $batchSize" }
             p {
