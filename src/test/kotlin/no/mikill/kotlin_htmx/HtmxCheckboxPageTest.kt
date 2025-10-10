@@ -111,4 +111,76 @@ class HtmxCheckboxPageTest : BaseSeleniumTest() {
             assertThat(newState2).isEqualTo(expectedState)
         }
     }
+
+    @Test
+    fun testClientCounterRendered() {
+        driver1.get(serverUrl!! + checkboxPageUrl)
+
+        // Wait for the page to load
+        val wait = WebDriverWait(driver1, Duration.ofSeconds(10))
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("client-counter")))
+
+        // Verify the client counter element exists
+        val clientCounter = driver1.findElement(By.id("client-counter"))
+        assertThat(clientCounter).isNotNull
+
+        // Verify it contains the expected text
+        val counterText = clientCounter.text
+        assertThat(counterText).contains("Connected browsers:")
+    }
+
+    @Test
+    fun testClientCounterUpdates() {
+        val wait1 = WebDriverWait(driver1, Duration.ofSeconds(10))
+        val wait2 = WebDriverWait(driver2, Duration.ofSeconds(10))
+
+        // Open first browser
+        driver1.get(serverUrl!! + checkboxPageUrl)
+        wait1.until(ExpectedConditions.presenceOfElementLocated(By.id("client-counter")))
+
+        // Wait a moment for SSE connection and count update
+        Thread.sleep(500)
+
+        // Verify first browser shows "Connected browsers: 1"
+        val counter1 = driver1.findElement(By.id("client-counter"))
+        assertThat(counter1.text).contains("Connected browsers: 1")
+
+        // Open second browser
+        driver2.get(serverUrl!! + checkboxPageUrl)
+        wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("client-counter")))
+
+        // Wait for SSE connection and count updates to propagate
+        Thread.sleep(500)
+
+        // Verify both browsers show "Connected browsers: 2"
+        val counter1After2nd = driver1.findElement(By.id("client-counter"))
+        val counter2 = driver2.findElement(By.id("client-counter"))
+        assertThat(counter1After2nd.text).contains("Connected browsers: 2")
+        assertThat(counter2.text).contains("Connected browsers: 2")
+
+        // Close second browser
+        driver2.quit()
+
+        // Wait for TCP connection to fully close before triggering dead connection detection
+        Thread.sleep(5000)
+        val checkbox = driver1.findElement(By.id("1"))
+        checkbox.click()
+
+        // Wait for the counter to update to "Connected browsers: 1"
+        // The checkbox broadcast will detect the dead connection, remove it, and broadcast the new count
+        val wait = WebDriverWait(driver1, Duration.ofSeconds(5))
+        wait.until(
+            ExpectedConditions.textToBePresentInElementLocated(
+                By.id("client-counter"),
+                "Connected browsers: 1",
+            ),
+        )
+
+        // Verify first browser now shows "Connected browsers: 1"
+        val counter1Final = driver1.findElement(By.id("client-counter"))
+        assertThat(counter1Final.text).contains("Connected browsers: 1")
+
+        // Recreate driver2 for teardown
+        driver2 = createWebDriver("-2")
+    }
 }

@@ -78,6 +78,15 @@ class HtmxCheckboxDemoPage(
     private fun HtmlBlockTag.renderBoxGridHtml() {
         div { +"Full refresh: ${ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)}" }
 
+        // Add the connected browsers counter at the top
+        div {
+            id = "client-counter"
+            attributes["sse-swap"] = "update-client-count"
+            span {
+                +"Connected browsers: ${connectedListeners.size}"
+            }
+        }
+
         // Add the checkbox counter that will always be visible
         div(classes = "checkbox-counter") {
             id = "checkbox-counter"
@@ -183,6 +192,7 @@ class HtmxCheckboxDemoPage(
      * Also handles cleanup of dead connections.
      */
     private suspend fun broadcastUpdate(batchNumber: Int) {
+        var deadConnectionRemoved = false
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
@@ -193,10 +203,52 @@ class HtmxCheckboxDemoPage(
                     "update-$batchNumber",
                     UUID.randomUUID().toString(),
                 )
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 logger.info("Dead connection detected, unregistering", e)
                 iterator.remove()
+                deadConnectionRemoved = true
             }
+        }
+
+        // Broadcast updated client count if any dead connections were removed
+        if (deadConnectionRemoved) {
+            broadcastClientCount()
+        }
+    }
+
+    /**
+     * Broadcasts the current client count to all connected clients.
+     * Removes dead connections and re-broadcasts if any are found.
+     */
+    private suspend fun broadcastClientCount() {
+        val count = connectedListeners.size
+        var deadConnectionRemoved = false
+
+        val iterator = connectedListeners.iterator()
+        while (iterator.hasNext()) {
+            val session = iterator.next()
+            try {
+                val html =
+                    partialHtml {
+                        span {
+                            +"Connected browsers: $count"
+                        }
+                    }
+                session.send(
+                    html,
+                    "update-client-count",
+                    UUID.randomUUID().toString(),
+                )
+            } catch (e: Exception) {
+                logger.info("Dead connection detected during client count broadcast, unregistering", e)
+                iterator.remove()
+                deadConnectionRemoved = true
+            }
+        }
+
+        // If we removed any dead connections, broadcast again with updated count
+        if (deadConnectionRemoved) {
+            broadcastClientCount()
         }
     }
 
@@ -346,15 +398,24 @@ class HtmxCheckboxDemoPage(
 
     /**
      * Registers a new SSE session for checkbox update notifications.
+     * Broadcasts the updated client count to all connected clients.
      */
-    fun registerOnCheckBoxNotification(session: ServerSSESession) {
+    suspend fun registerOnCheckBoxNotification(session: ServerSSESession) {
         connectedListeners.add(session)
+        broadcastClientCount()
     }
 
     /**
      * Unregisters an SSE session when the connection is closed.
+     * Broadcasts the updated client count to all remaining connected clients.
      */
-    fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
+    suspend fun unregisterOnCheckBoxNotification(session: ServerSSESession) {
         this.connectedListeners.remove(session)
+        broadcastClientCount()
     }
+
+    /**
+     * Returns the current number of connected clients.
+     */
+    fun getConnectedClientCount(): Int = connectedListeners.size
 }

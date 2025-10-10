@@ -14,17 +14,19 @@ Display the number of connected browsers to the checkbox demo page. The counter 
 
 ## Tests (TDD Order)
 
-### [ ] Test 1: Get connected client count
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/HtmxCheckboxPageTest.kt` (or new unit test file)
+### [x] Test 1: Get connected client count
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/HtmxCheckboxDemoPageTest.kt`
 
 **Test**: `HtmxCheckboxDemoPage` should expose a method to get the current number of connected clients.
 
 **Implementation**: Add `getConnectedClientCount(): Int` method that returns `connectedListeners.size`
 
+**Status**: ✅ COMPLETED
+
 ---
 
-### [ ] Test 2: Broadcast client count on registration
-**File**: Unit test for `HtmxCheckboxDemoPage`
+### [x] Test 2: Broadcast client count on registration
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/HtmxCheckboxDemoPageTest.kt`
 
 **Test**: When `registerOnCheckBoxNotification()` is called, it should broadcast the new client count to all connected clients.
 
@@ -33,9 +35,11 @@ Display the number of connected browsers to the checkbox demo page. The counter 
 - Call it from `registerOnCheckBoxNotification()` after adding the session
 - Use SSE event name "update-client-count"
 
+**Status**: ✅ COMPLETED
+
 ---
 
-### [ ] Test 3: Client count updates when dead connection detected
+### [x] Test 3: Client count updates when dead connection detected
 **File**: Unit test for `HtmxCheckboxDemoPage`
 
 **Test**: When `broadcastUpdate()` detects a dead connection (IOException), it should broadcast updated client count after removing the dead connection.
@@ -43,9 +47,11 @@ Display the number of connected browsers to the checkbox demo page. The counter 
 **Implementation**:
 - Call `broadcastClientCount()` after `iterator.remove()` in the existing catch block in `broadcastUpdate()`
 
+**Status**: ✅ COMPLETED
+
 ---
 
-### [ ] Test 4: Render client counter in UI
+### [x] Test 4: Render client counter in UI
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/HtmxCheckboxPageTest.kt`
 
 **Test**: The checkbox page should render a div with id "client-counter" containing the text "Connected browsers: ".
@@ -55,9 +61,11 @@ Display the number of connected browsers to the checkbox demo page. The counter 
 - Include SSE swap attribute: `attributes["sse-swap"] = "update-client-count"`
 - Initial count should be "0" or calculated value
 
+**Status**: ✅ COMPLETED
+
 ---
 
-### [ ] Test 5: Client counter updates in browser (Selenium)
+### [x] Test 5: Client counter updates in browser (Selenium)
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/HtmxCheckboxPageTest.kt`
 
 **Test**:
@@ -67,7 +75,9 @@ Display the number of connected browsers to the checkbox demo page. The counter 
 - Click a checkbox in first browser (triggers dead connection detection)
 - Verify first browser shows "Connected browsers: 1"
 
-**Implementation**: Already complete if previous tests pass.
+**Implementation**: All previous tests passed. Client counter updates correctly in real-time across browsers.
+
+**Status**: ✅ COMPLETED
 
 ---
 
