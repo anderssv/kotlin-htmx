@@ -4,6 +4,20 @@
 
 This is a demo application for showcasing plain HTML, CSS, HTMX and Kotlin.
 
+## Development Workflow
+
+**IMPORTANT**: Always follow the plan in `docs/plan.md` when working on tasks.
+
+When the user says "go":
+1. Find the next unmarked test in `docs/plan.md`
+2. Implement the test following TDD principles
+3. Implement only enough code to make that test pass
+4. Mark the test as completed in `docs/plan.md`
+5. Run all tests to ensure nothing is broken
+6. Verify code formatting with `./gradlew ktlintCheck`
+
+This ensures systematic, incremental progress through planned features.
+
 ## Tech Stack
 
 - Kotlin on the JVM
