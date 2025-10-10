@@ -10,7 +10,6 @@ import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.deflate
 import io.ktor.server.plugins.compression.gzip
 import io.ktor.utils.io.ExperimentalKtorApi
-import no.mikill.kotlin_htmx.application.ApplicationRepository
 import no.mikill.kotlin_htmx.css.PostCssTransformer
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.plugins.configureHTTP
@@ -138,7 +137,6 @@ fun Application.module() {
     // Configure page routes with dependencies
     configurePageRoutes(
         LookupClient(config.lookupApiKey),
-        ApplicationRepository(),
         numberOfCheckboxes,
     )
 }

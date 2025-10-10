@@ -2,8 +2,6 @@
 
 package no.mikill.kotlin_htmx
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.CacheControl
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
@@ -32,12 +30,9 @@ import kotlinx.html.p
 import kotlinx.html.section
 import kotlinx.html.ul
 import kotlinx.io.IOException
-import no.mikill.kotlin_htmx.application.ApplicationRepository
-import no.mikill.kotlin_htmx.application.Person
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.AdminDemoPage
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
-import no.mikill.kotlin_htmx.pages.FormDemoPage
 import no.mikill.kotlin_htmx.pages.HtmlElements.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
@@ -64,14 +59,11 @@ private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes
  * This is the main entry point for setting up the application's routing structure.
  *
  * @param lookupClient Client for external lookup services
- * @param applicationRepository Repository for application data
  */
 fun Application.configurePageRoutes(
     lookupClient: LookupClient,
-    applicationRepository: ApplicationRepository,
     numberOfCheckboxes: Int,
 ) {
-    val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
     val validatorFactory = Validation.buildDefaultValidatorFactory()
     val validationService = ValidationService(validatorFactory.validator)
 
@@ -88,12 +80,7 @@ fun Application.configurePageRoutes(
         }
 
         route("/demo") {
-            configureDemoRoutes(
-                applicationRepository,
-                mapper,
-                validationService,
-                numberOfCheckboxes,
-            )
+            configureDemoRoutes(numberOfCheckboxes)
         }
 
         route("/data") {
@@ -175,7 +162,7 @@ private fun Route.configureMainPageRoute() {
                         }
                         +"Just HTML and KTor"
                         ul {
-                            li { a(href = "/demo/form") { +"Form handling: Flow handling with validations" } }
+                            li { a(href = "/person/register") { +"Person Registration: Multi-step form with type-safe binding and validation" } }
                         }
                     }
                 }
@@ -208,18 +195,9 @@ private fun Route.configureSelectionRoutes(lookupClient: LookupClient) {
 }
 
 /**
- * Configures all demo routes including HTML, HTMX, and form demos
- *
- * @param applicationRepository Repository for application data
- * @param mapper JSON object mapper for serialization/deserialization
- * @param validationService Validation service for form validation
+ * Configures all demo routes including HTML and HTMX demos
  */
-private fun Route.configureDemoRoutes(
-    applicationRepository: ApplicationRepository,
-    mapper: ObjectMapper,
-    validationService: ValidationService,
-    numberOfCheckboxes: Int,
-) {
+private fun Route.configureDemoRoutes(numberOfCheckboxes: Int) {
     val adminDemoPage = AdminDemoPage()
     val multiTodoDemoPage = MultiTodoDemoPage()
     val htmlTodoDemoPage = HtmlTodoDemoPage()
@@ -247,7 +225,6 @@ private fun Route.configureDemoRoutes(
 
     // Configure specialized demo routes
     configureHtmxRoutes(numberOfCheckboxes)
-    configureFormRoutes(applicationRepository, mapper, validationService)
 }
 
 /**
@@ -329,82 +306,6 @@ private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: H
             alive = false
             htmxCheckboxDemoPage.unregisterOnCheckBoxNotification(this)
             routesLogger.debug("Detected dead connection, unregistering", e)
-        }
-    }
-}
-
-/**
- * Configures form handling demo routes
- *
- * @param applicationRepository Repository for application data
- * @param mapper JSON object mapper for serialization/deserialization
- * @param validationService Validation service for form validation
- */
-private fun Route.configureFormRoutes(
-    applicationRepository: ApplicationRepository,
-    mapper: ObjectMapper,
-    validationService: ValidationService,
-) {
-    val formDemoPage = FormDemoPage()
-
-    route("/form") {
-        get {
-            formDemoPage.renderInputForm(this, null, emptyMap())
-        }
-
-        post {
-            handleFormSubmission(formDemoPage, applicationRepository, mapper, validationService)
-        }
-
-        get("/{id}/saved") {
-            val application = applicationRepository.getApplication(UUID.fromString(call.parameters["id"]!!))!!
-            formDemoPage.renderFormSaved(this, application)
-        }
-    }
-}
-
-/**
- * Handles form submission, validation, and persistence
- *
- * Note: In a larger application, this logic would typically be moved to a dedicated controller class
- * to better separate concerns and improve testability.
- *
- * @param formDemoPage The form demo page handler
- * @param applicationRepository Repository for application data
- * @param mapper JSON object mapper for serialization/deserialization
- * @param validationService Validation service for form validation
- */
-private suspend fun RoutingContext.handleFormSubmission(
-    formDemoPage: FormDemoPage,
-    applicationRepository: ApplicationRepository,
-    mapper: ObjectMapper,
-    validationService: ValidationService,
-) {
-    val form = call.receiveParameters()
-    routesLogger.info("Received form data: $form")
-
-    // Create a new application instance with default values
-    val application =
-        no.mikill.kotlin_htmx.application.Application(
-            UUID.randomUUID(),
-            Person("", ""),
-            "",
-        )
-
-    // Update the application with form data
-    val updatedApplication: no.mikill.kotlin_htmx.application.Application =
-        mapper.readerForUpdating(application).readValue(form["__formjson"]!!)
-
-    // Save the application
-    applicationRepository.addApplication(updatedApplication)
-
-    // Validate and handle errors or redirect to success page
-    when (val result = validationService.validate(updatedApplication)) {
-        is ValidationResult.Invalid -> {
-            formDemoPage.renderInputForm(this, updatedApplication, result.violations)
-        }
-        is ValidationResult.Valid -> {
-            call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
         }
     }
 }

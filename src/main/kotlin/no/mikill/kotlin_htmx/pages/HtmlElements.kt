@@ -39,9 +39,6 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import kotlinx.html.ul
 import kotlinx.html.unsafe
-import no.mikill.kotlin_htmx.application.Application
-import no.mikill.kotlin_htmx.getProperty
-import no.mikill.kotlin_htmx.getValueFromPath
 import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
 import no.mikill.kotlin_htmx.todo.TodoListItem
 import org.intellij.lang.annotations.Language
@@ -69,48 +66,6 @@ object HtmlRenderUtils {
                 }
             }
         }
-}
-
-object FormUtils {
-    fun INPUT.setConstraints(annotations: Array<Annotation>) {
-        annotations.forEach { annotation ->
-            when (annotation) {
-                is NotEmpty -> required = true
-                is Size -> {
-                    minLength = annotation.min.toString()
-                    maxLength = annotation.max.toString()
-                }
-                // Could add Pattern here as well, but purposely left out for demo reasons (we need one that is on the server too)
-            }
-        }
-    }
-
-    fun FORM.inputFieldWithValidationAndErrors(
-        existingObject: Any?,
-        propertyPath: String,
-        text: String,
-        violations: Map<String, List<String>>,
-    ) {
-        val objectProperty = getProperty<Application>(propertyPath)
-        val objectValue = existingObject?.let { getValueFromPath(it, propertyPath) }
-        label {
-            +"$text: "
-            input {
-                name = propertyPath
-                value = objectValue?.toString() ?: ""
-                setConstraints(objectProperty.javaField!!.annotations)
-            }
-            violations[propertyPath]?.let { errorMessages ->
-                if (errorMessages.isNotEmpty()) {
-                    ul(classes = "form-error") {
-                        errorMessages.forEach { message ->
-                            li { +message }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 object HtmlElements {
