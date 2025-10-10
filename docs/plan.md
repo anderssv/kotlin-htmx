@@ -1,3 +1,23 @@
+# CURRENT FOCUS ⚡
+
+**TOP PRIORITY: Address Form Example - Nested Property Validation**
+
+The current focus is implementing a complete person registration system with nested addresses demonstrating three-level property nesting (`person.addresses[0].streetAddress`). This showcases:
+- Type-safe nested property references with PropertyPath
+- Collection validation with Jakarta Bean Validation
+- Multi-form registration flow
+- Aggregate root pattern
+
+**Work on these features in order:**
+1. **PropertyPath** - Type-safe nested property references (Section 7)
+2. **Person Registration - Nested Domain Models** - Domain models with Address collection (Section 8)
+3. **Person Registration Forms with PropertyPath** - Forms with nested address handling (Section 9)
+
+See "Implementation Priority" section at the bottom for full roadmap.
+
+---
+---
+
 # TDD Plan: HtmlConstraints - Automatic HTML Attribute Generation
 
 ## Feature Description
@@ -1834,12 +1854,15 @@ get("/person/{id}") {
 The plans above should be implemented in this order:
 
 1. **ValidationService** ✅ COMPLETED
-2. **HtmlConstraints** (Depends on ValidationService)
-3. **Type-Safe Form Components** (Depends on both above)
-4. **PropertyPath** (Foundation for nested properties)
-5. **Person Registration** (Depends on PropertyPath, ValidationService, HtmlConstraints)
-6. **Context Pattern** (Independent structural improvement)
-7. **Routing Utilities** (Independent utilities)
-8. **Component Organization** (Independent structural improvement)
+2. **PropertyPath** (Foundation for nested properties) ⚡ TOP PRIORITY
+3. **Person Registration - Nested Domain Models** (Domain models with addresses) ⚡ TOP PRIORITY
+4. **Person Registration Forms with PropertyPath** (Forms with nested address handling) ⚡ TOP PRIORITY
+5. **HtmlConstraints** (Depends on ValidationService)
+6. **Type-Safe Form Components** (Depends on HtmlConstraints)
+7. **Context Pattern** (Independent structural improvement)
+8. **Routing Utilities** (Independent utilities)
+9. **Component Organization** (Independent structural improvement)
+
+**Note**: The address-related features (PropertyPath, Person Registration models and forms) have been prioritized to TOP PRIORITY status.
 
 Each feature is designed to work independently, but they combine to show a complete architectural pattern.
