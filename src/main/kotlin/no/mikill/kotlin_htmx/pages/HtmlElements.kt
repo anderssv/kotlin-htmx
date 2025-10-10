@@ -11,7 +11,6 @@ import io.ktor.http.withCharset
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import io.ktor.utils.io.ExperimentalKtorApi
-import jakarta.validation.ConstraintViolation
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Size
 import kotlinx.html.A
@@ -90,7 +89,7 @@ object FormUtils {
         existingObject: Any?,
         propertyPath: String,
         text: String,
-        errors: Set<ConstraintViolation<Application>>,
+        violations: Map<String, List<String>>,
     ) {
         val objectProperty = getProperty<Application>(propertyPath)
         val objectValue = existingObject?.let { getValueFromPath(it, propertyPath) }
@@ -101,10 +100,10 @@ object FormUtils {
                 value = objectValue?.toString() ?: ""
                 setConstraints(objectProperty.javaField!!.annotations)
             }
-            errors.filter { it.propertyPath.toString() == propertyPath }.let {
-                if (it.isNotEmpty()) {
+            violations[propertyPath]?.let { errorMessages ->
+                if (errorMessages.isNotEmpty()) {
                     ul(classes = "form-error") {
-                        it.map { constraintViolation -> constraintViolation.message }.forEach { message ->
+                        errorMessages.forEach { message ->
                             li { +message }
                         }
                     }

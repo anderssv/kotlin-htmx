@@ -110,7 +110,7 @@ Add a type-safe validation system that wraps Jakarta Bean Validation with a seal
 
 ## Tests (TDD Order)
 
-### [ ] Test 1: ValidationResult sealed class structure
+### [x] Test 1: ValidationResult sealed class structure
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/ValidationResultTest.kt`
 
 **Test**:
@@ -126,11 +126,11 @@ sealed class ValidationResult<T> {
 }
 ```
 
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 
 ---
 
-### [ ] Test 2: ValidationService returns Valid for valid object
+### [x] Test 2: ValidationService returns Valid for valid object
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/ValidationServiceTest.kt`
 
 **Test**: When validating an object with no constraint violations, `ValidationService.validate()` should return `ValidationResult.Valid` containing the object.
@@ -141,11 +141,11 @@ sealed class ValidationResult<T> {
 - Call `validator.validate(value)`
 - Return `ValidationResult.Valid(value)` when violations are empty
 
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 
 ---
 
-### [ ] Test 3: ValidationService returns Invalid with grouped violations
+### [x] Test 3: ValidationService returns Invalid with grouped violations
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/ValidationServiceTest.kt`
 
 **Test**: When validating an object with constraint violations, should return `ValidationResult.Invalid` with violations grouped by property path.
@@ -156,11 +156,11 @@ sealed class ValidationResult<T> {
   - Extract messages: `it.message`
   - Return `ValidationResult.Invalid(violationMap)`
 
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 
 ---
 
-### [ ] Test 4: ValidationService handles multiple violations per field
+### [x] Test 4: ValidationService handles multiple violations per field
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/ValidationServiceTest.kt`
 
 **Test**: A single field with multiple constraint violations should have all error messages in the violations map.
@@ -169,11 +169,11 @@ Example: A field with `@NotBlank` and `@Size(max=10)` failing both validations s
 
 **Implementation**: Already handled by groupBy in Test 3 - verify with test.
 
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 
 ---
 
-### [ ] Test 5: ValidationService cascades to nested objects
+### [x] Test 5: ValidationService cascades to nested objects
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/ValidationServiceTest.kt`
 
 **Test**: When validating an object containing nested validated objects (with `@Valid` annotation), violations should include paths like "person.name" or "addresses[0].street".
@@ -182,7 +182,7 @@ Example: A field with `@NotBlank` and `@Size(max=10)` failing both validations s
 - Add `@Valid` annotation support (already handled by Jakarta validator)
 - Verify property paths are correctly captured
 
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 
 ---
 

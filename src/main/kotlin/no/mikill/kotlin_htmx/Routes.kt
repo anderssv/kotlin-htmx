@@ -24,7 +24,6 @@ import io.ktor.server.sse.ServerSSESession
 import io.ktor.server.sse.sse
 import io.ktor.utils.io.ExperimentalKtorApi
 import jakarta.validation.Validation
-import jakarta.validation.Validator
 import kotlinx.coroutines.delay
 import kotlinx.html.a
 import kotlinx.html.h1
@@ -50,6 +49,8 @@ import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
 import no.mikill.kotlin_htmx.todo.todoListItems
+import no.mikill.kotlin_htmx.validation.ValidationResult
+import no.mikill.kotlin_htmx.validation.ValidationService
 import org.slf4j.LoggerFactory
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
@@ -69,7 +70,8 @@ fun Application.configurePageRoutes(
     numberOfCheckboxes: Int,
 ) {
     val mapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
-    val validator = Validation.buildDefaultValidatorFactory().validator
+    val validatorFactory = Validation.buildDefaultValidatorFactory()
+    val validationService = ValidationService(validatorFactory.validator)
 
     routing {
         // Standard routes
@@ -87,7 +89,7 @@ fun Application.configurePageRoutes(
             configureDemoRoutes(
                 applicationRepository,
                 mapper,
-                validator,
+                validationService,
                 numberOfCheckboxes,
             )
         }
@@ -204,12 +206,12 @@ private fun Route.configureSelectionRoutes(lookupClient: LookupClient) {
  *
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
- * @param validator Bean validator for form validation
+ * @param validationService Validation service for form validation
  */
 private fun Route.configureDemoRoutes(
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: Validator,
+    validationService: ValidationService,
     numberOfCheckboxes: Int,
 ) {
     val adminDemoPage = AdminDemoPage()
@@ -239,7 +241,7 @@ private fun Route.configureDemoRoutes(
 
     // Configure specialized demo routes
     configureHtmxRoutes(numberOfCheckboxes)
-    configureFormRoutes(applicationRepository, mapper, validator)
+    configureFormRoutes(applicationRepository, mapper, validationService)
 }
 
 /**
@@ -330,22 +332,22 @@ private suspend fun ServerSSESession.handleSseConnection(htmxCheckboxDemoPage: H
  *
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
- * @param validator Bean validator for form validation
+ * @param validationService Validation service for form validation
  */
 private fun Route.configureFormRoutes(
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: Validator,
+    validationService: ValidationService,
 ) {
     val formDemoPage = FormDemoPage()
 
     route("/form") {
         get {
-            formDemoPage.renderInputForm(this, null, emptySet())
+            formDemoPage.renderInputForm(this, null, emptyMap())
         }
 
         post {
-            handleFormSubmission(formDemoPage, applicationRepository, mapper, validator)
+            handleFormSubmission(formDemoPage, applicationRepository, mapper, validationService)
         }
 
         get("/{id}/saved") {
@@ -364,13 +366,13 @@ private fun Route.configureFormRoutes(
  * @param formDemoPage The form demo page handler
  * @param applicationRepository Repository for application data
  * @param mapper JSON object mapper for serialization/deserialization
- * @param validator Bean validator for form validation
+ * @param validationService Validation service for form validation
  */
 private suspend fun RoutingContext.handleFormSubmission(
     formDemoPage: FormDemoPage,
     applicationRepository: ApplicationRepository,
     mapper: ObjectMapper,
-    validator: Validator,
+    validationService: ValidationService,
 ) {
     val form = call.receiveParameters()
     routesLogger.info("Received form data: $form")
@@ -391,11 +393,13 @@ private suspend fun RoutingContext.handleFormSubmission(
     applicationRepository.addApplication(updatedApplication)
 
     // Validate and handle errors or redirect to success page
-    val errors = validator.validate(updatedApplication)
-    if (errors.isNotEmpty()) {
-        formDemoPage.renderInputForm(this, updatedApplication, errors)
-    } else {
-        call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+    when (val result = validationService.validate(updatedApplication)) {
+        is ValidationResult.Invalid -> {
+            formDemoPage.renderInputForm(this, updatedApplication, result.violations)
+        }
+        is ValidationResult.Valid -> {
+            call.respondRedirect("/demo/form/${updatedApplication.id}/saved")
+        }
     }
 }
 

@@ -2,7 +2,6 @@ package no.mikill.kotlin_htmx.pages
 
 import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.routing.RoutingContext
-import jakarta.validation.ConstraintViolation
 import kotlinx.html.FormMethod
 import kotlinx.html.dd
 import kotlinx.html.div
@@ -21,7 +20,7 @@ class FormDemoPage {
     suspend fun renderInputForm(
         context: RoutingContext,
         existingApplication: Application?,
-        errors: Set<ConstraintViolation<Application>>,
+        violations: Map<String, List<String>>,
     ) {
         context.call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Form input")) {
             headerContent {
@@ -41,13 +40,13 @@ class FormDemoPage {
                             existingApplication,
                             "person.firstName",
                             "First name",
-                            errors,
+                            violations,
                         )
                         inputFieldWithValidationAndErrors(
                             existingApplication,
                             "person.lastName",
                             "Last name",
-                            errors,
+                            violations,
                         )
                         submitInput { name = "ok" }
                     }
