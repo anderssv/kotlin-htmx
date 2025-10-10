@@ -74,4 +74,26 @@ class FormBindingTest {
         assertThat(person.address.street).isEqualTo("123 Main St")
         assertThat(person.address.city).isEqualTo("Springfield")
     }
+
+    @Test
+    fun `should extract and bind indexed property to Address object`() {
+        // Arrange
+        val parameters =
+            parametersOf(
+                "addresses[0].type" to listOf("HOME"),
+                "addresses[0].streetAddress" to listOf("123 Main St"),
+                "addresses[0].city" to listOf("Springfield"),
+                "addresses[0].postalCode" to listOf("12345"),
+                "addresses[0].country" to listOf("USA"),
+            )
+
+        // Act
+        val address = parameters.bindIndexedProperty<no.mikill.kotlin_htmx.registration.Address>("addresses", 0)
+
+        // Assert
+        assertThat(address.streetAddress).isEqualTo("123 Main St")
+        assertThat(address.city).isEqualTo("Springfield")
+        assertThat(address.postalCode).isEqualTo("12345")
+        assertThat(address.country).isEqualTo("USA")
+    }
 }

@@ -8,6 +8,7 @@ import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import no.mikill.kotlin_htmx.forms.bindIndexedProperty
 import no.mikill.kotlin_htmx.forms.bindTo
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.MainTemplate
@@ -73,24 +74,8 @@ fun Application.configurePersonRegistrationRoutes(
             val parameters = call.receiveParameters()
             val nextIndex = person.addresses.size
 
-            // Parse address from form parameters
-            val addressType =
-                parameters["addresses[$nextIndex].type"]?.let {
-                    AddressType.valueOf(it)
-                }
-            val streetAddress = parameters["addresses[$nextIndex].streetAddress"] ?: ""
-            val city = parameters["addresses[$nextIndex].city"] ?: ""
-            val postalCode = parameters["addresses[$nextIndex].postalCode"] ?: ""
-            val country = parameters["addresses[$nextIndex].country"] ?: ""
-
-            val newAddress =
-                Address(
-                    type = addressType,
-                    streetAddress = streetAddress,
-                    city = city,
-                    postalCode = postalCode,
-                    country = country,
-                )
+            // Parse address from form parameters using type-safe binding
+            val newAddress = parameters.bindIndexedProperty<Address>("addresses", nextIndex)
 
             // Validate the new address
             when (val result = validationService.validate(newAddress)) {

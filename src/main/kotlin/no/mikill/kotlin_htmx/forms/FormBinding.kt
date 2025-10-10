@@ -25,6 +25,42 @@ inline fun <reified T : Any> Parameters.bindTo(): T {
 }
 
 /**
+ * Binds an indexed property from HTTP form parameters to a typed object.
+ *
+ * This extracts parameters with a specific indexed prefix (e.g., "addresses[0].city")
+ * and binds them to the element type, stripping the index prefix.
+ *
+ * Example:
+ * ```
+ * // Given parameters: addresses[0].city=Boston, addresses[0].street=Main St
+ * val address = parameters.bindIndexedProperty<Address>("addresses", 0)
+ * // Returns Address(city="Boston", street="Main St")
+ * ```
+ *
+ * @param propertyName The name of the indexed property (e.g., "addresses")
+ * @param index The index to extract (e.g., 0)
+ * @return The bound object of type T
+ */
+inline fun <reified T : Any> Parameters.bindIndexedProperty(
+    propertyName: String,
+    index: Int,
+): T {
+    val objectMapper = createObjectMapper()
+    val prefix = "$propertyName[$index]."
+
+    // Filter and transform parameters to remove the indexed prefix
+    val filteredParams = mutableMapOf<String, String>()
+    entries().forEach { (key, values) ->
+        if (key.startsWith(prefix)) {
+            val strippedKey = key.removePrefix(prefix)
+            filteredParams[strippedKey] = values.firstOrNull() ?: ""
+        }
+    }
+
+    return objectMapper.convertValue(filteredParams, T::class.java)
+}
+
+/**
  * Converts form parameters to a nested map structure.
  *
  * Handles:
