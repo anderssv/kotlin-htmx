@@ -154,7 +154,7 @@ object HtmlElements {
     }
 
     fun HtmlBlockTag.todoListHtmlContent(
-        blockIdPrefix: String, // Sometimes included twice in a page, so this gives isloation
+        blockIdPrefix: String, // Sometimes included twice in a page, so this gives isolation
         todoListItems: List<TodoListItem>, // The items to display
     ) {
         h1 { +"Todo List" }

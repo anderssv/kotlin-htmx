@@ -9,13 +9,13 @@ class PostCssTransformerTest {
         val transformer = PostCssTransformer()
 
         val inputCss =
-            """
-            ${'$'}primary-color: #007bff;
-            ${'$'}border-radius: 4px;
+            $$"""
+            $primary-color: #007bff;
+            $border-radius: 4px;
             
             .card {
-                background-color: ${'$'}primary-color;
-                border-radius: calc(${'$'}border-radius * 2);
+                background-color: $primary-color;
+                border-radius: calc($border-radius * 2);
                 transform: translateX(10px);
                 
                 .header {
@@ -34,8 +34,8 @@ class PostCssTransformerTest {
             .contains("-webkit-user-select: none")
             .contains("-moz-user-select: none")
             .contains("user-select: none")
-            .doesNotContain("${'$'}primary-color")
-            .doesNotContain("${'$'}border-radius")
+            .doesNotContain($$"$primary-color")
+            .doesNotContain($$"$border-radius")
             .doesNotContain("calc(")
     }
 

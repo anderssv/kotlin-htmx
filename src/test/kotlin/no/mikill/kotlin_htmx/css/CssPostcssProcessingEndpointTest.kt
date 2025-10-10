@@ -64,7 +64,7 @@ class CssPostcssProcessingEndpointTest {
             // Test SCSS variables processing - \$primary-color should become #007bff
             assertTrue(
                 responseBody.contains("#007bff"),
-                "Should process SCSS variables (\$primary-color: #007bff)",
+                $$"Should process SCSS variables ($primary-color: #007bff)",
             )
 
             // Test calc processing - calc(\$border-radius * 2) should be processed

@@ -23,7 +23,6 @@ import kotlinx.html.span
 import kotlinx.html.strong
 import kotlinx.html.style
 import kotlinx.html.unsafe
-import kotlinx.io.IOException
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.partialHtml
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
