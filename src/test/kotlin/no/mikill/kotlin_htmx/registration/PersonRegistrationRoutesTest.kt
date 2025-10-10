@@ -70,7 +70,7 @@ class PersonRegistrationRoutesTest {
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val html = response.bodyAsText()
             assertThat(html).contains("Register Person")
-            assertThat(html).contains("error-message")
+            assertThat(html).contains("form-error")
 
             // Verify no person was saved
             assertThat(repository.findAll()).isEmpty()

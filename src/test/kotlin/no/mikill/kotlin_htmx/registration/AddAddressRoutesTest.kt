@@ -85,7 +85,7 @@ class AddAddressRoutesTest {
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val html = response.bodyAsText()
             assertThat(html).contains("Add Address for")
-            assertThat(html).contains("error-message")
+            assertThat(html).contains("form-error")
 
             // Verify address was NOT added
             val updatedPerson = repository.findById(person.id)

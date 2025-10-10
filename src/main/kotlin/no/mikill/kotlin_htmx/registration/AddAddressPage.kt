@@ -30,7 +30,7 @@ class AddAddressPage {
 
             // Show general violations
             violations["addresses"]?.forEach { error ->
-                div(classes = "error-message") {
+                div(classes = "form-error") {
                     +error
                 }
             }

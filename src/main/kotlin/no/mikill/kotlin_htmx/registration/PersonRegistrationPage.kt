@@ -2,7 +2,6 @@ package no.mikill.kotlin_htmx.registration
 
 import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
-import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
@@ -41,7 +40,6 @@ class PersonRegistrationPage {
                         value = person.email,
                         violations = violations,
                         label = "Email",
-                        inputType = InputType.email,
                     )
                 }
                 submitInput { value = "Continue to Addresses" }

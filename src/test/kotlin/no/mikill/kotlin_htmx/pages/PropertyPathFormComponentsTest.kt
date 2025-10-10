@@ -71,7 +71,7 @@ class PropertyPathFormComponentsTest {
         // Assert
         assertThat(html).contains("First name is required")
         assertThat(html).contains("First name must be 50 characters or less")
-        assertThat(html).contains("error-message")
+        assertThat(html).contains("form-error")
     }
 
     @Test

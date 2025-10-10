@@ -1,7 +1,9 @@
 package no.mikill.kotlin_htmx.validation
 
+import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import kotlinx.html.InputType
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
@@ -26,5 +28,23 @@ object HtmlConstraints {
         }
 
         return attributes
+    }
+
+    /**
+     * Automatically determines the HTML input type based on property annotations.
+     * Currently supports:
+     * - @Email -> email
+     * - Default -> text
+     */
+    fun <T, R> getInputType(property: KProperty1<T, R>): InputType {
+        val javaField = property.javaField ?: return InputType.text
+
+        // Check for @Email annotation
+        javaField.getAnnotation(Email::class.java)?.let {
+            return InputType.email
+        }
+
+        // Default to text
+        return InputType.text
     }
 }

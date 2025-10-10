@@ -90,7 +90,7 @@ object HtmlConstraints {
 
 ---
 
-### [ ] Test 4: Extract maxlength from @Size
+### [✅] Test 4: Extract maxlength from @Size
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given `@field:Size(max=100)`, should return `mapOf("maxlength" to "100")`.
@@ -108,7 +108,7 @@ javaField.getAnnotation(Size::class.java)?.let { sizeAnnotation ->
 
 ---
 
-### [ ] Test 5: Extract minlength from @Size
+### [✅] Test 5: Extract minlength from @Size
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given `@field:Size(min=3)`, should return `mapOf("minlength" to "3")`.
@@ -124,7 +124,7 @@ if (sizeAnnotation.min > 0) {
 
 ---
 
-### [ ] Test 6: Extract both min and max from @Size
+### [✅] Test 6: Extract both min and max from @Size
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given `@field:Size(min=3, max=100)`, should return both attributes.
@@ -135,7 +135,7 @@ if (sizeAnnotation.min > 0) {
 
 ---
 
-### [ ] Test 7: Extract email type from @Email
+### [✅] Test 7: Extract email type from @Email
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given `@field:Email`, should return `mapOf("type" to "email")`.
@@ -151,7 +151,7 @@ javaField.getAnnotation(Email::class.java)?.let {
 
 ---
 
-### [ ] Test 8: Extract pattern from @Pattern
+### [✅] Test 8: Extract pattern from @Pattern
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given `@field:Pattern(regexp="[0-9]+")`, should return `mapOf("pattern" to "[0-9]+")`.
@@ -167,7 +167,7 @@ javaField.getAnnotation(Pattern::class.java)?.let { patternAnnotation ->
 
 ---
 
-### [ ] Test 9: Combine multiple constraints
+### [✅] Test 9: Combine multiple constraints
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given a field with multiple annotations (`@NotBlank @Size(max=50) @Email`), should return all corresponding HTML attributes.
@@ -178,7 +178,7 @@ javaField.getAnnotation(Pattern::class.java)?.let { patternAnnotation ->
 
 ---
 
-### [ ] Test 10: Handle property with no annotations
+### [✅] Test 10: Handle property with no annotations
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given a property with no validation annotations, should return empty map.
@@ -292,7 +292,7 @@ input(type = effectiveType, name = name, classes = cssClasses) { /* ... */ }
 
 ---
 
-### [ ] Test 4: validatedTextInput allows custom configuration
+### [✅] Test 4: validatedTextInput allows custom configuration
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: The `configure` lambda should allow adding custom attributes (e.g., HTMX attributes, autocomplete, etc.)
@@ -303,7 +303,7 @@ input(type = effectiveType, name = name, classes = cssClasses) { /* ... */ }
 
 ---
 
-### [ ] Test 5: validatedInputWithErrors renders input
+### [✅] Test 5: validatedInputWithErrors renders input
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: `validatedInputWithErrors()` should render the same input as `validatedTextInput()`.
@@ -337,7 +337,7 @@ fun <T, R> DIV.validatedInputWithErrors(
 
 ---
 
-### [ ] Test 6: validatedInputWithErrors renders single error
+### [✅] Test 6: validatedInputWithErrors renders single error
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: When violations map contains errors for the property, should render error div(s) after the input.
@@ -355,7 +355,7 @@ violations[property.name]?.forEach { error ->
 
 ---
 
-### [ ] Test 7: validatedInputWithErrors renders multiple errors
+### [✅] Test 7: validatedInputWithErrors renders multiple errors
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: When a property has multiple violations, should render multiple error divs.
@@ -366,7 +366,7 @@ violations[property.name]?.forEach { error ->
 
 ---
 
-### [ ] Test 8: validatedInputWithErrors renders no errors for valid field
+### [✅] Test 8: validatedInputWithErrors renders no errors for valid field
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: When violations map doesn't contain the property, should render no error divs.
@@ -377,7 +377,7 @@ violations[property.name]?.forEach { error ->
 
 ---
 
-### [ ] Test 9: Integration test with Person data class
+### [✅] Test 9: Integration test with Person data class
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/FormComponentsTest.kt`
 
 **Test**: Create a test with actual `Person` data class, validate using ValidationService, and render with validatedInputWithErrors(). Verify:
@@ -495,7 +495,7 @@ private fun wireRepositories(): Repositories =
 
 ---
 
-### [ ] Test 4: Context.wireServices creates ValidationService
+### [✅] Test 4: Context.wireServices creates ValidationService
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
 
 **Test**: `wireServices()` should create a `Services` instance with ValidationService properly initialized.
@@ -518,7 +518,7 @@ private fun wireServices(
 
 ---
 
-### [ ] Test 5: Context supports custom clock for testing
+### [✅] Test 5: Context supports custom clock for testing
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
 
 **Test**: When passing a custom Clock to wireContext(), the TopContext should contain that clock.
@@ -529,7 +529,7 @@ private fun wireServices(
 
 ---
 
-### [ ] Test 6: Context supports custom config for testing
+### [✅] Test 6: Context supports custom config for testing
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
 
 **Test**: When passing a custom ApplicationConfig, the TopContext should use it.
@@ -540,7 +540,7 @@ private fun wireServices(
 
 ---
 
-### [ ] Test 7: Update Application.module to use Context
+### [✅] Test 7: Update Application.module to use Context
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
 
 **Test**: Application module should wire dependencies using Context and pass them to routes.
@@ -573,7 +573,7 @@ fun Application.module() {
 
 ---
 
-### [ ] Test 8: Update configurePageRoutes signature
+### [✅] Test 8: Update configurePageRoutes signature
 **File**: Update routing tests
 
 **Test**: Routes should accept ValidationService from Context.
@@ -694,7 +694,7 @@ override fun HTML.apply() {
 
 ---
 
-### [ ] Test 4: Header renders in full page
+### [✅] Test 4: Header renders in full page
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
 
 **Test**: When rendering any page, the response should include the header HTML.
@@ -705,7 +705,7 @@ override fun HTML.apply() {
 
 ---
 
-### [ ] Test 5: Footer renders in full page
+### [✅] Test 5: Footer renders in full page
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
 
 **Test**: When rendering any page, the response should include the footer HTML.
@@ -814,7 +814,7 @@ suspend fun ApplicationCall.respondHtmlFragment(
 
 ---
 
-### [ ] Test 4: Move existing fragment rendering to use HtmlRenderUtils
+### [✅] Test 4: Move existing fragment rendering to use HtmlRenderUtils
 **File**: Update existing route handlers
 
 **Test**: All routes currently using custom fragment rendering should use `call.respondHtmlFragment()`.
@@ -828,7 +828,7 @@ suspend fun ApplicationCall.respondHtmlFragment(
 
 ---
 
-### [ ] Test 5: Parameters.getUUID extracts valid UUID
+### [✅] Test 5: Parameters.getUUID extracts valid UUID
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/routing/ParameterExtensionsTest.kt`
 
 **Test**: Given valid UUID string in parameters, `getUUID("id")` should return UUID instance.
@@ -860,7 +860,7 @@ fun Parameters.getUUID(name: String): UUID {
 
 ---
 
-### [ ] Test 6: Parameters.getUUID throws for missing parameter
+### [✅] Test 6: Parameters.getUUID throws for missing parameter
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/routing/ParameterExtensionsTest.kt`
 
 **Test**: When parameter is not present, should throw `IllegalArgumentException` with clear message.
@@ -871,7 +871,7 @@ fun Parameters.getUUID(name: String): UUID {
 
 ---
 
-### [ ] Test 7: Parameters.getUUID throws custom exception for invalid UUID
+### [✅] Test 7: Parameters.getUUID throws custom exception for invalid UUID
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/routing/ParameterExtensionsTest.kt`
 
 **Test**: When parameter value is not a valid UUID, should throw `MissingResourceBecauseInvalidUuidException`.
@@ -882,7 +882,7 @@ fun Parameters.getUUID(name: String): UUID {
 
 ---
 
-### [ ] Test 8: Update existing routes to use Parameters.getUUID
+### [✅] Test 8: Update existing routes to use Parameters.getUUID
 **File**: Update Routes.kt
 
 **Test**: All routes extracting UUID parameters should use `call.parameters.getUUID()`.
@@ -1106,7 +1106,7 @@ enum class AddressType {
 
 ---
 
-### [ ] Test 2: Address data class with validation
+### [✅] Test 2: Address data class with validation
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTest.kt`
 
 **Test**: `Address` should have id, type, streetAddress, city, postalCode, country with appropriate validation annotations.
@@ -1138,22 +1138,22 @@ data class Address(
 )
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 3: Address validation with ValidationService
+### [✅] Test 3: Address validation with ValidationService
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTest.kt`
 
 **Test**: Validate Address with ValidationService - verify violations for invalid fields.
 
 **Implementation**: Use existing ValidationService to test Address validation rules.
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 4: Person data class with nested Address validation
+### [✅] Test 4: Person data class with nested Address validation
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
 
 **Test**: `Person` should have id, firstName, lastName, email, addresses with @Valid annotation on addresses list.
@@ -1181,7 +1181,7 @@ data class Person(
 
 ---
 
-### [ ] Test 5: Person validates nested Address violations
+### [✅] Test 5: Person validates nested Address violations
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
 
 **Test**: When validating Person with invalid Address, violations should include paths like "addresses[0].city".
@@ -1192,7 +1192,7 @@ data class Person(
 
 ---
 
-### [ ] Test 6: Person requires at least one address
+### [✅] Test 6: Person requires at least one address
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
 
 **Test**: Person with empty addresses list should have violation on "addresses" property.
@@ -1203,7 +1203,7 @@ data class Person(
 
 ---
 
-### [ ] Test 7: Person.valid() test data builder
+### [✅] Test 7: Person.valid() test data builder
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonTest.kt`
 
 **Test**: Create `Person.Companion.valid()` extension that returns valid Person with one valid Address.
@@ -1241,7 +1241,7 @@ fun Address.Companion.valid(
 
 ---
 
-### [ ] Test 8: PersonRepository stores and retrieves Person
+### [✅] Test 8: PersonRepository stores and retrieves Person
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
 
 **Test**: `PersonRepository.save()` stores Person, `findById()` retrieves it.
@@ -1270,7 +1270,7 @@ class PersonRepository {
 
 ---
 
-### [ ] Test 9: PersonRepository.update() modifies existing Person
+### [✅] Test 9: PersonRepository.update() modifies existing Person
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
 
 **Test**: Can update Person (e.g., add addresses) and retrieve updated version.
@@ -1281,7 +1281,7 @@ class PersonRepository {
 
 ---
 
-### [ ] Test 10: PersonRepository.findAll() returns all persons
+### [✅] Test 10: PersonRepository.findAll() returns all persons
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRepositoryTest.kt`
 
 **Test**: `findAll()` should return list of all stored persons.
@@ -1425,7 +1425,7 @@ fun <T, R> DIV.validatedInputWithErrors(
 
 ---
 
-### [ ] Test 4: Test with nested PropertyPath
+### [✅] Test 4: Test with nested PropertyPath
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PropertyPathFormComponentsTest.kt`
 
 **Test**: Create test with `Person::addresses.at(0, Address::city)` - verify name="addresses[0].city" and correct constraints.
@@ -1436,7 +1436,7 @@ fun <T, R> DIV.validatedInputWithErrors(
 
 ---
 
-### [ ] Test 5: PersonRegistrationPage renders person form
+### [✅] Test 5: PersonRegistrationPage renders person form
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationPageTest.kt`
 
 **Test**: First form should render inputs for firstName, lastName, email using PropertyPath.
@@ -1501,7 +1501,7 @@ class PersonRegistrationPage {
 
 ---
 
-### [ ] Test 6: POST /person/register validates and saves Person
+### [✅] Test 6: POST /person/register validates and saves Person
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationRoutesTest.kt`
 
 **Test**: Posting valid person data should create Person with empty addresses, save to repository, redirect to add address page.
@@ -1537,7 +1537,7 @@ post("/person/register") {
 
 ---
 
-### [ ] Test 7: POST /person/register shows violations on invalid data
+### [✅] Test 7: POST /person/register shows violations on invalid data
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationRoutesTest.kt`
 
 **Test**: Invalid person data should re-render form with error messages.
@@ -1548,7 +1548,7 @@ post("/person/register") {
 
 ---
 
-### [ ] Test 8: AddAddressPage renders address form with person context
+### [✅] Test 8: AddAddressPage renders address form with person context
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressPageTest.kt`
 
 **Test**: Address form should show person name (read-only), list existing addresses, and form for new address using PropertyPath with index.
@@ -1655,7 +1655,7 @@ class AddAddressPage {
 
 ---
 
-### [ ] Test 9: POST /person/{id}/address/add validates and adds address
+### [✅] Test 9: POST /person/{id}/address/add validates and adds address
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressRoutesTest.kt`
 
 **Test**: Valid address data should be added to person, person re-saved, redirects back to add address page.
@@ -1700,7 +1700,7 @@ post("/person/{id}/address/add") {
 
 ---
 
-### [ ] Test 10: POST /person/{id}/address/add shows violations for invalid address
+### [✅] Test 10: POST /person/{id}/address/add shows violations for invalid address
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddAddressRoutesTest.kt`
 
 **Test**: Invalid address should re-render form with errors at correct paths (e.g., "addresses[0].city").
