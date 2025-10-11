@@ -100,6 +100,75 @@ fun Application.configurePersonRegistrationRoutes(
             }
         }
 
+        get("/person/{personId}/address/{addressId}/edit") {
+            val personId = UUID.fromString(call.parameters["personId"]!!)
+            val addressId = UUID.fromString(call.parameters["addressId"]!!)
+            val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
+
+            // Find the address index by UUID
+            val addressIndex = person.addresses.indexOfFirst { it.id == addressId }
+            if (addressIndex == -1) {
+                return@get call.respondRedirect("/person/$personId/address/add")
+            }
+
+            call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Edit Address")) {
+                mainSectionTemplate {
+                    emptyContentWrapper {
+                        EditAddressPage().renderEditAddressFormContent(this, person, addressIndex, emptyMap())
+                    }
+                }
+            }
+        }
+
+        post("/person/{personId}/address/{addressId}/update") {
+            val personId = UUID.fromString(call.parameters["personId"]!!)
+            val addressId = UUID.fromString(call.parameters["addressId"]!!)
+            val person = repository.findById(personId) ?: return@post call.respondRedirect("/person/register")
+
+            // Find the address index by UUID
+            val addressIndex = person.addresses.indexOfFirst { it.id == addressId }
+            if (addressIndex == -1) {
+                return@post call.respondRedirect("/person/$personId/address/add")
+            }
+
+            val parameters = call.receiveParameters()
+
+            // Parse the updated address from form parameters
+            val updatedAddress = parameters.bindIndexedProperty<Address>("addresses", addressIndex)
+
+            // Create a new list of addresses with the updated one
+            val updatedAddresses =
+                person.addresses.toMutableList().apply {
+                    this[addressIndex] = updatedAddress.copy(id = addressId) // Preserve the UUID
+                }
+
+            // Create person with updated addresses for validation
+            val personWithUpdatedAddress = person.copy(addresses = updatedAddresses)
+
+            // Validate the updated address
+            when (val result = validationService.validate(personWithUpdatedAddress)) {
+                is ValidationResult.Valid -> {
+                    repository.save(result.value)
+                    call.respondRedirect("/person/$personId/address/add")
+                }
+                is ValidationResult.Invalid -> {
+                    // Show the form again with validation errors
+                    call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Edit Address")) {
+                        mainSectionTemplate {
+                            emptyContentWrapper {
+                                EditAddressPage().renderEditAddressFormContent(
+                                    this,
+                                    personWithUpdatedAddress,
+                                    addressIndex,
+                                    result.violations,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         post("/person/{id}/complete") {
             val personId = UUID.fromString(call.parameters["id"]!!)
             val person = repository.findById(personId) ?: return@post call.respondRedirect("/person/register")

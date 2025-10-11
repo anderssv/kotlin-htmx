@@ -3,6 +3,7 @@ package no.mikill.kotlin_htmx.pages
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
 import kotlinx.html.div
+import kotlinx.html.hiddenInput
 import kotlinx.html.label
 import kotlinx.html.option
 import kotlinx.html.select
@@ -146,6 +147,21 @@ class IndexedFormBuilder<T, E>(
                 cssClasses = cssClasses,
                 inputId = inputId,
             )
+        }
+    }
+
+    /**
+     * Renders a hidden input field for an indexed property with automatic path building and value extraction.
+     *
+     * @param elementProperty The property on the list element type (e.g., Address::id)
+     */
+    fun <R> FlowContent.hiddenField(elementProperty: KProperty1<E, R>) {
+        val propertyPath = listProperty.at(index, elementProperty)
+        val currentValue = propertyPath.getValue(valueObject)
+
+        hiddenInput {
+            name = propertyPath.path
+            value = currentValue?.toString() ?: ""
         }
     }
 

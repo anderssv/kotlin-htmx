@@ -2,6 +2,7 @@ package no.mikill.kotlin_htmx.registration
 
 import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
+import kotlinx.html.a
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
@@ -38,6 +39,10 @@ class AddAddressPage {
                     person.addresses.forEach { address ->
                         li {
                             +"${address.type}: ${address.streetAddress}, ${address.city}"
+                            +" "
+                            a(href = "/person/${person.id}/address/${address.id}/edit") {
+                                +"(Edit)"
+                            }
                         }
                     }
                 }

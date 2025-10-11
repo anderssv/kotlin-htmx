@@ -27,7 +27,7 @@ data class Person(
 }
 
 data class Address(
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID? = null, // null for new addresses, populated for existing addresses
     @field:NotNull(message = "Address type is required")
     val type: AddressType?,
     @field:NotBlank(message = "Street address is required")

@@ -31,12 +31,13 @@ class PersonRepositoryTest {
             person.copy(
                 addresses = person.addresses + Address.valid().copy(type = AddressType.WORK),
             )
-        repository.save(updatedPerson)
+        val savedPerson = repository.save(updatedPerson)
         val retrieved = repository.findById(person.id)
 
-        // Assert
-        assertThat(retrieved).isEqualTo(updatedPerson)
+        // Assert - Repository assigns UUIDs to addresses without them
+        assertThat(retrieved).isEqualTo(savedPerson)
         assertThat(retrieved?.addresses).hasSize(1) // Person starts with 0 addresses, adds 1
+        assertThat(retrieved?.addresses?.get(0)?.id).isNotNull() // UUID was assigned
     }
 
     @Test
@@ -67,5 +68,31 @@ class PersonRepositoryTest {
 
         // Assert
         assertThat(result).isNull()
+    }
+
+    @Test
+    fun `PersonRepository assigns UUIDs to addresses without IDs when saving`() {
+        // Arrange
+        val repository = PersonRepository()
+        val addressWithoutId =
+            Address(
+                id = null, // New address without UUID
+                type = AddressType.HOME,
+                streetAddress = "123 Main St",
+                city = "Springfield",
+                postalCode = "12345",
+                country = "USA",
+            )
+        val person = Person.valid().copy(addresses = listOf(addressWithoutId))
+
+        // Act
+        val savedPerson = repository.save(person)
+        val retrievedPerson = repository.findById(person.id)
+
+        // Assert - Addresses should have UUIDs assigned
+        assertThat(savedPerson.addresses).hasSize(1)
+        assertThat(savedPerson.addresses[0].id).isNotNull()
+        assertThat(retrievedPerson?.addresses?.get(0)?.id).isNotNull()
+        assertThat(retrievedPerson?.addresses?.get(0)?.id).isEqualTo(savedPerson.addresses[0].id)
     }
 }

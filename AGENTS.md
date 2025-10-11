@@ -15,6 +15,7 @@ When the user says "go":
 4. Mark the test as completed in `docs/plan.md`
 5. Run all tests to ensure nothing is broken
 6. Format and verify code with `./gradlew ktlintFormat` (this both formats and checks in one step)
+7. **Update `docs/features.md`** when completing significant features (features.md is for developers learning techniques)
 
 This ensures systematic, incremental progress through planned features.
 
@@ -112,10 +113,14 @@ cd src/main/resources/postcss && npm run build
     - Keep README.md updated
     - Document complex business rules in code
 
-6. **Task Management**
-    - Always update improvement-tasks.md when completing tasks
+6. **Documentation & Task Management**
+    - **Always update `docs/plan.md`** when completing tests (mark with ✅ and status COMPLETED)
+    - **Always update `docs/features.md`** when completing significant features
+      - `features.md` is intended for developers wanting to learn the techniques in this repo
+      - Focus on explaining patterns, approaches, and architectural decisions
+      - Include code examples and explanations of "how" and "why"
+    - Update improvement-tasks.md when completing tasks
     - Mark completed tasks with ✅ COMPLETED status
-    - Strike through completed action items
     - Add status notes explaining what was accomplished
     - This provides clear audit trail of work done
 

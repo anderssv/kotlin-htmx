@@ -73,4 +73,40 @@ class AddressTest {
         // Assert
         assertThat(result).isInstanceOf(ValidationResult.Valid::class.java)
     }
+
+    @Test
+    fun `Address should have nullable UUID field defaulting to null for new addresses`() {
+        // Arrange & Act - Create address without specifying id
+        val newAddress =
+            Address(
+                type = AddressType.HOME,
+                streetAddress = "123 Main St",
+                city = "Springfield",
+                postalCode = "12345",
+                country = "USA",
+            )
+
+        // Assert - New addresses should have null id
+        assertThat(newAddress.id).isNull()
+    }
+
+    @Test
+    fun `Address should preserve UUID when provided for existing addresses`() {
+        // Arrange
+        val existingId = UUID.randomUUID()
+
+        // Act - Create address with specific id (simulating existing address)
+        val existingAddress =
+            Address(
+                id = existingId,
+                type = AddressType.HOME,
+                streetAddress = "123 Main St",
+                city = "Springfield",
+                postalCode = "12345",
+                country = "USA",
+            )
+
+        // Assert - Existing addresses should preserve their id
+        assertThat(existingAddress.id).isEqualTo(existingId)
+    }
 }

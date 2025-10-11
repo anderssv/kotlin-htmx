@@ -290,7 +290,7 @@ class MainTemplate<T : Template<FlowContent>>(
                             li { span("separator") { +"🚀" } }
                             li { a(href = "/demo/admin") { +"Admin demo" } }
                             li { span("separator") { +"🚀" } }
-                            li { a(href = "/person/register") { +"Person Registration" } }
+                            li { a(href = "/person/register") { +"Form Demo" } }
                         }
                     }
 
