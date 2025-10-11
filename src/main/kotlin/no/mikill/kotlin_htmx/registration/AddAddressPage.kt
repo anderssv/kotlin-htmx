@@ -46,7 +46,7 @@ class AddAddressPage {
             h2 { +"New Address" }
             form(method = FormMethod.post, action = "/person/${person.id}/address/add") {
                 indexedForm(personWithNewAddress, violations, Person::addresses, nextIndex) {
-                    enumSelect(Address::type, "Address Type", AddressType.entries.toTypedArray())
+                    enumSelect(Address::type, "Address Type")
                     field(Address::streetAddress, "Street Address")
                     field(Address::city, "City")
                     field(Address::postalCode, "Postal Code")

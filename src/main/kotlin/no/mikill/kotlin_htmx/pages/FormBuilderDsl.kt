@@ -8,6 +8,7 @@ import kotlinx.html.option
 import kotlinx.html.select
 import no.mikill.kotlin_htmx.validation.PropertyPath
 import no.mikill.kotlin_htmx.validation.at
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 /**
@@ -152,26 +153,35 @@ class IndexedFormBuilder<T, E>(
      * Renders an enum dropdown for an indexed property with automatic path building and value selection.
      * The dropdown is automatically wrapped in a div.
      *
+     * Enum values are automatically extracted from the property's return type using reflection.
+     *
      * @param elementProperty The enum property on the list element type (e.g., Address::type)
      * @param labelText The label text for the dropdown
      * @param cssClasses Optional: CSS classes to apply to the select element
-     * @param options The list of enum values to display
      */
+    @Suppress("UNCHECKED_CAST")
     fun <R : Enum<R>> FlowContent.enumSelect(
         elementProperty: KProperty1<E, R?>,
         labelText: String,
-        options: Array<R>,
         cssClasses: String? = null,
     ) {
         val propertyPath = listProperty.at(index, elementProperty)
         val currentValue = propertyPath.getValue(valueObject)
+
+        // Extract enum class from property return type using reflection
+        val enumClass =
+            (elementProperty.returnType.classifier as? KClass<*>)
+                ?.let { if (it.java.isEnum) it.java as Class<R> else null }
+                ?: throw IllegalArgumentException("Property ${elementProperty.name} must be an enum type")
+
+        val enumValues = enumClass.enumConstants
 
         div {
             label {
                 +labelText
                 select(classes = cssClasses) {
                     name = propertyPath.path
-                    options.forEach { enumValue ->
+                    enumValues.forEach { enumValue ->
                         option {
                             value = enumValue.name
                             if (enumValue == currentValue) {
