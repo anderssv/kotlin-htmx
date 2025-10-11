@@ -129,7 +129,7 @@ fun <T, R> DIV.validatedInputWithErrors(
  * extract `person.addresses[0].city`.
  *
  * @param propertyPath The type-safe property path
- * @param obj The root object to extract the value from
+ * @param valueObject The root object to extract the value from
  * @param violations Map of validation violations to display
  * @param label The label text for the input
  * @param inputType Optional: Override the automatically determined input type
@@ -140,7 +140,7 @@ fun <T, R> DIV.validatedInputWithErrors(
  */
 fun <T, R> DIV.validatedInputWithErrors(
     propertyPath: PropertyPath<T, R>,
-    obj: T,
+    valueObject: T,
     violations: Map<String, List<String>>,
     label: String,
     inputType: InputType? = null,
@@ -150,7 +150,7 @@ fun <T, R> DIV.validatedInputWithErrors(
     configure: INPUT.() -> Unit = {},
 ) {
     // Extract value automatically from the object using the property path
-    val value = propertyPath.getValue(obj).toString()
+    val value = propertyPath.getValue(valueObject).toString()
 
     // Delegate to the existing function
     validatedInputWithErrors(

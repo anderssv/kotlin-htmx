@@ -69,7 +69,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::streetAddress),
-                        obj = personWithNewAddress,
+                        valueObject = personWithNewAddress,
                         violations = violations,
                         label = "Street Address",
                     )
@@ -77,7 +77,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::city),
-                        obj = personWithNewAddress,
+                        valueObject = personWithNewAddress,
                         violations = violations,
                         label = "City",
                     )
@@ -85,7 +85,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::postalCode),
-                        obj = personWithNewAddress,
+                        valueObject = personWithNewAddress,
                         violations = violations,
                         label = "Postal Code",
                     )
@@ -93,7 +93,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::country),
-                        obj = personWithNewAddress,
+                        valueObject = personWithNewAddress,
                         violations = violations,
                         label = "Country",
                     )
