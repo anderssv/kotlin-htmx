@@ -65,25 +65,25 @@ object HtmlConstraints {
 
 ---
 
-### [ ] Test 2: Extract required attribute from @NotEmpty
+### [✅] Test 2: Extract required attribute from @NotEmpty
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given a property with `@field:NotEmpty` annotation, should return `required` attribute.
 
 **Implementation**: Add similar check for `NotEmpty` annotation in `getAttributes()`.
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
-### [ ] Test 3: Extract required attribute from @NotNull
+### [✅] Test 3: Extract required attribute from @NotNull
 **File**: `src/test/kotlin/no/mikill/kotlin_htmx/validation/HtmlConstraintsTest.kt`
 
 **Test**: Given a property with `@field:NotNull` annotation, should return `required` attribute.
 
 **Implementation**: Add check for `NotNull` annotation.
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
@@ -160,7 +160,7 @@ javaField.getAnnotation(Pattern::class.java)?.let { patternAnnotation ->
 }
 ```
 
-**Status**: PENDING
+**Status**: COMPLETED
 
 ---
 
@@ -1046,7 +1046,7 @@ data class Address(
 
 **⚠️ OPTIONAL ENHANCEMENTS** (remaining in plan above):
 1. **Edit Existing Addresses** - NOT STARTED (Functional enhancement: edit registered addresses in form flow)
-2. **HtmlConstraints** - PARTIALLY COMPLETED (@NotBlank/@Size/Email working, missing @Pattern/@NotEmpty/@NotNull)
+2. **HtmlConstraints** - ✅ COMPLETED (All annotations supported: @NotBlank/@NotEmpty/@NotNull/@Size/@Email/@Pattern)
 3. **Type-Safe Form Components** - PARTIALLY COMPLETED (basic components done, FormBuilderDsl supersedes this)
 4. **Context Pattern** - NOT STARTED (Dependency injection pattern for better testability)
 5. **Routing Utilities** - PARTIALLY COMPLETED (some utilities exist, could add more)

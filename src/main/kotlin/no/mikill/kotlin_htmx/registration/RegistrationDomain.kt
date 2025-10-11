@@ -52,21 +52,23 @@ data class Address(
  *
  * @param numberOfAddresses Controls the complexity of the object graph (default: 0)
  */
-fun Person.Companion.valid(numberOfAddresses: Int = 0) = Person(
-    firstName = "John",
-    lastName = "Doe",
-    email = "john.doe@example.com",
-    addresses = (1..numberOfAddresses).map { Address.valid() },
-)
+fun Person.Companion.valid(numberOfAddresses: Int = 0) =
+    Person(
+        firstName = "John",
+        lastName = "Doe",
+        email = "john.doe@example.com",
+        addresses = (1..numberOfAddresses).map { Address.valid() },
+    )
 
 /**
  * Creates a valid Address with default values.
  * Use .copy() to override specific properties in tests.
  */
-fun Address.Companion.valid() = Address(
-    type = AddressType.HOME,
-    streetAddress = "123 Main St",
-    city = "Springfield",
-    postalCode = "12345",
-    country = "USA",
-)
+fun Address.Companion.valid() =
+    Address(
+        type = AddressType.HOME,
+        streetAddress = "123 Main St",
+        city = "Springfield",
+        postalCode = "12345",
+        country = "USA",
+    )

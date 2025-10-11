@@ -2,6 +2,9 @@ package no.mikill.kotlin_htmx.validation
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import kotlinx.html.InputType
 import kotlin.reflect.KProperty1
@@ -17,6 +20,16 @@ object HtmlConstraints {
             attributes["required"] = ""
         }
 
+        // Check for @NotEmpty annotation
+        javaField.getAnnotation(NotEmpty::class.java)?.let {
+            attributes["required"] = ""
+        }
+
+        // Check for @NotNull annotation
+        javaField.getAnnotation(NotNull::class.java)?.let {
+            attributes["required"] = ""
+        }
+
         // Check for @Size annotation
         javaField.getAnnotation(Size::class.java)?.let { sizeAnnotation ->
             if (sizeAnnotation.max < Int.MAX_VALUE) {
@@ -25,6 +38,11 @@ object HtmlConstraints {
             if (sizeAnnotation.min > 0) {
                 attributes["minlength"] = sizeAnnotation.min.toString()
             }
+        }
+
+        // Check for @Pattern annotation
+        javaField.getAnnotation(Pattern::class.java)?.let { patternAnnotation ->
+            attributes["pattern"] = patternAnnotation.regexp
         }
 
         return attributes
