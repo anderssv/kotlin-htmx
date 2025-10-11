@@ -29,22 +29,22 @@ class PersonRepositoryTest {
         // Act
         val updatedPerson =
             person.copy(
-                addresses = person.addresses + Address.valid(type = AddressType.WORK),
+                addresses = person.addresses + Address.valid().copy(type = AddressType.WORK),
             )
         repository.save(updatedPerson)
         val retrieved = repository.findById(person.id)
 
         // Assert
         assertThat(retrieved).isEqualTo(updatedPerson)
-        assertThat(retrieved?.addresses).hasSize(2)
+        assertThat(retrieved?.addresses).hasSize(1) // Person starts with 0 addresses, adds 1
     }
 
     @Test
     fun `PersonRepository findAll returns all stored persons`() {
         // Arrange
         val repository = PersonRepository()
-        val person1 = Person.valid(firstName = "Alice")
-        val person2 = Person.valid(firstName = "Bob")
+        val person1 = Person.valid().copy(firstName = "Alice")
+        val person2 = Person.valid().copy(firstName = "Bob")
 
         // Act
         repository.save(person1)

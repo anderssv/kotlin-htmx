@@ -10,7 +10,7 @@ class AddAddressPageTest {
     fun `AddAddressPage renders address form with person context`() {
         // Arrange
         val page = AddAddressPage()
-        val person = Person.valid()
+        val person = Person.valid(numberOfAddresses = 1) // Has 1 existing address
         val newAddress = Address(type = null, streetAddress = "", city = "", postalCode = "", country = "")
 
         // Act
@@ -32,7 +32,7 @@ class AddAddressPageTest {
     fun `AddAddressPage lists existing addresses`() {
         // Arrange
         val page = AddAddressPage()
-        val person = Person.valid()
+        val person = Person.valid(numberOfAddresses = 1) // Has 1 address to display
         val newAddress = Address(type = null, streetAddress = "", city = "", postalCode = "", country = "")
 
         // Act

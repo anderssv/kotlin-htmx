@@ -46,28 +46,27 @@ data class Address(
     companion object
 }
 
-fun Person.Companion.valid(
-    firstName: String = "John",
-    lastName: String = "Doe",
-    email: String = "john.doe@example.com",
-    addresses: List<Address> = listOf(Address.valid()),
-) = Person(
-    firstName = firstName,
-    lastName = lastName,
-    email = email,
-    addresses = addresses,
+/**
+ * Creates a valid Person with default values.
+ * Use .copy() to override specific properties in tests.
+ *
+ * @param numberOfAddresses Controls the complexity of the object graph (default: 0)
+ */
+fun Person.Companion.valid(numberOfAddresses: Int = 0) = Person(
+    firstName = "John",
+    lastName = "Doe",
+    email = "john.doe@example.com",
+    addresses = (1..numberOfAddresses).map { Address.valid() },
 )
 
-fun Address.Companion.valid(
-    type: AddressType = AddressType.HOME,
-    streetAddress: String = "123 Main St",
-    city: String = "Springfield",
-    postalCode: String = "12345",
-    country: String = "USA",
-) = Address(
-    type = type,
-    streetAddress = streetAddress,
-    city = city,
-    postalCode = postalCode,
-    country = country,
+/**
+ * Creates a valid Address with default values.
+ * Use .copy() to override specific properties in tests.
+ */
+fun Address.Companion.valid() = Address(
+    type = AddressType.HOME,
+    streetAddress = "123 Main St",
+    city = "Springfield",
+    postalCode = "12345",
+    country = "USA",
 )

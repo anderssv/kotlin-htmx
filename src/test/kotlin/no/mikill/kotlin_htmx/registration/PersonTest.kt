@@ -95,7 +95,7 @@ class PersonTest {
     @Test
     fun `Person valid test data builder creates valid person`() {
         // Arrange & Act
-        val person = Person.valid()
+        val person = Person.valid(numberOfAddresses = 1) // Test with 1 address
 
         // Assert
         val result = validationService.validate(person)

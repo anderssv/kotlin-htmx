@@ -88,7 +88,7 @@ class PersonRegistrationRoutesTest {
                 configurePersonRegistrationRoutes(repository, validationService)
             }
 
-            val person = Person.valid()
+            val person = Person.valid(numberOfAddresses = 1) // Has one address for successful completion
             repository.save(person)
 
             // Act
@@ -111,7 +111,7 @@ class PersonRegistrationRoutesTest {
                 configurePersonRegistrationRoutes(repository, validationService)
             }
 
-            val person = Person.valid(addresses = emptyList())
+            val person = Person.valid() // No addresses - should cause validation error
             repository.save(person)
 
             // Act
@@ -135,7 +135,7 @@ class PersonRegistrationRoutesTest {
                 configurePersonRegistrationRoutes(repository, validationService)
             }
 
-            val person = Person.valid()
+            val person = Person.valid(numberOfAddresses = 1) // Needs address to display
             repository.save(person)
 
             // Act

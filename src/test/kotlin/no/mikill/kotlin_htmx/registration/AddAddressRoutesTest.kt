@@ -25,7 +25,7 @@ class AddAddressRoutesTest {
                 configurePersonRegistrationRoutes(repository, validationService)
             }
 
-            val person = Person.valid(addresses = emptyList())
+            val person = Person.valid() // No addresses by default
             repository.save(person)
 
             // Act
@@ -65,7 +65,7 @@ class AddAddressRoutesTest {
                 configurePersonRegistrationRoutes(repository, validationService)
             }
 
-            val person = Person.valid(addresses = emptyList())
+            val person = Person.valid() // No addresses by default
             repository.save(person)
 
             // Act - Invalid postal code and empty fields
