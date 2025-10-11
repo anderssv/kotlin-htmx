@@ -2,6 +2,9 @@
 
 **Status:** Core person registration system is complete. Remaining work is optional enhancements.
 
+**BUGS TO FIX:**
+- 🐛 **Checkbox Pagination Bug**: The last page of checkboxes isn't necessarily loaded. It seems when the last page is smaller than the page size it isn't loaded.
+
 **Next Priority:** Optional enhancements (pick any)
 - **Edit Existing Addresses** - NEW FEATURE: Allow editing of registered addresses in form flow (functional enhancement)
 - HtmlConstraints - Complete remaining annotations (@Pattern, @NotEmpty, @NotNull support)
