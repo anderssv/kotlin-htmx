@@ -1,5 +1,7 @@
 # Kotlin-HTMX Features
 
+> **⚠️ Warning:** This is a demo project, not a library or a production application. You should copy parts that are relevant to you and change it when you need. Good luck.
+
 This document describes the features and technical capabilities of the kotlin-htmx project. The project serves as a showcase for building modern web applications using **Kotlin + Ktor + HTMX** with plain HTML and CSS, emphasizing type safety, server-side rendering, and minimal JavaScript.
 
 ## Table of Contents
