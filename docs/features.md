@@ -34,6 +34,7 @@ A demonstration of real-time state synchronization across multiple browser windo
 - HTMX `sse-swap` attribute for declarative DOM updates
 - Dead connection detection and automatic cleanup
 - Dynamic batch loading triggered by `revealed` HTMX event
+- Ceiling division for batch calculation ensures partial last pages load correctly
 
 **Blog Post:** [HTMX SSE: Easy updates of HTML state with no JavaScript](https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/)
 
