@@ -5,7 +5,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.20"
     id("io.ktor.plugin") version "3.2.3"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("com.gradleup.shadow") version "8.3.8"
@@ -24,6 +24,7 @@ tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         manifest {
             attributes["Main-Class"] = mainClassString
+            attributes["Multi-Release"] = "true"
         }
         archiveBaseName.set("kotlin-htmx")
         mergeServiceFiles()
