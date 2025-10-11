@@ -12,7 +12,7 @@ import kotlinx.html.option
 import kotlinx.html.select
 import kotlinx.html.submitInput
 import kotlinx.html.ul
-import no.mikill.kotlin_htmx.pages.validatedInputWithErrors
+import no.mikill.kotlin_htmx.pages.indexedForm
 import no.mikill.kotlin_htmx.validation.at
 
 class AddAddressPage {
@@ -66,37 +66,11 @@ class AddAddressPage {
                         }
                     }
                 }
-                div {
-                    validatedInputWithErrors(
-                        propertyPath = Person::addresses.at(nextIndex, Address::streetAddress),
-                        valueObject = personWithNewAddress,
-                        violations = violations,
-                        label = "Street Address",
-                    )
-                }
-                div {
-                    validatedInputWithErrors(
-                        propertyPath = Person::addresses.at(nextIndex, Address::city),
-                        valueObject = personWithNewAddress,
-                        violations = violations,
-                        label = "City",
-                    )
-                }
-                div {
-                    validatedInputWithErrors(
-                        propertyPath = Person::addresses.at(nextIndex, Address::postalCode),
-                        valueObject = personWithNewAddress,
-                        violations = violations,
-                        label = "Postal Code",
-                    )
-                }
-                div {
-                    validatedInputWithErrors(
-                        propertyPath = Person::addresses.at(nextIndex, Address::country),
-                        valueObject = personWithNewAddress,
-                        violations = violations,
-                        label = "Country",
-                    )
+                indexedForm(personWithNewAddress, violations, Person::addresses, nextIndex) {
+                    field(Address::streetAddress, "Street Address")
+                    field(Address::city, "City")
+                    field(Address::postalCode, "Postal Code")
+                    field(Address::country, "Country")
                 }
                 submitInput { value = "Add Address" }
             }
