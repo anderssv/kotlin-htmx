@@ -3,6 +3,7 @@
 **Status:** Core person registration system is complete. Remaining work is optional enhancements.
 
 **Next Priority:** Optional enhancements (pick any)
+- **Edit Existing Addresses** - NEW FEATURE: Allow editing of registered addresses in form flow (functional enhancement)
 - HtmlConstraints - Complete remaining annotations (@Pattern, @NotEmpty, @NotNull support)
 - Type-Safe Form Components - Complete remaining component patterns
 - Context Pattern - Dependency injection pattern (structural improvement)
@@ -900,6 +901,140 @@ fun Parameters.getUUID(name: String): UUID {
 - Can add more parameter extraction helpers (e.g., getInt, getLocalDate) following same pattern
 
 ---
+---
+
+# TDD Plan: Edit Existing Addresses in Form Flow
+
+## Feature Description
+Add ability to edit already registered addresses in the person registration form. When a person has existing addresses, they should be able to modify them in the form, not just add new ones.
+
+## Implementation Approach
+- Add UUID field to Address domain model for exact identification
+- Modify the person registration form to pre-populate existing addresses
+- Use UUID to distinguish between editing existing addresses (UUID present) and adding new ones (UUID null/absent)
+- Support editing of existing address fields (not just adding new ones)
+- Ensure validation works for edited addresses
+- Update the form submission to handle both new and edited addresses based on UUID presence
+- Maintain proper indexing when mixing existing and new addresses
+
+## Benefits
+- Complete CRUD functionality for addresses
+- Better user experience - users can correct mistakes
+- Demonstrates full form lifecycle management
+- Shows how to handle updates to nested collections
+- Practical real-world scenario
+
+---
+
+## Tests (TDD Order)
+
+### [ ] Test 0: Add UUID field to Address domain model
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/AddressTest.kt`
+
+**Test**: Address should have an optional UUID field (null for new addresses, populated for existing ones).
+
+**Implementation**:
+```kotlin
+data class Address(
+    val id: UUID? = null,  // null for new addresses, populated for existing
+    val type: AddressType,
+    @field:NotBlank(message = "Street address is required")
+    val streetAddress: String,
+    // ... other fields
+)
+```
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 1: Display existing addresses in edit mode
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/pages/PersonFormTest.kt`
+
+**Test**: When rendering the person registration form with a Person that has existing addresses (with UUIDs), those addresses should be pre-populated in the form fields, and the UUID should be included as a hidden field.
+
+**Implementation**:
+- Modify the form rendering to check if the person has existing addresses
+- Pre-populate address fields with existing data
+- Include address UUID as a hidden field in the form to track which addresses are being edited
+- Hidden field naming: `addresses[0].id` for proper binding
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 2: Submit form with edited address
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
+
+**Test**: When submitting a form with modified address data (UUID present), the person's address should be updated while preserving the UUID.
+
+**Implementation**:
+- Update form submission handler to detect edited vs new addresses based on UUID presence
+- If address has UUID: update existing address in the repository
+- If address has no UUID: treat as new address and generate UUID on save
+- Validate edited addresses the same way as new ones
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 3: Validation errors on edited addresses
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
+
+**Test**: When editing an address and submitting invalid data, validation errors should be displayed correctly for that specific address.
+
+**Implementation**:
+- Ensure PropertyPath works correctly with edited addresses
+- Error messages should reference the correct address index
+- Form should re-render with edited values and errors
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 4: Mix new and existing addresses
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
+
+**Test**: A person should be able to edit existing addresses (with UUID) AND add new addresses (without UUID) in the same form submission.
+
+**Implementation**:
+- Handle both scenarios in form processing based on UUID presence
+- Maintain correct indices for all addresses in the form
+- Validate all addresses (new and edited) together
+- Preserve UUIDs for existing addresses, generate new UUIDs for new addresses
+
+**Status**: PENDING
+
+---
+
+### [ ] Test 5: Delete address functionality
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
+
+**Test**: User should be able to remove an existing address (identified by UUID) from the form (optional enhancement).
+
+**Implementation**:
+- Add delete/remove button for existing addresses
+- Handle removal in form submission (address with UUID not submitted = deleted)
+- Update repository to reflect deletions based on UUID comparison
+- Alternative: Add a "deleted" flag field to track deletions explicitly
+
+**Status**: PENDING (Optional)
+
+---
+
+## Notes
+- **UUID as identifier**: Addresses will use UUID for exact identification
+  - New addresses: UUID is null/absent until saved
+  - Existing addresses: UUID is populated and preserved through updates
+  - Form includes UUID as hidden field for existing addresses
+- **Update strategy**: All addresses must be submitted in the form (no partial updates)
+  - Missing addresses (by UUID comparison) are considered deleted
+  - Present addresses with UUID are updates
+  - Present addresses without UUID are new additions
+- **Concurrency**: Not handled in initial implementation (could add "last modified" timestamp later for optimistic locking)
+- **UI consideration**: Existing vs new addresses could be visually distinguished (e.g., different styling, "Edit" vs "New" label)
+
+---
 
 # Implementation Priority
 
@@ -910,11 +1045,12 @@ fun Parameters.getUUID(name: String): UUID {
 4. Person Registration Forms with PropertyPath - Complete registration flow with FormBuilderDsl
 
 **⚠️ OPTIONAL ENHANCEMENTS** (remaining in plan above):
-1. **HtmlConstraints** - PARTIALLY COMPLETED (@NotBlank/@Size/Email working, missing @Pattern/@NotEmpty/@NotNull)
-2. **Type-Safe Form Components** - PARTIALLY COMPLETED (basic components done, FormBuilderDsl supersedes this)
-3. **Context Pattern** - NOT STARTED (Dependency injection pattern for better testability)
-4. **Routing Utilities** - PARTIALLY COMPLETED (some utilities exist, could add more)
-5. **Component Organization** - NOT STARTED (Header/Footer extraction for better code organization)
+1. **Edit Existing Addresses** - NOT STARTED (Functional enhancement: edit registered addresses in form flow)
+2. **HtmlConstraints** - PARTIALLY COMPLETED (@NotBlank/@Size/Email working, missing @Pattern/@NotEmpty/@NotNull)
+3. **Type-Safe Form Components** - PARTIALLY COMPLETED (basic components done, FormBuilderDsl supersedes this)
+4. **Context Pattern** - NOT STARTED (Dependency injection pattern for better testability)
+5. **Routing Utilities** - PARTIALLY COMPLETED (some utilities exist, could add more)
+6. **Component Organization** - NOT STARTED (Header/Footer extraction for better code organization)
 
 ## Summary
 

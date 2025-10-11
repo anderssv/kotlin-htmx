@@ -2,6 +2,8 @@
 
 > **⚠️ Warning:** This is a demo project, not a library or a production application. You should copy parts that are relevant to you and change it when you need. Good luck.
 
+> **🎥 KotlinConf 2025:** This project was created as the basis for a talk at KotlinConf 2025. Watch the recording here: [https://youtu.be/AlGWsTXnWsY?si=7I0-qMj86Wr7h4rq](https://youtu.be/AlGWsTXnWsY?si=7I0-qMj86Wr7h4rq)
+
 This document describes the features and technical capabilities of the kotlin-htmx project. The project serves as a showcase for building modern web applications using **Kotlin + Ktor + HTMX** with plain HTML and CSS, emphasizing type safety, server-side rendering, and minimal JavaScript.
 
 ## Table of Contents
@@ -643,6 +645,7 @@ Full source code with comprehensive test coverage available at:
 
 ## Related Resources
 
+- [KotlinConf 2025 Talk Recording](https://youtu.be/AlGWsTXnWsY?si=7I0-qMj86Wr7h4rq) - Watch the full presentation about this project
 - [Blog: HTMX + SSE Implementation](https://blog.f12.no/wp/2024/11/11/htmx-sse-easy-updates-of-html-state-with-no-javascript/)
 - [Mikill Digital](https://www.mikill.no)
 - [Author's Blog](https://blog.f12.no)

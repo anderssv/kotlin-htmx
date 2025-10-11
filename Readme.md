@@ -5,7 +5,7 @@ It has efficient feedback loops and hot reloading.
 Almost like Next.js, but less complexity.
 
 It was created to demonstrate how to build a full-stack web application while holding different talks. You can see
-a recording of the version I held at KotlinConf 2025 here: https://youtu.be/AlGWsTXnWsY?si=BxojLHXlyopijyPk .
+a recording of the version I held at KotlinConf 2025 here: https://youtu.be/AlGWsTXnWsY?si=7I0-qMj86Wr7h4rq .
 
 ## Technologies Used
 
