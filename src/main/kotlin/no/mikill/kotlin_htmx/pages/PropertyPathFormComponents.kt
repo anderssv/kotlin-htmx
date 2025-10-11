@@ -118,3 +118,50 @@ fun <T, R> DIV.validatedInputWithErrors(
         }
     }
 }
+
+/**
+ * Renders an input field with automatic value extraction, type detection, and validation error display.
+ * This is the safest way to render input fields - the value is automatically extracted from the object
+ * using the property path, eliminating the risk of passing mismatched values.
+ *
+ * The value is extracted by navigating through the property path from the root object.
+ * For example, with path `addresses[0].city` and a Person object, it will automatically
+ * extract `person.addresses[0].city`.
+ *
+ * @param propertyPath The type-safe property path
+ * @param obj The root object to extract the value from
+ * @param violations Map of validation violations to display
+ * @param label The label text for the input
+ * @param inputType Optional: Override the automatically determined input type
+ * @param placeholder Optional: Placeholder text
+ * @param cssClasses Optional: CSS classes to apply
+ * @param inputId Optional: HTML id attribute
+ * @param configure Optional: Additional configuration for the input element
+ */
+fun <T, R> DIV.validatedInputWithErrors(
+    propertyPath: PropertyPath<T, R>,
+    obj: T,
+    violations: Map<String, List<String>>,
+    label: String,
+    inputType: InputType? = null,
+    placeholder: String? = null,
+    cssClasses: String? = null,
+    inputId: String? = null,
+    configure: INPUT.() -> Unit = {},
+) {
+    // Extract value automatically from the object using the property path
+    val value = propertyPath.getValue(obj).toString()
+
+    // Delegate to the existing function
+    validatedInputWithErrors(
+        propertyPath = propertyPath,
+        value = value,
+        violations = violations,
+        label = label,
+        inputType = inputType,
+        placeholder = placeholder,
+        cssClasses = cssClasses,
+        inputId = inputId,
+        configure = configure,
+    )
+}

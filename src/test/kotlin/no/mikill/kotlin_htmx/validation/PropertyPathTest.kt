@@ -110,4 +110,44 @@ class PropertyPathTest {
         assertThat(firstAddressCity.path).isEqualTo("addresses[0].city")
         assertThat(secondAddressCity.path).isEqualTo("addresses[1].city")
     }
+
+    @Test
+    fun `PropertyPath Direct getValue should extract value from object`() {
+        // Arrange
+        val person = TestPerson(name = "John", address = TestAddress("Boston"), addresses = emptyList())
+        val namePath = TestPerson::name.toPath()
+
+        // Act
+        val value = namePath.getValue(person)
+
+        // Assert
+        assertThat(value).isEqualTo("John")
+    }
+
+    @Test
+    fun `PropertyPath Nested getValue should navigate through nested properties`() {
+        // Arrange
+        val person = TestPerson(name = "John", address = TestAddress("Boston"), addresses = emptyList())
+        val cityPath = TestPerson::address.toPath().then(TestAddress::city)
+
+        // Act
+        val value = cityPath.getValue(person)
+
+        // Assert
+        assertThat(value).isEqualTo("Boston")
+    }
+
+    @Test
+    fun `PropertyPath Indexed getValue should navigate to list element property`() {
+        // Arrange
+        val addresses = listOf(TestAddress("Boston"), TestAddress("Portland"), TestAddress("Seattle"))
+        val person = TestPerson(name = "John", address = TestAddress("Boston"), addresses = addresses)
+        val indexedPath = TestPerson::addresses.at(1, TestAddress::city)
+
+        // Act
+        val value = indexedPath.getValue(person)
+
+        // Assert
+        assertThat(value).isEqualTo("Portland")
+    }
 }

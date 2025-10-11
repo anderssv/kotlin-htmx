@@ -24,6 +24,8 @@ class AddAddressPage {
     ) {
         container.apply {
             val nextIndex = person.addresses.size
+            // Create a temporary person with the new address at the correct index for value extraction
+            val personWithNewAddress = person.copy(addresses = person.addresses + newAddress)
 
             h1 { +"Add Address for ${person.firstName} ${person.lastName}" }
 
@@ -67,7 +69,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::streetAddress),
-                        value = newAddress.streetAddress,
+                        obj = personWithNewAddress,
                         violations = violations,
                         label = "Street Address",
                     )
@@ -75,7 +77,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::city),
-                        value = newAddress.city,
+                        obj = personWithNewAddress,
                         violations = violations,
                         label = "City",
                     )
@@ -83,7 +85,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::postalCode),
-                        value = newAddress.postalCode,
+                        obj = personWithNewAddress,
                         violations = violations,
                         label = "Postal Code",
                     )
@@ -91,7 +93,7 @@ class AddAddressPage {
                 div {
                     validatedInputWithErrors(
                         propertyPath = Person::addresses.at(nextIndex, Address::country),
-                        value = newAddress.country,
+                        obj = personWithNewAddress,
                         violations = violations,
                         label = "Country",
                     )
