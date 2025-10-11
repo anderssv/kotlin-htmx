@@ -5,11 +5,11 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.2.0"
-    id("io.ktor.plugin") version "3.2.3"
-    id("com.github.ben-manes.versions") version "0.52.0"
-    id("com.gradleup.shadow") version "8.3.8"
-    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
+    kotlin("jvm") version "2.2.20"
+    id("io.ktor.plugin") version "3.3.1"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.gradleup.shadow") version "9.2.2"
+    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     application
 }
 
@@ -76,27 +76,27 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0")
 
-    implementation("org.graalvm.sdk:graal-sdk:24.2.2")
-    implementation("org.graalvm.js:js:24.2.2")
-    implementation("org.graalvm.js:js-scriptengine:24.2.2")
+    implementation("org.graalvm.sdk:graal-sdk:25.0.0")
+    implementation("org.graalvm.js:js:25.0.0")
+    implementation("org.graalvm.js:js-scriptengine:25.0.0")
 
-    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("org.assertj:assertj-core:3.27.6")
 
     // JUnit 5 dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.13.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.34.0")
-    testImplementation("io.github.bonigarcia:webdrivermanager:6.2.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.36.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.3.2")
 }
 
 fun isNonStable(version: String): Boolean {
