@@ -98,6 +98,7 @@ cd src/main/resources/postcss && npm run build
     - Prefer objects to primitive types
     - Re-use test data setup, prefer <class>.valid() test extension methods.
     - Use rich domain models, avoid splitting data into multiple tables unless necessary. JSONB column in PostgreSQL is a good option for complex data structures.
+    - **Data Binding**: Prefer using Jackson for all serialization/deserialization. When working with formats that Jackson doesn't natively support (like HTML form parameters with dot notation), write utility functions to convert to an intermediate structure (Map, JsonNode) that Jackson can consume. Avoid writing custom deserializers; instead, adapt the input to Jackson's expectations.
 
 4. **Naming Conventions**
     - *Domain.kt for domain models
