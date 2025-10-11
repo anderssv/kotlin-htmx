@@ -44,6 +44,10 @@ This ensures systematic, incremental progress through planned features.
 # Print new versions of dependencies
 ./gradlew dependencyUpdates
 
+# Verify version upgrades by building and running the shadow jar
+# Always run this after upgrading dependencies to ensure everything works
+./gradlew shadowJar && java -jar build/libs/kotlin-htmx-all.jar
+
 # Run the application. This starts the server and is a blocking operation.
 ./gradlew run
 
