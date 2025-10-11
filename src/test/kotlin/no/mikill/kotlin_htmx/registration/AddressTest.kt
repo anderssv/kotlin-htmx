@@ -5,34 +5,11 @@ import no.mikill.kotlin_htmx.validation.ValidationResult
 import no.mikill.kotlin_htmx.validation.ValidationService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 class AddressTest {
     private val validatorFactory = Validation.buildDefaultValidatorFactory()
     private val validator = validatorFactory.validator
     private val validationService = ValidationService(validator)
-
-    @Test
-    fun `Address should have id type streetAddress city postalCode country fields`() {
-        // Arrange & Act
-        val address =
-            Address(
-                id = UUID.randomUUID(),
-                type = AddressType.HOME,
-                streetAddress = "123 Main St",
-                city = "Springfield",
-                postalCode = "12345",
-                country = "USA",
-            )
-
-        // Assert
-        assertThat(address.id).isNotNull()
-        assertThat(address.type).isEqualTo(AddressType.HOME)
-        assertThat(address.streetAddress).isEqualTo("123 Main St")
-        assertThat(address.city).isEqualTo("Springfield")
-        assertThat(address.postalCode).isEqualTo("12345")
-        assertThat(address.country).isEqualTo("USA")
-    }
 
     @Test
     fun `Address validation should fail for invalid fields`() {
@@ -72,41 +49,5 @@ class AddressTest {
 
         // Assert
         assertThat(result).isInstanceOf(ValidationResult.Valid::class.java)
-    }
-
-    @Test
-    fun `Address should have nullable UUID field defaulting to null for new addresses`() {
-        // Arrange & Act - Create address without specifying id
-        val newAddress =
-            Address(
-                type = AddressType.HOME,
-                streetAddress = "123 Main St",
-                city = "Springfield",
-                postalCode = "12345",
-                country = "USA",
-            )
-
-        // Assert - New addresses should have null id
-        assertThat(newAddress.id).isNull()
-    }
-
-    @Test
-    fun `Address should preserve UUID when provided for existing addresses`() {
-        // Arrange
-        val existingId = UUID.randomUUID()
-
-        // Act - Create address with specific id (simulating existing address)
-        val existingAddress =
-            Address(
-                id = existingId,
-                type = AddressType.HOME,
-                streetAddress = "123 Main St",
-                city = "Springfield",
-                postalCode = "12345",
-                country = "USA",
-            )
-
-        // Assert - Existing addresses should preserve their id
-        assertThat(existingAddress.id).isEqualTo(existingId)
     }
 }

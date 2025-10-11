@@ -10,6 +10,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.53.0"
     id("com.gradleup.shadow") version "8.3.8"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
+    jacoco
     application
 }
 
@@ -37,7 +38,31 @@ tasks {
             showStandardStreams = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
+        finalizedBy(jacocoTestReport) // Generate coverage report after tests
     }
+
+    jacocoTestReport {
+        dependsOn(test) // Ensure tests run before generating report
+        reports {
+            xml.required = true
+            html.required = true
+            csv.required = false
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    minimum = "0.80".toBigDecimal() // 80% coverage minimum
+                }
+            }
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
 }
 
 repositories {
