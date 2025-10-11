@@ -6,203 +6,44 @@
 - ✅ **Checkbox Pagination Bug**: Fixed ceiling division calculation in `numberOfBatches` to properly count partial last batch. Added bounds checking in `renderBoxesForBatch()`. All tests passing.
 
 **Next Priority:** Optional enhancements (pick any)
-- Context Pattern - Dependency injection pattern (structural improvement)
+- Test Duplication Review - Review and consolidate tests (quality improvement)
 - Routing Utilities - HtmlRenderUtils, UUID extensions (utility functions)
 - Component Organization - Header/Footer extraction (structural improvement)
+- Context Pattern - Dependency injection pattern (structural improvement)
 
 See "Implementation Priority" section at the bottom for full roadmap.
 
 ---
 ---
 
-# TDD Plan: Context Pattern for Dependency Injection
+# TDD Plan: Test Duplication Review
 
 ## Feature Description
-Implement a structured dependency injection pattern using a Context object that wires together all application components (clients, services, repositories). This provides clear dependency structure and makes testing easier.
+Review existing tests for duplication and find the right balance between test coverage and maintainability. Too many tests require maintenance, too few make it hard to understand what is broken.
 
-## Implementation Approach
-- Create `Context` object with wire methods for each dependency layer
-- Define `TopContext` data class holding all wired dependencies
-- Create typed wrapper classes: `Clients`, `Services`, `Repositories`
-- Support optional parameters for testing (clock, config overrides)
-- Update Application.module() to use Context
+## Approach
+- Remove basic tests that are indirectly tested through real features using them
+- Keep direct testing for complex utilities like DSLs where understanding behavior is critical
+- Focus on feature-level tests that verify actual use cases
+- Eliminate redundant unit tests for trivial getters/setters
+- Consolidate similar tests into parameterized tests where appropriate
 
-## Benefits
-- Clear dependency structure visible in one place
-- Easy to test: can override specific dependencies
-- Type-safe: All dependencies in strongly-typed containers
-- Scalable: Easy to add new services/repositories
-- Shows architectural best practices
+## Principles
+- **Feature-level tests are valuable**: Tests that verify actual user-facing functionality should be preserved
+- **Infrastructure requires direct tests**: Complex utilities (FormBuilderDsl, PropertyPath, ValidationService) need direct unit tests since they're hard to debug through integration tests
+- **Avoid testing trivial code**: Simple data classes, getters, and obvious behavior don't need dedicated tests
+- **Prefer integration over unit**: When a piece of code is already tested through a realistic usage scenario, additional unit tests may be redundant
 
----
+## Areas to Review
+1. **Form DSL tests** (FormBuilderDslTest, PropertyPathFormComponentsTest) - Keep these, DSL is complex
+2. **Domain model tests** (PersonTest, AddressTest) - Review for trivial tests of basic properties
+3. **Repository tests** (PersonRepositoryTest) - Might be covered by integration tests
+4. **Validation tests** (ValidationServiceTest) - Keep, validation logic is critical
+5. **Route integration tests** - Keep, these verify actual behavior
+6. **PropertyPath tests** - Keep, this is complex infrastructure
 
-## Tests (TDD Order)
-
-### [ ] Test 1: Context.wireContext creates TopContext
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: `Context.wireContext()` should return a `TopContext` instance with non-null dependencies.
-
-**Implementation**:
-```kotlin
-object Context {
-    fun wireContext(
-        clock: Clock = Clock.systemDefaultZone(),
-        appConfig: ApplicationConfig = ApplicationConfig.load()
-    ): TopContext {
-        val clients = wireClients(appConfig)
-        val repositories = wireRepositories()
-        val services = wireServices(clock, clients, repositories)
-        return TopContext(clock, appConfig, clients, services, repositories)
-    }
-
-    data class TopContext(
-        val clock: Clock,
-        val config: ApplicationConfig,
-        val clients: Clients,
-        val services: Services,
-        val repositories: Repositories
-    )
-
-    class Clients(val lookupClient: LookupClient)
-    class Repositories(val applicationRepository: ApplicationRepository)
-    class Services(val validationService: ValidationService)
-}
-```
-
-**Status**: PENDING
-
----
-
-### [ ] Test 2: Context.wireClients creates HTTP client
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: `wireClients()` should create a `Clients` instance containing the LookupClient.
-
-**Implementation**:
-```kotlin
-private fun wireClients(config: ApplicationConfig): Clients =
-    Clients(
-        lookupClient = LookupClient(config.lookupApiKey)
-    )
-```
-
-**Status**: PENDING
-
----
-
-### [ ] Test 3: Context.wireRepositories creates repositories
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: `wireRepositories()` should create a `Repositories` instance containing ApplicationRepository.
-
-**Implementation**:
-```kotlin
-private fun wireRepositories(): Repositories =
-    Repositories(
-        applicationRepository = ApplicationRepository()
-    )
-```
-
-**Status**: PENDING
-
----
-
-### [✅] Test 4: Context.wireServices creates ValidationService
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: `wireServices()` should create a `Services` instance with ValidationService properly initialized.
-
-**Implementation**:
-```kotlin
-private fun wireServices(
-    clock: Clock,
-    clients: Clients,
-    repositories: Repositories
-): Services {
-    val validatorFactory = Validation.buildDefaultValidatorFactory()
-    val validator = validatorFactory.validator
-    val validationService = ValidationService(validator)
-    return Services(validationService)
-}
-```
-
-**Status**: PENDING
-
----
-
-### [✅] Test 5: Context supports custom clock for testing
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: When passing a custom Clock to wireContext(), the TopContext should contain that clock.
-
-**Implementation**: Already supported via default parameter - verify with test.
-
-**Status**: PENDING
-
----
-
-### [✅] Test 6: Context supports custom config for testing
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ContextTest.kt`
-
-**Test**: When passing a custom ApplicationConfig, the TopContext should use it.
-
-**Implementation**: Already supported via default parameter - verify with test.
-
-**Status**: PENDING
-
----
-
-### [✅] Test 7: Update Application.module to use Context
-**File**: `src/test/kotlin/no/mikill/kotlin_htmx/ApplicationTest.kt`
-
-**Test**: Application module should wire dependencies using Context and pass them to routes.
-
-**Implementation**:
-```kotlin
-fun Application.module() {
-    val context = Context.wireContext()
-
-    configureHTTP()
-    configureMonitoring()
-    configureSerialization()
-    configureRouting(PostCssTransformer())
-
-    install(Compression) {
-        gzip { priority = 1.0 }
-        deflate { priority = 0.9 }
-    }
-
-    configurePageRoutes(
-        context.clients.lookupClient,
-        context.repositories.applicationRepository,
-        context.services.validationService,
-        numberOfCheckboxes
-    )
-}
-```
-
-**Status**: PENDING
-
----
-
-### [✅] Test 8: Update configurePageRoutes signature
-**File**: Update routing tests
-
-**Test**: Routes should accept ValidationService from Context.
-
-**Implementation**: Add `validationService: ValidationService` parameter to `configurePageRoutes()`.
-
-**Status**: PENDING
-
----
-
-## Notes
-- This is a structural refactoring - all tests should continue passing
-- Context pattern replaces ad-hoc dependency creation in Application.module()
-- Makes it easy to create test contexts with fake dependencies
-- Can add more dependency layers as needed (e.g., UseCases, Handlers)
-- Consider adding resource cleanup (e.g., closing HTTP clients) via TopContext.close()
+## Status
+NOT STARTED - This is a planning task, not TDD implementation
 
 ---
 ---
@@ -544,8 +385,9 @@ fun Parameters.getUUID(name: String): UUID {
    - Delete functionality - OPTIONAL (not implemented)
 2. **HtmlConstraints** - ✅ COMPLETED (All annotations supported: @NotBlank/@NotEmpty/@NotNull/@Size/@Email/@Pattern)
 3. **Context Pattern** - NOT STARTED (Dependency injection pattern for better testability)
-4. **Routing Utilities** - PARTIALLY COMPLETED (some utilities exist, could add StatusPages for error handling)
-5. **Component Organization** - NOT STARTED (Header/Footer extraction for better code organization)
+4. **Test Duplication Review** - NOT STARTED (Review tests for duplication and maintainability balance)
+5. **Routing Utilities** - PARTIALLY COMPLETED (some utilities exist, could add StatusPages for error handling)
+6. **Component Organization** - NOT STARTED (Header/Footer extraction for better code organization)
 
 ## Summary
 
