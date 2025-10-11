@@ -6,14 +6,10 @@ import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.h2
-import kotlinx.html.label
 import kotlinx.html.li
-import kotlinx.html.option
-import kotlinx.html.select
 import kotlinx.html.submitInput
 import kotlinx.html.ul
 import no.mikill.kotlin_htmx.pages.indexedForm
-import no.mikill.kotlin_htmx.validation.at
 
 class AddAddressPage {
     fun renderAddAddressFormContent(
@@ -49,24 +45,8 @@ class AddAddressPage {
 
             h2 { +"New Address" }
             form(method = FormMethod.post, action = "/person/${person.id}/address/add") {
-                div {
-                    label {
-                        +"Address Type"
-                        select {
-                            name = Person::addresses.at(nextIndex, Address::type).path
-                            AddressType.entries.forEach { type ->
-                                option {
-                                    value = type.name
-                                    if (type == newAddress.type) {
-                                        selected = true
-                                    }
-                                    +type.name
-                                }
-                            }
-                        }
-                    }
-                }
                 indexedForm(personWithNewAddress, violations, Person::addresses, nextIndex) {
+                    enumSelect(Address::type, "Address Type", AddressType.entries.toTypedArray())
                     field(Address::streetAddress, "Street Address")
                     field(Address::city, "City")
                     field(Address::postalCode, "Postal Code")
