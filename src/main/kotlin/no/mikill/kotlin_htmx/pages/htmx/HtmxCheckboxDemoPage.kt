@@ -54,7 +54,9 @@ class HtmxCheckboxDemoPage(
 
     private val initialBoxes = 2000.let { if (numberOfBoxes > it) it else numberOfBoxes / 2 }
     private val batchSize = initialBoxes / 6
-    private val numberOfBatches = numberOfBoxes / batchSize
+
+    // Use ceiling division to ensure the last partial batch is counted
+    private val numberOfBatches = (numberOfBoxes + batchSize - 1) / batchSize
 
     /**
      * In-memory state storage for checkbox states.
@@ -131,13 +133,17 @@ class HtmxCheckboxDemoPage(
 
     /**
      * Renders all checkboxes for a specific batch.
+     * Includes bounds checking for the last partial batch.
      */
     private fun HtmlBlockTag.renderBoxesForBatch(batchNumber: Int) {
         generateSequence(0) { it + 1 }
             .takeWhile { it <= batchSize - 1 }
             .forEach {
                 val checkBoxNumber = batchNumber * batchSize + it
-                renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
+                // Bounds check: only render if checkbox exists (handles last partial batch)
+                if (checkBoxNumber < numberOfBoxes) {
+                    renderCheckbox(checkBoxNumber, checkboxState[checkBoxNumber])
+                }
             }
     }
 
