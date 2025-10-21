@@ -119,37 +119,7 @@ class MainTemplate<T : Template<FlowContent>>(
             div {
                 style = "max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;"
 
-                // Header section with site title and navigation
-                header {
-                    classes = setOf("site-header")
-                    style = "text-align: center; margin-bottom: 2rem;"
-
-                    h1 {
-                        style = "margin-bottom: 1rem; font-weight: 700;"
-                        +"Kotlin, KTor and HTMX front end demos"
-                    }
-
-                    // Main navigation
-                    nav {
-                        ul {
-                            li { a(href = "/") { +"Home" } }
-                            li { span("separator") { +"🚀" } }
-                            li { a(href = "/demo/htmx/checkboxes") { +"Checkboxes" } }
-                            li { span("separator") { +"🚀" } }
-                            li { a(href = "/select") { +"SPA Emulation" } }
-                            li { span("separator") { +"🚀" } }
-                            li { a(href = "/demo/admin") { +"Admin demo" } }
-                            li { span("separator") { +"🚀" } }
-                            li { a(href = "/person/register") { +"Form Demo" } }
-                        }
-                    }
-
-                    // Optional header content from page
-                    div {
-                        style = "margin-top: 1.5rem;"
-                        insert(headerContent)
-                    }
-                }
+                headerComponent(headerContent)
 
                 // Main content area
                 main {
@@ -163,12 +133,7 @@ class MainTemplate<T : Template<FlowContent>>(
                     insert(template, mainSectionTemplate)
                 }
 
-                // Footer
-                footer {
-                    style = "text-align: center; padding: 2rem 0; margin-top: 3rem;"
-                    +"Made with ❤️ by Anders Sveen • Check out "
-                    a(href = "https://www.mikill.no") { +"mikill.no" }
-                }
+                footerComponent()
 
                 // HTMX highlight effect for updated elements
                 script {

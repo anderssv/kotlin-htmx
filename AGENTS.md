@@ -86,6 +86,7 @@ cd src/main/resources/postcss && npm run build
     - Use test data builders (usually objects with valid() methods, a variant of the Object Mother pattern)
     - Run all tests after finishing a task
     - Format and verify code with `./gradlew ktlintFormat` before considering a task complete (this both formats and checks)
+    - **Balance test approaches**: It's not always necessary to test HTML content with full HTTP integration tests if the code compiles and can be tested with HTML generation in isolation. Prefer lightweight unit tests for HTML components over heavyweight integration tests when both provide equivalent coverage.
 
 2. **Code Organization**
     - Follow domain-driven package structure

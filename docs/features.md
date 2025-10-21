@@ -556,9 +556,11 @@ object HtmlRenderUtils {
 
 ### 5. Component Organization
 
-Reusable HTML components using kotlinx.html:
+Reusable HTML components using kotlinx.html extension functions:
 
+**Component Pattern:**
 ```kotlin
+// HeaderComponent.kt
 fun FlowContent.headerComponent() {
     header(classes = "site-header") {
         h1 { +"Kotlin HTMX Demo" }
@@ -568,13 +570,77 @@ fun FlowContent.headerComponent() {
         }
     }
 }
+
+// FooterComponent.kt
+fun FlowContent.footerComponent() {
+    footer(classes = "site-footer") {
+        div {
+            +"A "
+            a(href = "https://www.mikill.no") { +"Mikill Digital" }
+            +" project"
+        }
+    }
+}
+```
+
+**Usage in Templates:**
+```kotlin
+class MainTemplate : Template<HTML> {
+    override fun HTML.apply() {
+        head { /* ... */ }
+        body {
+            headerComponent()
+            main { /* page content */ }
+            footerComponent()
+        }
+    }
+}
+```
+
+**Testing Components:**
+
+Components can be tested in isolation without full HTTP integration:
+
+```kotlin
+class HeaderComponentTest {
+    @Test
+    fun `headerComponent renders header element`() {
+        val html = createHTML().div {
+            headerComponent()
+        }
+        
+        assertThat(html).contains("<header")
+        assertThat(html).contains("Kotlin HTMX Demo")
+    }
+}
 ```
 
 **Pattern Benefits:**
-- Type-safe HTML generation
-- Reusable components
-- Composable architecture
-- No template language needed
+- **Type-safe HTML generation**: Compile-time checking of HTML structure
+- **Reusable components**: Define once, use everywhere
+- **Composable architecture**: Components nest naturally
+- **No template language needed**: Pure Kotlin, no DSL to learn
+- **Lightweight testing**: Test HTML generation without HTTP overhead
+- **Better organization**: Each component in its own file
+- **Easy refactoring**: IDE refactoring tools work seamlessly
+
+**When to Use Full Integration Tests vs Unit Tests:**
+
+The component pattern allows for flexible testing strategies:
+
+1. **Unit Tests (Lightweight)**: Test HTML generation in isolation
+   - Fast execution
+   - No HTTP overhead
+   - Good for verifying component structure and content
+   - Example: `HeaderComponentTest`, `FooterComponentTest`
+
+2. **Integration Tests (Comprehensive)**: Test components in full page renders
+   - Verifies components work in real application context
+   - Tests HTTP handling and routing
+   - Good for end-to-end verification
+   - Example: `ApplicationTest` checking header/footer in actual pages
+
+**Guideline**: If code compiles and unit tests pass, full HTTP integration tests may be redundant for simple components. Reserve integration tests for complex interactions or when testing routing behavior.
 
 ---
 
