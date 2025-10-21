@@ -27,7 +27,6 @@ import kotlinx.html.style
 import kotlinx.html.title
 import kotlinx.html.ul
 import kotlinx.html.unsafe
-import no.mikill.kotlin_htmx.pages.HtmlElements.rawCss
 
 /**
  * Main template for all pages in the application.
@@ -85,6 +84,12 @@ class MainTemplate<T : Template<FlowContent>>(
                 href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=block"
             }
 
+            // Load application styles
+            link {
+                rel = "stylesheet"
+                href = "/css/styles.css"
+            }
+
             // Google Analytics
             script(src = "https://www.googletagmanager.com/gtag/js?id=G-30QSF4X9PW") { defer = true }
             script {
@@ -107,161 +112,6 @@ class MainTemplate<T : Template<FlowContent>>(
                 script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") { defer = true }
                 script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") { defer = true }
                 script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") { defer = true }
-            }
-
-            // Application styles
-            style {
-                rawCss(
-                    """
-                    /* Custom font for better typography - works with picocss */
-                    body {
-                        font-family: 'Inter', sans-serif;
-                    }
-
-                    /* Primary color for headings to match our theme */
-                    h1 {
-                        color: #4361ee;
-                    }
-
-                    /* HTMX-specific styles for loading indicators */
-                    .htmx-indicator {
-                        opacity: 0;
-                        transition: opacity 500ms ease-in;
-                    }
-
-                    .htmx-request .htmx-indicator {
-                        opacity: 1;
-                    }
-
-                    .htmx-request.htmx-indicator {
-                        opacity: 1;
-                    }
-
-                    /* Custom box component with hover effect */
-                    .box {
-                        border: 1px solid #ced4da;
-                        border-radius: 8px;
-                        text-align: center;
-                        padding: 1.5em;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    }
-
-                    .box:hover {
-                        transform: translateY(-3px);
-                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                    }
-
-                    /* Section styling for card-like appearance */
-                    section {
-                        margin-bottom: 2.5em;
-                        padding: 1.5em;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    }
-
-                    /* Custom navigation styling */
-                    nav {
-                        background: linear-gradient(135deg, #4361ee, #3f37c9);
-                        width: 100%;
-                        border-radius: 8px;
-                        font-size: 0.9em;
-                        padding: 0.8em 1.5em;
-                        margin-bottom: 1.5em;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-                        & ul {
-                            list-style: none;
-                            display: flex;
-                            flex-wrap: wrap;
-                            justify-content: space-evenly;
-                            align-items: center;
-                            margin: 0.5em auto;
-                            padding: 0;
-                            width: 100%;
-                            gap: 1em;
-                        }
-
-                        & li {
-                            display: flex;
-                            align-items: center;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        & .separator {
-                            color: rgba(255, 255, 255, 0.5);
-                        }
-
-                        & a {
-                            color: white;
-                            text-decoration: none;
-                            font-weight: 500;
-                            transition: all 0.3s ease;
-                            padding: 0.5em 0.8em;
-                            border-radius: 8px;
-                        }
-
-                        & a:hover {
-                            background-color: rgba(255, 255, 255, 0.1);
-                            transform: translateY(-2px);
-                            text-decoration: none;
-                        }
-                    }
-
-                    /* Form validation error styling */
-                    .form-error {
-                        color: #f44336;
-                        font-size: 0.9em;
-                        margin-top: 0.3em;
-                    }
-
-                    /* HTMX content update highlight effect */
-                    .htmx-modified {
-                        animation: highlight-fade 2s ease-out;
-                    }
-
-                    @keyframes highlight-fade {
-                        from {
-                            background-color: rgba(240,76,180,0.86);
-                        }
-                        to {
-                            background-color: transparent;
-                        }
-                    }
-
-                    /* Page transition animation */
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(10px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-
-                    /* Floating checkbox counter box */
-                    .checkbox-counter {
-                        & p {
-                            margin: 0;
-                            pointer-events: none; /* Ensure paragraphs also don't intercept clicks */
-                        }
-                        position: fixed;
-                        bottom: 20px;
-                        right: 20px;
-                        border-color: #005e7d;
-                        padding: 10px 15px;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                        z-index: 1000;
-                        font-size: 0.8rem;
-                        pointer-events: none; /* Allow clicks to pass through to elements underneath */
-                    }
-
-                    /* Responsive styles - hide QR code image */
-                    @media (max-width: 800px) {
-                        .qr-code-image {
-                            display: none;
-                        }
-                    }
-                    """.trimIndent(),
-                )
             }
         }
         body {
@@ -353,22 +203,6 @@ class SelectionTemplate : Template<FlowContent> {
     val selectionPagesContent = Placeholder<FlowContent>()
 
     override fun FlowContent.apply() {
-        style {
-            rawCss(
-                """
-                /* Responsive grid layout for selection choices - works well with picocss */
-                #choices {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); 
-                    gap: 20px;
-
-                    a {
-                        display: block;
-                    }
-                }                    
-                """.trimIndent(),
-            )
-        }
         insert(selectionPagesContent)
     }
 }
