@@ -86,7 +86,18 @@ cd src/main/resources/postcss && npm run build
     - Use test data builders (usually objects with valid() methods, a variant of the Object Mother pattern)
     - Run all tests after finishing a task
     - Format and verify code with `./gradlew ktlintFormat` before considering a task complete (this both formats and checks)
-    - **Balance test approaches**: It's not always necessary to test HTML content with full HTTP integration tests if the code compiles and can be tested with HTML generation in isolation. Prefer lightweight unit tests for HTML components over heavyweight integration tests when both provide equivalent coverage.
+
+    - **Testing Layers - Understanding the Differences**:
+      - **Page/Component Tests (e.g., `PersonRegistrationPageTest`)**: Test HTML structure and form field generation in isolation. These verify that form inputs have correct `name` attributes, proper field structure, and correct HTML element nesting. They catch structural issues without HTTP overhead.
+      - **Endpoint/Route Tests (e.g., `PersonRegistrationRoutesTest`)**: Test HTTP behavior, validation flow, redirects, and repository state changes. They verify HTML content with `contains()` checks for specific text, but do NOT verify form field structure or `name` attributes.
+      - **E2E/Selenium Tests (e.g., `HtmxCheckboxPageTest`)**: Test full browser behavior, JavaScript execution, SSE connections, and multi-browser synchronization.
+
+    - **Why All Three Layers Matter**:
+      - Page tests catch form binding issues (wrong field names) that endpoint tests miss
+      - Endpoint tests catch HTTP flow and validation issues that page tests miss
+      - E2E tests catch browser behavior and JavaScript issues that neither catch
+      - These are NOT duplicates - they test different concerns at different levels
+
     - **Skip low-value utility tests**: Don't write unit tests for simple utility functions (like `partialHtml()` or `respondHtmlFragment()`) if they are already exercised by integration/endpoint tests. Focus testing effort on complex logic, edge cases, and code that's hard to verify through integration tests alone. Simple wrappers and formatting utilities that are called by tested endpoints don't need dedicated unit tests.
 
 2. **Code Organization**

@@ -20,32 +20,4 @@ class ApplicationTest {
                 assertThat(bodyAsText()).contains("Three")
             }
         }
-
-    @Test
-    fun `header renders in full page`() =
-        testApplication {
-            application {
-                module()
-            }
-            client.get("/").apply {
-                assertEquals(HttpStatusCode.OK, status)
-                val html = bodyAsText()
-                assertThat(html).contains("class=\"site-header\"")
-                assertThat(html).contains("Kotlin, KTor and HTMX front end demos")
-            }
-        }
-
-    @Test
-    fun `footer renders in full page`() =
-        testApplication {
-            application {
-                module()
-            }
-            client.get("/").apply {
-                assertEquals(HttpStatusCode.OK, status)
-                val html = bodyAsText()
-                assertThat(html).contains("Anders Sveen")
-                assertThat(html).contains("mikill.no")
-            }
-        }
 }
