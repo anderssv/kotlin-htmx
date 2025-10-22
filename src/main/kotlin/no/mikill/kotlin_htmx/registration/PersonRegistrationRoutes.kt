@@ -11,9 +11,9 @@ import no.mikill.kotlin_htmx.forms.bindIndexedProperty
 import no.mikill.kotlin_htmx.forms.bindTo
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.MainTemplate
+import no.mikill.kotlin_htmx.routing.getUUID
 import no.mikill.kotlin_htmx.validation.ValidationResult
 import no.mikill.kotlin_htmx.validation.ValidationService
-import java.util.UUID
 
 fun Application.configurePersonRegistrationRoutes(
     repository: PersonRepository,
@@ -53,7 +53,7 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         get("/person/{id}/address/add") {
-            val personId = UUID.fromString(call.parameters["id"]!!)
+            val personId = call.parameters.getUUID("id")
             val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
 
             val emptyAddress = Address(type = null, streetAddress = "", city = "", postalCode = "", country = "")
@@ -67,7 +67,7 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         post("/person/{id}/address/add") {
-            val personId = UUID.fromString(call.parameters["id"]!!)
+            val personId = call.parameters.getUUID("id")
             val person = repository.findById(personId) ?: return@post call.respondRedirect("/person/register")
 
             val parameters = call.receiveParameters()
@@ -101,8 +101,8 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         get("/person/{personId}/address/{addressId}/edit") {
-            val personId = UUID.fromString(call.parameters["personId"]!!)
-            val addressId = UUID.fromString(call.parameters["addressId"]!!)
+            val personId = call.parameters.getUUID("personId")
+            val addressId = call.parameters.getUUID("addressId")
             val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
 
             // Find the address index by UUID
@@ -121,8 +121,8 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         post("/person/{personId}/address/{addressId}/update") {
-            val personId = UUID.fromString(call.parameters["personId"]!!)
-            val addressId = UUID.fromString(call.parameters["addressId"]!!)
+            val personId = call.parameters.getUUID("personId")
+            val addressId = call.parameters.getUUID("addressId")
             val person = repository.findById(personId) ?: return@post call.respondRedirect("/person/register")
 
             // Find the address index by UUID
@@ -170,7 +170,7 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         post("/person/{id}/complete") {
-            val personId = UUID.fromString(call.parameters["id"]!!)
+            val personId = call.parameters.getUUID("id")
             val person = repository.findById(personId) ?: return@post call.respondRedirect("/person/register")
 
             // Validate that person has at least one address
@@ -191,7 +191,7 @@ fun Application.configurePersonRegistrationRoutes(
         }
 
         get("/person/{id}") {
-            val personId = UUID.fromString(call.parameters["id"]!!)
+            val personId = call.parameters.getUUID("id")
             val person = repository.findById(personId) ?: return@get call.respondRedirect("/person/register")
 
             call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Person Details")) {

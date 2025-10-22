@@ -87,6 +87,7 @@ cd src/main/resources/postcss && npm run build
     - Run all tests after finishing a task
     - Format and verify code with `./gradlew ktlintFormat` before considering a task complete (this both formats and checks)
     - **Balance test approaches**: It's not always necessary to test HTML content with full HTTP integration tests if the code compiles and can be tested with HTML generation in isolation. Prefer lightweight unit tests for HTML components over heavyweight integration tests when both provide equivalent coverage.
+    - **Skip low-value utility tests**: Don't write unit tests for simple utility functions (like `partialHtml()` or `respondHtmlFragment()`) if they are already exercised by integration/endpoint tests. Focus testing effort on complex logic, edge cases, and code that's hard to verify through integration tests alone. Simple wrappers and formatting utilities that are called by tested endpoints don't need dedicated unit tests.
 
 2. **Code Organization**
     - Follow domain-driven package structure

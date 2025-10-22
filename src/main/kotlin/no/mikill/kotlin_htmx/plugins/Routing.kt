@@ -18,6 +18,10 @@ fun Application.configureRouting(postCssTransformer: PostCssTransformer) {
     val logger = LoggerFactory.getLogger("Routing")
     install(SSE)
     install(StatusPages) {
+        exception<IllegalArgumentException> { call, cause ->
+            logger.warn("Bad request: ${cause.message}")
+            call.respondText(text = "400: ${cause.message}", status = HttpStatusCode.BadRequest)
+        }
         exception<Throwable> { call, cause ->
             logger.error("Unhandled error", cause)
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
