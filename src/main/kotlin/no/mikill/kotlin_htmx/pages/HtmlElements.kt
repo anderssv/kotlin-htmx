@@ -45,20 +45,14 @@ object Styles {
 object HtmlRenderUtils {
     suspend fun ApplicationCall.respondHtmlFragment(
         status: HttpStatusCode = HttpStatusCode.OK,
-        block: BODY.() -> Unit,
+        block: TagConsumer<Appendable>.() -> Unit,
     ) {
         val text = partialHtml(block)
         respond(TextContent(text, ContentType.Text.Html.withCharset(Charsets.UTF_8), status))
     }
 
-    fun partialHtml(block: BODY.() -> Unit): String =
-        buildString {
-            appendHTML().filter { if (it.tagName in listOf("html", "body")) SKIP else PASS }.html {
-                body {
-                    block(this)
-                }
-            }
-        }
+    fun partialHtml(block: TagConsumer<Appendable>.() -> Unit): String =
+        buildString { appendHTML().block() }
 }
 
 object HtmlElements {
