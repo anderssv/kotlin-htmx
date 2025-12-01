@@ -1,11 +1,12 @@
-name: Fly Deploy
+name: CI/CD
 on:
   push:
     branches:
       - main
+  pull_request:
 jobs:
-  test:
-    name: Run tests
+  build:
+    name: Build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,13 +16,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-      - name: Run tests
-        run: ./gradlew test
+      - name: Build with Gradle
+        run: ./gradlew build
 
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
