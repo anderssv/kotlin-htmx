@@ -52,7 +52,7 @@ This ensures systematic, incremental progress through planned features.
 ./gradlew run
 
 # Update the npm dependencies for postcss
-cd src/main/resources/postcss && npm run build
+cd src/main/resources/postcss && npm install && npm run build
 
 # Format and check code with ktlint (recommended - does both formatting and checking)
 ./gradlew ktlintFormat
@@ -62,6 +62,29 @@ cd src/main/resources/postcss && npm run build
 ```
 
 **Note**: Prefer `ktlintFormat` over `ktlintCheck` as it both formats the code and verifies it in one step.
+
+## Testing After Dependency Updates
+
+When updating dependencies (especially Gradle/Kotlin dependencies), follow this verification process:
+
+1. **Run all tests**: `./gradlew test`
+2. **Build the shadow jar**: `./gradlew shadowJar`
+3. **Start the application**: `java -jar build/libs/kotlin-htmx-all.jar &`
+4. **Wait for startup** (watch for "Responding at http://0.0.0.0:8080")
+5. **Test CSS endpoint** (uses PostCSS + GraalJS processing):
+   ```bash
+   curl -s http://localhost:8080/css/styles.css | head -30
+   curl -s http://localhost:8080/css/test.scss | head -20
+   ```
+6. **Kill the test server**: `pkill -f "kotlin-htmx-all.jar"`
+
+The CSS endpoint test is important because it exercises:
+- GraalJS JavaScript engine integration
+- PostCSS processing pipeline
+- Webpack bundled dependencies
+- Async context pool initialization
+
+If the CSS returns processed output (no SCSS variables like `$primary-color`, nested selectors flattened), the dependency update is successful.
 
 
 ## Development Setup

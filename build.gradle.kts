@@ -5,11 +5,11 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.21"
     id("io.ktor.plugin") version "3.2.3"
     id("com.github.ben-manes.versions") version "0.52.0"
     id("com.gradleup.shadow") version "8.3.8"
-    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     application
 }
 
@@ -67,7 +67,7 @@ dependencies {
     implementation("io.ktor:ktor-htmx-html:$ktorVersion")
     implementation("io.ktor:ktor-server-htmx:$ktorVersion")
 
-    implementation("org.hibernate.validator:hibernate-validator:9.0.1.Final")
+    implementation("org.hibernate.validator:hibernate-validator:9.1.0.Final")
     implementation("org.glassfish.expressly:expressly:6.0.0")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -82,7 +82,7 @@ dependencies {
     implementation("org.graalvm.js:js:24.2.2")
     implementation("org.graalvm.js:js-scriptengine:24.2.2")
 
-    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("org.assertj:assertj-core:3.27.6")
 
     // JUnit 5 dependencies
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
@@ -95,7 +95,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.34.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.38.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:6.2.0")
 }
 
