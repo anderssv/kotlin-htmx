@@ -189,28 +189,143 @@ val address = call.receiveParameters()
 
 ---
 
-### 4. Server-Side CSS Processing
+### 4. Server-Side CSS Processing with GraalJS
 
-**PostCSS Integration with GraalJS**
+**PostCSS Integration via GraalJS**
 
-Processes CSS/SCSS on-demand at runtime using PostCSS bundled with Webpack:
+This project demonstrates how to process CSS/SCSS on-demand at runtime using PostCSS,
+without requiring a separate Node.js process. The CSS processing runs entirely on the JVM
+using GraalJS.
 
 ```kotlin
 // Automatic processing of .scss files
 GET /css/styles.css → processes styles.scss → returns CSS
 ```
 
-**Features:**
-- On-demand CSS processing (no build step required for development)
-- PostCSS plugins: autoprefixer, nested syntax, etc.
-- GraalJS context pooling for performance
-- Webpack bundled PostCSS with all plugins
-- Cache-friendly with appropriate headers
+**Architecture Overview:**
 
-**Performance:**
-- Context pool (2 contexts) to avoid slow initialization
-- Synchronized access for thread safety
-- Caching via HTTP headers
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        PostCssTransformer                           │
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                     Shared GraalJS Engine                    │   │
+│  │  (JIT-compiled code cache, parsed AST structures)           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                              │                                      │
+│       ┌──────────────────────┼──────────────────────┐              │
+│       ▼                      ▼                      ▼              │
+│  ┌─────────┐           ┌─────────┐           ┌─────────┐          │
+│  │Context 1│           │Context 2│           │Context N│          │
+│  │processCss│          │processCss│          │processCss│          │
+│  └─────────┘           └─────────┘           └─────────┘          │
+│       │                      │                      │              │
+│       └──────────────────────┴──────────────────────┘              │
+│                              │                                      │
+│                    LinkedBlockingQueue                              │
+│                    (thread-safe pool)                               │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Why GraalJS?**
+
+PostCSS and its plugins are Node.js packages with no pure Java alternatives. GraalJS allows
+running JavaScript directly on the JVM, enabling server-side CSS processing without spawning
+external Node.js processes. This keeps the deployment simple (single JAR) while still using
+the rich PostCSS ecosystem.
+
+**PostCSS Plugins (in order of execution):**
+
+1. **postcss-simple-vars**: Variable substitution (`$var-name`)
+2. **postcss-nested**: Flatten nested selectors (SCSS-like syntax)
+3. **postcss-calc**: Resolve `calc()` expressions where possible
+4. **autoprefixer**: Add vendor prefixes for browser compatibility
+
+The order is important: variables are resolved first, then nesting is flattened, then
+calculations are evaluated, and finally autoprefixer adds vendor prefixes to the final CSS.
+
+**Example Input/Output:**
+
+```scss
+/* Input (SCSS-like syntax) */
+$primary-color: #007bff;
+$spacing: 8px;
+
+.card {
+    background: $primary-color;
+    padding: calc($spacing * 2);
+
+    .title {
+        font-weight: bold;
+        user-select: none;
+    }
+}
+```
+
+```css
+/* Output (processed CSS) */
+.card {
+    background: #007bff;
+    padding: 16px;
+}
+.card .title {
+    font-weight: bold;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+```
+
+**Key Design Decisions:**
+
+1. **Shared Engine**: All GraalJS contexts share a single Engine instance, providing
+   significant memory savings as JIT-compiled code and parsed AST structures are shared.
+
+2. **Async Initialization**: Context creation is slow (~4-8 seconds per context).
+   Contexts are created asynchronously in a background thread so the application starts
+   immediately while contexts initialize.
+
+3. **Pre-parsed Source**: The Webpack bundle is parsed once into a GraalJS Source object
+   and reused across all contexts, avoiding redundant parsing.
+
+4. **Thread-safe Pool**: GraalJS contexts are single-threaded. The pool uses
+   synchronized access with round-robin distribution to safely handle concurrent requests.
+
+**Build Requirements:**
+
+The PostCSS bundle must be built before using this feature:
+```bash
+cd src/main/resources/postcss
+npm install
+npm run build
+```
+
+This creates `dist/bundle.js` which is included in the JAR and loaded by `PostCssTransformer.kt`.
+
+**File Structure:**
+
+```
+src/main/resources/postcss/
+├── package.json          # npm dependencies (PostCSS, plugins, Webpack)
+├── postcss-runner.js     # PostCSS processing function (entry point)
+├── webpack.config.js     # Bundles for GraalJS (target: web)
+└── dist/
+    └── bundle.js         # Generated bundle loaded by Kotlin
+```
+
+**Performance Considerations:**
+
+- First CSS request may block while waiting for context initialization
+- Set appropriate HTTP caching headers for processed CSS files
+- The context pool (default: 4) provides good concurrency for typical loads
+- Context creation time: ~2-4 seconds after first (due to shared Engine)
+
+**Related Files:**
+
+- `PostCssTransformer.kt`: Kotlin class that manages GraalJS contexts
+- `Routing.kt`: HTTP endpoint that serves processed CSS
+- `postcss-runner.js`: JavaScript processCss function
+- `webpack.config.js`: Webpack configuration for bundling
 
 ---
 
