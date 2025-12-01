@@ -7,14 +7,19 @@ class ValidationService(
 ) {
     fun <T> validate(value: T): ValidationResult<T> {
         val violations = validator.validate(value)
-        return if (violations.isEmpty()) {
-            ValidationResult.Valid(value)
-        } else {
-            val violationMap =
-                violations
-                    .groupBy { it.propertyPath.toString() }
-                    .mapValues { entry -> entry.value.map { it.message } }
-            ValidationResult.Invalid(violationMap)
+        return when {
+            violations.isEmpty() -> {
+                ValidationResult.Valid(value)
+            }
+
+            else -> {
+                val violationMap =
+                    violations.groupBy(
+                        { it.propertyPath.toString() },
+                        { it.message },
+                    )
+                ValidationResult.Invalid(violationMap)
+            }
         }
     }
 }

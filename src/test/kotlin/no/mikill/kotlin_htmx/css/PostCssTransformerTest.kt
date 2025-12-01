@@ -1,23 +1,30 @@
 package no.mikill.kotlin_htmx.css
 
+import no.mikill.kotlin_htmx.junit.PostCssExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+/**
+ * Tests for PostCssTransformer.
+ *
+ * Uses the PostCssExtension to share a single PostCssTransformer instance
+ * across all tests. This avoids the ~4-8s initialization cost per test.
+ */
+@ExtendWith(PostCssExtension::class)
 class PostCssTransformerTest {
     @Test
-    fun `should process CSS with PostCSS plugins`() {
-        val transformer = PostCssTransformer()
-
+    fun `should process CSS with PostCSS plugins`(transformer: PostCssTransformer) {
         val inputCss =
             $$"""
             $primary-color: #007bff;
             $border-radius: 4px;
-            
+
             .card {
                 background-color: $primary-color;
                 border-radius: calc($border-radius * 2);
                 transform: translateX(10px);
-                
+
                 .header {
                     font-weight: bold;
                     user-select: none;
@@ -40,18 +47,14 @@ class PostCssTransformerTest {
     }
 
     @Test
-    fun `should handle empty CSS input`() {
-        val transformer = PostCssTransformer()
-
+    fun `should handle empty CSS input`(transformer: PostCssTransformer) {
         val result = transformer.process("")
 
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `should handle CSS without PostCSS features`() {
-        val transformer = PostCssTransformer()
-
+    fun `should handle CSS without PostCSS features`(transformer: PostCssTransformer) {
         val inputCss =
             """
             .simple {
@@ -69,17 +72,15 @@ class PostCssTransformerTest {
     }
 
     @Test
-    fun `should process nested selectors correctly`() {
-        val transformer = PostCssTransformer()
-
+    fun `should process nested selectors correctly`(transformer: PostCssTransformer) {
         val inputCss =
             """
             .parent {
                 color: blue;
-                
+
                 .child {
                     color: red;
-                    
+
                     &:hover {
                         color: green;
                     }
@@ -97,9 +98,7 @@ class PostCssTransformerTest {
     }
 
     @Test
-    fun `should process calc expressions`() {
-        val transformer = PostCssTransformer()
-
+    fun `should process calc expressions`(transformer: PostCssTransformer) {
         val inputCss =
             """
             .container {
