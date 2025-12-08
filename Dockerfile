@@ -7,14 +7,13 @@ COPY gradlew gradlew
 COPY gradle gradle
 COPY build.gradle.kts settings.gradle.kts gradle.properties ./
 
-# Download dependencies (this layer is cached if build files don't change)
-RUN ./gradlew dependencies --no-daemon
-
 # Copy source code
 COPY src src
 
-# Build the application
-RUN ./gradlew shadowJar --no-daemon
+# Build the application with BuildKit cache mount for Gradle
+# This caches downloaded dependencies AND compiled classes between builds
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew shadowJar --no-daemon
 
 FROM eclipse-temurin:21
 WORKDIR /app
