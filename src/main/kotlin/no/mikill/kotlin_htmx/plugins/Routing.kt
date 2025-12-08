@@ -11,10 +11,21 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.sse.SSE
+import no.mikill.kotlin_htmx.css.CssTransformer
+import no.mikill.kotlin_htmx.css.LightningCssTransformer
 import no.mikill.kotlin_htmx.css.PostCssTransformer
 import org.slf4j.LoggerFactory
 
-fun Application.configureRouting(postCssTransformer: PostCssTransformer) {
+/**
+ * Configures application routing including CSS processing.
+ *
+ * @param postCssTransformer PostCSS transformer for JS-based CSS processing
+ * @param lightningCssTransformer LightningCSS transformer for native CSS processing (optional)
+ */
+fun Application.configureRouting(
+    postCssTransformer: PostCssTransformer,
+    lightningCssTransformer: LightningCssTransformer? = null,
+) {
     val logger = LoggerFactory.getLogger("Routing")
     install(SSE)
     install(StatusPages) {
@@ -58,7 +69,16 @@ fun Application.configureRouting(postCssTransformer: PostCssTransformer) {
             if (cssContent == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
-                val processedCss = postCssTransformer.process(cssContent)
+                // Select processor based on URL parameter: ?processor=postcss or ?processor=lightningcss
+                // Default to lightningcss if available, otherwise postcss
+                val processorParam = call.request.queryParameters["processor"]
+                val transformer: CssTransformer =
+                    when (processorParam) {
+                        "postcss" -> postCssTransformer
+                        "lightningcss" -> lightningCssTransformer ?: postCssTransformer
+                        else -> lightningCssTransformer ?: postCssTransformer
+                    }
+                val processedCss = transformer.process(cssContent)
                 call.respondText(processedCss, ContentType.Text.CSS)
             }
         }

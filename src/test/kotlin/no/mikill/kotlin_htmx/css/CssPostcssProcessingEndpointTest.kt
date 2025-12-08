@@ -17,8 +17,9 @@ class CssPostcssProcessingEndpointTest {
                 module()
             }
 
-            // Request the existing test SCSS file
-            val response = client.get("/css/test.scss")
+            // Request the existing test SCSS file with PostCSS processor
+            // (default is LightningCSS which can't handle SASS variables)
+            val response = client.get("/css/test.scss?processor=postcss")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody = response.bodyAsText()
@@ -53,7 +54,8 @@ class CssPostcssProcessingEndpointTest {
             }
 
             // Request the existing test SCSS file that contains multiple PostCSS features
-            val response = client.get("/css/test.scss")
+            // Use ?processor=postcss since default is now LightningCSS
+            val response = client.get("/css/test.scss?processor=postcss")
 
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody = response.bodyAsText()

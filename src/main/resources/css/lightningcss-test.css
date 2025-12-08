@@ -1,0 +1,50 @@
+/* CSS test file for LightningCSS processing */
+/* Uses standard CSS syntax (CSS custom properties, CSS nesting) */
+
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --border-radius: 4px;
+  --padding: 10px;
+  --margin: 20px;
+}
+
+/* Testing CSS calc */
+.calc-test {
+  width: calc(100% - 30px);
+  margin: calc(var(--margin) / 2);
+  padding: calc(var(--padding) * 2);
+}
+
+/* Testing CSS nesting (standard CSS feature) */
+.nested-test {
+  color: var(--primary-color);
+
+  .child {
+    background-color: var(--secondary-color);
+  }
+
+  &:hover {
+    color: var(--secondary-color);
+  }
+}
+
+/* Testing autoprefixer targets */
+.flex-test {
+  display: flex;
+}
+
+::placeholder {
+  color: gray;
+}
+
+/* Card example with nesting */
+.card {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+
+  .header {
+    font-weight: bold;
+    transform: translateX(10px);
+  }
+}

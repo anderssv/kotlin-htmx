@@ -1,0 +1,7 @@
+[tools]
+java = "openjdk-21"
+rust = "1.91.1"
+
+[tools."cargo:lightningcss"]
+version = "1.0.0-alpha.68"
+features = "cli"

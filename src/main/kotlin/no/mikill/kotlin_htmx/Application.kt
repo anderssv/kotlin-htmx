@@ -10,6 +10,7 @@ import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.deflate
 import io.ktor.server.plugins.compression.gzip
 import io.ktor.utils.io.ExperimentalKtorApi
+import no.mikill.kotlin_htmx.css.LightningCssTransformer
 import no.mikill.kotlin_htmx.css.PostCssTransformer
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.plugins.configureHTTP
@@ -119,7 +120,18 @@ fun Application.module() {
     configureHTTP()
     configureMonitoring()
     configureSerialization()
-    configureRouting(PostCssTransformer())
+
+    // Initialize CSS transformers
+    val postCssTransformer = PostCssTransformer()
+    val lightningCssTransformer =
+        try {
+            LightningCssTransformer()
+        } catch (e: Exception) {
+            logger.warn("LightningCSS not available, falling back to PostCSS only: ${e.message}")
+            null
+        }
+
+    configureRouting(postCssTransformer, lightningCssTransformer)
 
     // Enable compression for better performance
     install(Compression) {

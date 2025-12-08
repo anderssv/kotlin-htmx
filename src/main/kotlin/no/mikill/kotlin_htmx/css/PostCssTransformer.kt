@@ -97,7 +97,7 @@ import kotlin.concurrent.thread
  */
 class PostCssTransformer(
     private val poolSize: Int = 4,
-) {
+) : CssTransformer {
     private val log = LoggerFactory.getLogger(PostCssTransformer::class.java)
 
     /**
@@ -221,7 +221,7 @@ class PostCssTransformer(
      * @return Processed CSS with all transformations applied
      * @throws RuntimeException If CSS syntax is invalid or processing fails
      */
-    fun process(css: String): String = getNextContext().process(css)
+    override fun process(css: String): String = getNextContext().process(css)
 
     /**
      * Get the next available context using round-robin distribution.
