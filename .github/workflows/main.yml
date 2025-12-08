@@ -30,7 +30,15 @@ jobs:
           lightningcss --version
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build shadowJar
+
+      - name: Upload shadow jar
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-jar
+          path: build/libs/kotlin-htmx-all.jar
+          retention-days: 1
 
   deploy:
     name: Deploy app
@@ -40,7 +48,15 @@ jobs:
     concurrency: deploy-group
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download shadow jar
+        uses: actions/download-artifact@v4
+        with:
+          name: shadow-jar
+          path: build/libs
+
       - uses: superfly/flyctl-actions/setup-flyctl@master
+
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -1,16 +1,22 @@
 # flyctl launch added from .gitignore
 **/.env.local
 **/.gradle
+
+# Exclude build artifacts except the shadow jar
 **/build
-!**/gradle/wrapper/gradle-wrapper.jar
-!**/**/src/main/**/build
-!**/**/src/test/**/build
+!build/libs/kotlin-htmx-all.jar
 
 # Reduce Docker context size
 .git
 docs
 *.md
 **/node_modules
+src
+gradle
+gradlew
+gradlew.bat
+*.kts
+*.properties
 
 ### STS ###
 **/.apt_generated
