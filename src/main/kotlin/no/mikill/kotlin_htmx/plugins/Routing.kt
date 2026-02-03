@@ -20,11 +20,11 @@ import org.slf4j.LoggerFactory
  * Configures application routing including CSS processing.
  *
  * @param postCssTransformer PostCSS transformer for JS-based CSS processing
- * @param lightningCssTransformer LightningCSS transformer for native CSS processing (optional)
+ * @param lightningCssTransformer LightningCSS transformer for native CSS processing
  */
 fun Application.configureRouting(
     postCssTransformer: PostCssTransformer,
-    lightningCssTransformer: LightningCssTransformer? = null,
+    lightningCssTransformer: LightningCssTransformer,
 ) {
     val logger = LoggerFactory.getLogger("Routing")
     install(SSE)
@@ -70,13 +70,12 @@ fun Application.configureRouting(
                 call.respond(HttpStatusCode.NotFound)
             } else {
                 // Select processor based on URL parameter: ?processor=postcss or ?processor=lightningcss
-                // Default to lightningcss if available, otherwise postcss
+                // Default to lightningcss
                 val processorParam = call.request.queryParameters["processor"]
                 val transformer: CssTransformer =
                     when (processorParam) {
                         "postcss" -> postCssTransformer
-                        "lightningcss" -> lightningCssTransformer ?: postCssTransformer
-                        else -> lightningCssTransformer ?: postCssTransformer
+                        else -> lightningCssTransformer
                     }
                 val processedCss = transformer.process(cssContent)
                 call.respondText(processedCss, ContentType.Text.CSS)

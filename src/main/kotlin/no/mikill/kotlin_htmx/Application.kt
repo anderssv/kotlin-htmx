@@ -123,13 +123,7 @@ fun Application.module() {
 
     // Initialize CSS transformers
     val postCssTransformer = PostCssTransformer()
-    val lightningCssTransformer =
-        try {
-            LightningCssTransformer()
-        } catch (e: Exception) {
-            logger.warn("LightningCSS not available, falling back to PostCSS only: ${e.message}")
-            null
-        }
+    val lightningCssTransformer = LightningCssTransformer()
 
     configureRouting(postCssTransformer, lightningCssTransformer)
 
