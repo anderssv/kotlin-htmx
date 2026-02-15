@@ -45,7 +45,7 @@ section {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom navigation styling - uses SCSS nesting which is flattened by PostCSS */
+/* Custom navigation styling - uses SCSS nesting which is flattened by LightningCSS */
 nav {
     background: linear-gradient(135deg, #4361ee, #3f37c9);
     width: 100%;
@@ -55,7 +55,7 @@ nav {
     margin-bottom: 1.5em;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-    /* Nested: becomes "nav ul" after PostCSS processing */
+    /* Nested: becomes "nav ul" after LightningCSS processing */
     & ul {
         list-style: none;
         display: flex;
@@ -68,7 +68,7 @@ nav {
         gap: 1em;
     }
 
-    /* Nested: becomes "nav li" after PostCSS processing */
+    /* Nested: becomes "nav li" after LightningCSS processing */
     & li {
         display: flex;
         align-items: center;
@@ -76,12 +76,12 @@ nav {
         padding: 0;
     }
 
-    /* Nested: becomes "nav .separator" after PostCSS processing */
+    /* Nested: becomes "nav .separator" after LightningCSS processing */
     & .separator {
         color: rgba(255, 255, 255, 0.5);
     }
 
-    /* Nested: becomes "nav a" after PostCSS processing */
+    /* Nested: becomes "nav a" after LightningCSS processing */
     & a {
         color: white;
         text-decoration: none;
@@ -91,7 +91,7 @@ nav {
         border-radius: 8px;
     }
 
-    /* Nested: becomes "nav a:hover" after PostCSS processing */
+    /* Nested: becomes "nav a:hover" after LightningCSS processing */
     & a:hover {
         background-color: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
@@ -128,7 +128,7 @@ nav {
 
 /* Floating checkbox counter box - uses SCSS nesting */
 .checkbox-counter {
-    /* Nested: becomes ".checkbox-counter p" after PostCSS processing */
+    /* Nested: becomes ".checkbox-counter p" after LightningCSS processing */
     & p {
         margin: 0;
         pointer-events: none; /* Ensure paragraphs also don't intercept clicks */
@@ -158,7 +158,7 @@ nav {
     grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
     gap: 20px;
 
-    /* Nested: becomes "#choices a" after PostCSS processing */
+    /* Nested: becomes "#choices a" after LightningCSS processing */
     a {
         display: block;
     }

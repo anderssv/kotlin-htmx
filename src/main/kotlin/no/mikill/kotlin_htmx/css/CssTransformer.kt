@@ -3,9 +3,8 @@ package no.mikill.kotlin_htmx.css
 /**
  * Interface for CSS transformers.
  *
- * Implementations can use different CSS processing engines:
- * - [PostCssTransformer]: Uses PostCSS via GraalJS (slower, more plugins)
- * - [LightningCssTransformer]: Uses native LightningCSS binary (faster, simpler)
+ * Current implementation:
+ * - [LightningCssTransformer]: Uses native LightningCSS binary for fast CSS processing
  */
 interface CssTransformer {
     /**

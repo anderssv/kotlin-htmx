@@ -51,9 +51,6 @@ This ensures systematic, incremental progress through planned features.
 # Run the application. This starts the server and is a blocking operation.
 ./gradlew run
 
-# Update the npm dependencies for postcss
-cd src/main/resources/postcss && npm install && npm run build
-
 # Format and check code with ktlint (recommended - does both formatting and checking)
 ./gradlew ktlintFormat
 
@@ -71,20 +68,13 @@ When updating dependencies (especially Gradle/Kotlin dependencies), follow this 
 2. **Build the shadow jar**: `./gradlew shadowJar`
 3. **Start the application**: `java -jar build/libs/kotlin-htmx-all.jar &`
 4. **Wait for startup** (watch for "Responding at http://0.0.0.0:8080")
-5. **Test CSS endpoint** (uses PostCSS + GraalJS processing):
+5. **Test CSS endpoint** (uses LightningCSS processing):
    ```bash
    curl -s http://localhost:8080/css/styles.css | head -30
-   curl -s http://localhost:8080/css/test.scss | head -20
    ```
 6. **Kill the test server**: `pkill -f "kotlin-htmx-all.jar"`
 
-The CSS endpoint test is important because it exercises:
-- GraalJS JavaScript engine integration
-- PostCSS processing pipeline
-- Webpack bundled dependencies
-- Async context pool initialization
-
-If the CSS returns processed output (no SCSS variables like `$primary-color`, nested selectors flattened), the dependency update is successful.
+The CSS endpoint test verifies that LightningCSS is processing CSS correctly (nested selectors flattened, custom properties preserved).
 
 
 ## Development Setup

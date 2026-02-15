@@ -15,7 +15,7 @@ Back end:
 Front end:
 - HTMX for front end interactivity — https://htmx.org
 - Pico CSS for responsive styling and semantic defaults — https://picocss.com
-- PostCSS for CSS processing (actually running on the back end though) — https://postcss.org
+- LightningCSS for fast CSS processing on the back end — https://lightningcss.dev
 
 For more details on the tech stack and project guidelines, see [AGENTS.md](AGENTS.md).
 

@@ -78,10 +78,6 @@ dependencies {
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0")
 
-    implementation("org.graalvm.sdk:graal-sdk:25.0.2")
-    implementation("org.graalvm.js:js:25.0.2")
-    implementation("org.graalvm.js:js-scriptengine:25.0.2")
-
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // JUnit 5 dependencies
