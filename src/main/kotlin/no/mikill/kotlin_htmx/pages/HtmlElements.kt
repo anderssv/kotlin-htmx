@@ -136,20 +136,17 @@ object HtmlElements {
     }
 
     private fun A.boostAndPreload() {
-        // Preloading resources
+        // Preloading resources (not HTMX, so stays as manual attributes)
         attributes["preload"] = "mouseover"
         attributes["preload-images"] = true.toString()
 
         // Boosting using HTMX DSL
         attributes.hx {
-            // boost = true  // May not be available in DSL
-            // select = "#mainContent" // The DIV in the response that is inserted
+            boost = true
+            select = "#mainContent" // The DIV in the response that is inserted
             target = "#mainContent" // The DIV in the existing page that is replaced
             swap = HxSwap.outerHtml + " show:window:top" // Makes sure the window scrolls to the top
         }
-        // NOT-IN-DSL:  attributes for unsupported properties
-        attributes["hx-boost"] = "true"
-        attributes["hx-select"] = "#mainContent"
     }
 
     fun STYLE.rawCss(

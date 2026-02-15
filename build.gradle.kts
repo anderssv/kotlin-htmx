@@ -62,7 +62,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sse:$ktorVersion")
     implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
 
-    // HTMX support (commented out - modules may not be available in this Ktor version)
+    // HTMX support - provides DSL for HTMX attributes and server-side routing helpers
     implementation("io.ktor:ktor-htmx:$ktorVersion")
     implementation("io.ktor:ktor-htmx-html:$ktorVersion")
     implementation("io.ktor:ktor-server-htmx:$ktorVersion")

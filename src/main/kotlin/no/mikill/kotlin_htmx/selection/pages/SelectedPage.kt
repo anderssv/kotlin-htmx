@@ -2,6 +2,7 @@
 
 package no.mikill.kotlin_htmx.selection.pages
 
+import io.ktor.htmx.html.hx
 import io.ktor.http.CacheControl
 import io.ktor.http.HttpHeaders
 import io.ktor.server.html.respondHtmlTemplate
@@ -35,8 +36,9 @@ class SelectedPage {
                         }
                         section {
                             id = "choices"
-                            // NOT-IN-DSL:  attribute for ext
-                            attributes["hx-ext"] = "preload"
+                            attributes.hx {
+                                ext = "preload"
+                            }
 
                             selectBox(
                                 name = "Yes",

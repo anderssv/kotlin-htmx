@@ -111,12 +111,8 @@ class HtmxQuestionsPage {
                                     id = "question-form"
                                     // HTMX event handler to reset the form after successful submission
                                     // This allows users to submit multiple questions without manually clearing the form
+                                    // Note: The on() event handler in the DSL doesn't seem to work correctly, using manual attribute
                                     attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
-                                    /*
-                                    // NOT-IN-DSL: This is supported in the API, but isn't working for some reason
-                                    attributes.hx {
-                                        on("after-request", "if(event.detail.successful) this.reset()")
-                                    }*/
 
                                     div {
                                         style = "display: flex; gap: 10px;"
@@ -136,10 +132,8 @@ class HtmxQuestionsPage {
                                                 post = "questions/submit"
                                                 target = "#questions-list"
                                                 swap = HxSwap.innerHtml
-                                                // indicator = ".htmx-indicator"  // May not be available in DSL
+                                                indicator = ".htmx-indicator"
                                             }
-                                            // NOT-IN-DSL:  attribute for indicator
-                                            attributes["hx-indicator"] = ".htmx-indicator"
                                             +"Submit"
                                         }
                                     }

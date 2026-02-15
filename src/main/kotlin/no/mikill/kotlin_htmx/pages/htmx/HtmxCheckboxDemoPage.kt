@@ -155,8 +155,9 @@ class HtmxCheckboxDemoPage(
         checkedState: Boolean,
     ) {
         input(type = InputType.checkBox) {
-            // NOT-IN-DSL: . Put not in DSL.
-            attributes["hx-put"] = "checkboxes/$boxNumber"
+            attributes.hx {
+                put = "checkboxes/$boxNumber"
+            }
             checked = checkedState
             id = "$boxNumber"
         }
@@ -296,7 +297,9 @@ class HtmxCheckboxDemoPage(
                     emptyContentWrapper {
                         div {
                             style = "max-width: 40em;"
-                            attributes["hx-ext"] = "sse"
+                            attributes.hx {
+                                ext = "sse"
+                            }
                             attributes["sse-connect"] = "checkboxes/events"
                             section {
                                 attributes.hx {

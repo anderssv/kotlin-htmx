@@ -51,12 +51,10 @@ class SelectMainPage(
                             div {
                                 form {
                                     attributes.hx {
-                                        // ext = "json-enc"  // May not be available in DSL
+                                        ext = "json-enc"
                                         post = "/select/search"
                                         swap = HxSwap.outerHtml
                                     }
-                                    // NOT-IN-DSL:  attribute for ext
-                                    attributes["hx-ext"] = "json-enc"
 
                                     div(classes = "htmx-indicator") {
                                         id = "formLoading"
@@ -87,7 +85,9 @@ class SelectMainPage(
                         }
                         section {
                             id = "choices"
-                            attributes["hx-ext"] = "preload"
+                            attributes.hx {
+                                ext = "preload"
+                            }
 
                             items.forEach { item ->
                                 selectBox(

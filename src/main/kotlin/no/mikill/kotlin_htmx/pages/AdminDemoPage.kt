@@ -49,10 +49,8 @@ class AdminDemoPage {
                                             attributes.hx {
                                                 get = "item/$item"
                                                 target = "#itemPanel"
-                                                // indicator = "#loader"  // May not be available in DSL
+                                                indicator = "#loader"
                                             }
-                                            // NOT-IN-DSL:  attribute for indicator
-                                            attributes["hx-indicator"] = "#loader"
                                             +"Item $item"
                                         }
                                     }
