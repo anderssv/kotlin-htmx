@@ -108,10 +108,10 @@ class MainTemplate<T : Template<FlowContent>>(
 
             // Load HTMX and its extensions
             if ((System.getenv("ENABLE_HTMX") ?: "true") == "true") {
-                script(src = "https://unpkg.com/htmx.org@2.0.3") { defer = true }
-                script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js") { defer = true }
-                script(src = "https://unpkg.com/htmx-ext-preload@2.0.1/preload.js") { defer = true }
-                script(src = "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js") { defer = true }
+                script(src = "https://unpkg.com/htmx.org@2.0.8") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.3/json-enc.js") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-preload@2.1.2/preload.js") { defer = true }
+                script(src = "https://unpkg.com/htmx-ext-sse@2.2.4/sse.js") { defer = true }
             }
         }
         body {
