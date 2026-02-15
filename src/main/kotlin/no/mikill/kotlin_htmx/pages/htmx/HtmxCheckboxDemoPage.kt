@@ -117,7 +117,7 @@ class HtmxCheckboxDemoPage(
         span {
             id = "batch-$batchNumber"
 
-            /**
+            /*
              * The sse-swap attribute tells HTMX to replace this element's content
              * when an SSE event with the specified name is received.
              *

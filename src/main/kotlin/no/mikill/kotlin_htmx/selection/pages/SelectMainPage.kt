@@ -133,17 +133,19 @@ class SelectMainPage(
                         }
                     }
 
-                    is LookupResult.NotFound ->
+                    is LookupResult.NotFound -> {
                         div(classes = "text-red-800") {
                             p { +"Could not locate item with '${search.lookupValue}'." }
                             a(href = routePath) { +"Try again" }
                         }
+                    }
 
-                    is LookupResult.InvalidInput ->
+                    is LookupResult.InvalidInput -> {
                         div(classes = "text-red-800") {
                             p { +lookupResult.message }
                             a(href = routePath) { +"Try again" }
                         }
+                    }
 
                     is LookupResult.Failure -> {
                         logger.error("Lookup failed. Reason: ${lookupResult.reason}")

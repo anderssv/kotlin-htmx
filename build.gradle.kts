@@ -5,10 +5,10 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    id("io.ktor.plugin") version "3.2.3"
-    id("com.github.ben-manes.versions") version "0.52.0"
-    id("com.gradleup.shadow") version "8.3.8"
+    kotlin("jvm") version "2.3.10"
+    id("io.ktor.plugin") version "3.4.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.gradleup.shadow") version "9.3.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     application
 }
@@ -76,13 +76,13 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0")
 
-    implementation("org.graalvm.sdk:graal-sdk:24.2.2")
-    implementation("org.graalvm.js:js:24.2.2")
-    implementation("org.graalvm.js:js-scriptengine:24.2.2")
+    implementation("org.graalvm.sdk:graal-sdk:25.0.2")
+    implementation("org.graalvm.js:js:25.0.2")
+    implementation("org.graalvm.js:js-scriptengine:25.0.2")
 
-    testImplementation("org.assertj:assertj-core:3.27.6")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 
     // JUnit 5 dependencies
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
@@ -95,8 +95,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.38.0")
-    testImplementation("io.github.bonigarcia:webdrivermanager:6.2.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.40.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.3.3")
 }
 
 fun isNonStable(version: String): Boolean {
@@ -118,7 +118,7 @@ kotlin {
 }
 
 ktlint {
-    version.set("1.7.1")
+    version.set("1.8.0")
     verbose.set(true)
     outputToConsole.set(true)
     coloredOutput.set(true)

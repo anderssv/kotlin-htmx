@@ -101,10 +101,12 @@ private fun setNestedValue(
                     val currentMap = current as MutableMap<String, Any?>
                     currentMap.getOrPut(part.name) { mutableMapOf<String, Any?>() } as Any
                 }
+
                 part is KeyPart.Property && nextPart is KeyPart.Index -> {
                     val currentMap = current as MutableMap<String, Any?>
                     currentMap.getOrPut(part.name) { mutableListOf<MutableMap<String, Any?>>() } as Any
                 }
+
                 part is KeyPart.Index -> {
                     val currentList = current as MutableList<MutableMap<String, Any?>>
                     // Ensure list has enough elements
@@ -113,7 +115,10 @@ private fun setNestedValue(
                     }
                     currentList[part.index] as Any
                 }
-                else -> current
+
+                else -> {
+                    current
+                }
             }
     }
 

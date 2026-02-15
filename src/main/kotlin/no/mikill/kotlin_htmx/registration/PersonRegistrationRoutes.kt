@@ -40,6 +40,7 @@ fun Application.configurePersonRegistrationRoutes(
                     repository.save(result.value)
                     call.respondRedirect("/person/${result.value.id}/address/add")
                 }
+
                 is ValidationResult.Invalid -> {
                     call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Register Person")) {
                         mainSectionTemplate {
@@ -83,6 +84,7 @@ fun Application.configurePersonRegistrationRoutes(
                     repository.save(updatedPerson)
                     call.respondRedirect("/person/$personId/address/add")
                 }
+
                 is ValidationResult.Invalid -> {
                     // Remap violations to include the addresses[index] prefix
                     val remappedViolations =
@@ -151,6 +153,7 @@ fun Application.configurePersonRegistrationRoutes(
                     repository.save(result.value)
                     call.respondRedirect("/person/$personId/address/add")
                 }
+
                 is ValidationResult.Invalid -> {
                     // Show the form again with validation errors
                     call.respondHtmlTemplate(MainTemplate(template = EmptyTemplate(), "Edit Address")) {
