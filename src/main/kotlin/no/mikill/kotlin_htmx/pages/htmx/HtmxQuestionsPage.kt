@@ -111,7 +111,8 @@ class HtmxQuestionsPage {
                                     id = "question-form"
                                     // HTMX event handler to reset the form after successful submission
                                     // This allows users to submit multiple questions without manually clearing the form
-                                    // Note: The on() event handler in the DSL doesn't seem to work correctly, using manual attribute
+                                    // NOTE: Using manual attribute due to Ktor bug - on() generates hx-on:after-request
+                                    // but HTMX 2.0 requires hx-on::after-request (double colon) for HTMX events
                                     attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
 
                                     div {
