@@ -51,6 +51,12 @@ This ensures systematic, incremental progress through planned features.
 # Run the application. This starts the server and is a blocking operation.
 ./gradlew run
 
+# Run with auto-reload (two terminals):
+# Terminal 1: continuous build
+./gradlew -t build -x test -i
+# Terminal 2: run the application
+./gradlew run
+
 # Format and check code with ktlint (recommended - does both formatting and checking)
 ./gradlew ktlintFormat
 
@@ -59,6 +65,8 @@ This ensures systematic, incremental progress through planned features.
 ```
 
 **Note**: Prefer `ktlintFormat` over `ktlintCheck` as it both formats the code and verifies it in one step.
+
+**Auto-reload**: Development mode is enabled via the `ktor` block in `build.gradle.kts`. The application module must be a `suspend` function reference (`suspend fun Application.module()`) for auto-reload to work with Ktor > 3.2. Lambda initializers and blocking function references are not supported.
 
 ## Testing After Dependency Updates
 

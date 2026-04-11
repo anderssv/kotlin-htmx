@@ -472,7 +472,51 @@ val config = ApplicationConfig.load()
 
 ---
 
-### 5. Separation of Concerns
+### 5. Auto-Reload in Development
+
+**Hot Reload with Ktor 3.4+**
+
+Ktor 3.4 fixed long-standing auto-reload issues (see [ktor#975](https://github.com/ktorio/ktor/issues/975)). The project is configured for working auto-reload during development.
+
+**How it works:**
+
+1. Development mode is enabled via the `ktor` block in `build.gradle.kts`:
+   ```kotlin
+   ktor {
+       development = true
+   }
+   ```
+
+2. The application module is a **suspend function reference** (required for Ktor > 3.2):
+   ```kotlin
+   suspend fun Application.module() { ... }
+
+   embeddedServer(
+       Netty,
+       watchPaths = listOf("classes", "resources"),
+       module = Application::module,
+   )
+   ```
+
+3. Run continuous build in one terminal:
+   ```bash
+   ./gradlew -t build -x test -i
+   ```
+
+4. Run the application in another terminal:
+   ```bash
+   ./gradlew run
+   ```
+
+**Key details:**
+- Ktor > 3.2 requires **suspend function references** for auto-reload (lambda initializers and blocking function references are not supported)
+- `watchPaths` narrows which output directories Ktor monitors for changes
+- The `-t` flag enables Gradle's continuous build, recompiling on source changes
+- Ktor detects the recompiled classes and reloads the application module automatically
+
+---
+
+### 6. Separation of Concerns
 
 **Layered Architecture:**
 1. **Routes**: HTTP handling, parameter extraction
@@ -681,8 +725,8 @@ The component pattern allows for flexible testing strategies:
 ## Technology Stack Summary
 
 ### Backend
-- **Kotlin** 2.2.20 on JVM 21
-- **Ktor** 3.3.1 (web framework)
+- **Kotlin** 2.3.20 on JVM 21
+- **Ktor** 3.4.2 (web framework)
 - **kotlinx.html** (type-safe HTML DSL)
 - **Jackson** (JSON/form serialization)
 - **Jakarta Bean Validation** (Hibernate Validator)

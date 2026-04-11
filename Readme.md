@@ -78,6 +78,20 @@ Run the ```fun main()``` in Application.kt in your favourite IDE, or run:
 
 It is then available on [http://localhost:8080](http://localhost:8080).
 
+### Auto-reload (Hot Reload)
+
+For development with automatic code reloading, run two terminals:
+
+```bash
+# Terminal 1: continuous build (recompiles on source changes)
+./gradlew -t build -x test -i
+
+# Terminal 2: run the application
+./gradlew run
+```
+
+When you change source code, Gradle detects the change and recompiles. Ktor then auto-reloads the application module without a full server restart.
+
 # Other notes
 
 I used KTor generator to get started.

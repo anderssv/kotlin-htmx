@@ -84,7 +84,7 @@ val logger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.ApplicationKt")!!
 
 /**
  * Application entry point that starts the Ktor server.
- * Sets up development mode if specified in the environment file.
+ * Development mode and auto-reload are configured via build.gradle.kts ktor block.
  */
 fun main() {
     // Print the memory configuration for debugging purposes
@@ -94,16 +94,11 @@ fun main() {
     logger.info("Available processors: ${Runtime.getRuntime().availableProcessors()}")
     logger.info("Environment file: ${envFile()?.absolutePath}")
 
-    // Set development mode property before Ktor initialization
-    // This needs to be done early because Ktor configures the classloader for hot reloading
-    if (envFile()?.readText()?.contains("KTOR_DEVELOPMENT=true") == true) {
-        System.setProperty("io.ktor.development", "true")
-    }
-
     embeddedServer(
         Netty,
         port = 8080,
         host = "0.0.0.0",
+        watchPaths = listOf("classes", "resources"),
         module = Application::module,
     ).start(wait = true)
 }
@@ -113,7 +108,7 @@ fun main() {
  * Sets up HTTP, monitoring, serialization, routing, and compression.
  * Initializes dependencies and configures page routes.
  */
-fun Application.module() {
+suspend fun Application.module() {
     val numberOfCheckboxes = System.getenv("NUMBER_OF_BOXES")?.toInt() ?: 5000
     // Configure Ktor features
     configureHTTP()

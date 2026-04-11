@@ -5,11 +5,11 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.3.10"
-    id("io.ktor.plugin") version "3.4.0"
+    kotlin("jvm") version "2.3.20"
+    id("io.ktor.plugin") version "3.4.2"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("com.gradleup.shadow") version "9.3.1"
-    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     application
 }
 
@@ -18,6 +18,10 @@ version = "0.0.1"
 val mainClassString = "no.mikill.kotlin_htmx.ApplicationKt"
 application {
     mainClass.set(mainClassString)
+}
+
+ktor {
+    development = true
 }
 
 tasks {
@@ -91,7 +95,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.40.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.43.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:6.3.3")
 }
 

@@ -20,8 +20,8 @@
 - **Issue**: Several dependencies have newer versions available
 - **Impact**: Missing bug fixes and security patches
 - **Action**: ~~Update ktlint (1.5.0 → 1.7.1), kotlin-logging (5.1.0 → 7.0.11), ktlint gradle plugin (12.1.2 → 13.0.0)~~ **DONE**
-- **Files**: `build.gradle.kts`
-- **Status**: ktlint and ktlint gradle plugin updated successfully. kotlin-logging was not used in project.
+- **Files**: `build.gradle.kts`, `gradle.properties`
+- **Status**: Latest round: Kotlin 2.3.10→2.3.20, Ktor 3.4.0→3.4.2, ktlint plugin 14.0.1→14.2.0, Selenium 4.40.0→4.43.0. JUnit 6.x skipped (major version bump). Auto-reload enabled with suspend module function and ktor development block.
 
 ### 4. Test Coverage Improvements
 - **Issue**: Limited unit test coverage (8 test files vs 24 source files)
