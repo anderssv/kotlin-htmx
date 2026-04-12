@@ -6,8 +6,6 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.calllogging.CallLogging
-import io.ktor.server.plugins.calllogging.CallLoggingConfig
-import io.ktor.server.request.path
 import org.slf4j.event.Level
 
 fun Application.configureMonitoring() {
@@ -22,13 +20,4 @@ fun Application.configureMonitoring() {
             callId.isNotEmpty()
         }
     }
-}
-
-/**
- * Excludes the Ktor auto-reload polling endpoint (/__dev/reload) from call logging.
- * This endpoint is added by the Ktor Gradle plugin when development mode is enabled
- * and generates noise in the logs.
- */
-fun CallLoggingConfig.excludeDevReloadEndpoint() {
-    filter { call -> !call.request.path().startsWith("/__dev/") }
 }

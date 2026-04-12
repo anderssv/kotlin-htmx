@@ -4,6 +4,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
 import kotlinx.html.form
 import kotlinx.html.h1
+import kotlinx.html.p
 import kotlinx.html.submitInput
 import no.mikill.kotlin_htmx.validation.toPath
 import no.mikill.kotlin_htmx.pages.form as formDsl

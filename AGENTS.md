@@ -51,7 +51,15 @@ This ensures systematic, incremental progress through planned features.
 # Run the application. This starts the server and is a blocking operation.
 ./gradlew run
 
-# Run with auto-reload (two terminals):
+# Start dev server with auto-reload + LiveReload (recommended)
+./start-dev-server.sh                # Blocking, random port, opens browser
+./start-dev-server.sh stop           # Stop running server and watch
+./start-dev-server.sh status         # Show running server info
+PORT=8080 ./start-dev-server.sh      # Specific port
+NO_BROWSER=1 ./start-dev-server.sh   # Don't open browser
+BACKGROUND=1 ./start-dev-server.sh   # Return immediately
+
+# Or run with auto-reload manually (two terminals):
 # Terminal 1: continuous build
 ./gradlew -t build -x test -i
 # Terminal 2: run the application

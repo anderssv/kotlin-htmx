@@ -498,13 +498,16 @@ Ktor 3.4 fixed long-standing auto-reload issues (see [ktor#975](https://github.c
    )
    ```
 
-3. Run continuous build in one terminal:
+3. Start the dev server (handles both server and continuous recompilation):
    ```bash
-   ./gradlew -t build -x test -i
+   ./start-dev-server.sh
    ```
 
-4. Run the application in another terminal:
+   Or manually in two terminals:
    ```bash
+   # Terminal 1: continuous build
+   ./gradlew -t build -x test -i
+   # Terminal 2: run the application
    ./gradlew run
    ```
 
@@ -513,6 +516,32 @@ Ktor 3.4 fixed long-standing auto-reload issues (see [ktor#975](https://github.c
 - `watchPaths` narrows which output directories Ktor monitors for changes
 - The `-t` flag enables Gradle's continuous build, recompiling on source changes
 - Ktor detects the recompiled classes and reloads the application module automatically
+
+**LiveReload Plugin** (`plugins/LiveReload.kt`)
+
+The LiveReload plugin completes the auto-reload story by automatically refreshing the browser when the server reloads. It is only installed in development mode.
+
+**How it works:**
+
+1. Registers a `GET /__dev/reload` endpoint that returns a JSON version string (generated at plugin install time from `System.currentTimeMillis()`).
+2. Intercepts all HTML responses and injects:
+   - [Idiomorph](https://github.com/bigskysoftware/idiomorph) (~4KB) into `</head>` for DOM morphing.
+   - A polling script into `</body>` that polls `/__dev/reload` every 1 second.
+3. When the server module reloads (after recompilation), the version changes and the script uses Idiomorph to morph the DOM in-place -- preserving scroll position, form state, and focus. Falls back to a full page reload if morphing fails.
+
+**Three mechanisms cooperate:**
+
+1. **Continuous recompilation**: `./gradlew -t build -x test -i` watches source files and recompiles on change.
+2. **Ktor auto-reload**: Detects recompiled class files and reloads the application module.
+3. **LiveReload plugin**: Detects the version change and morphs the browser DOM.
+
+**Workflow**: Edit Kotlin -> Gradle recompiles -> next poll triggers Ktor auto-reload -> version changes -> browser DOM morphs automatically.
+
+The plugin also provides `CallLoggingConfig.excludeDevReloadEndpoint()` to suppress the noisy polling logs from `/__dev/reload`.
+
+**Related Files:**
+- `plugins/LiveReload.kt`: Plugin implementation (polling endpoint + response transformer + log filter)
+- `Application.kt`: Conditional installation (`if (developmentMode) { install(LiveReload) }`)
 
 ---
 

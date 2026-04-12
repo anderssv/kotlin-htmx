@@ -12,6 +12,7 @@ import io.ktor.server.plugins.compression.gzip
 import io.ktor.utils.io.ExperimentalKtorApi
 import no.mikill.kotlin_htmx.css.LightningCssTransformer
 import no.mikill.kotlin_htmx.integration.LookupClient
+import no.mikill.kotlin_htmx.plugins.LiveReload
 import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
 import no.mikill.kotlin_htmx.plugins.configureRouting
@@ -94,9 +95,11 @@ fun main() {
     logger.info("Available processors: ${Runtime.getRuntime().availableProcessors()}")
     logger.info("Environment file: ${envFile()?.absolutePath}")
 
+    val port = System.getenv("SERVER_PORT")?.toIntOrNull() ?: 8080
+
     embeddedServer(
         Netty,
-        port = 8080,
+        port = port,
         host = "0.0.0.0",
         watchPaths = listOf("classes", "resources"),
         module = Application::module,
@@ -114,6 +117,10 @@ suspend fun Application.module() {
     configureHTTP()
     configureMonitoring()
     configureSerialization()
+
+    if (developmentMode) {
+        install(LiveReload)
+    }
 
     // Initialize CSS transformer
     val lightningCssTransformer = LightningCssTransformer()

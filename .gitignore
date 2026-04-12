@@ -43,3 +43,4 @@ out/
 # Node.js dependencies
 node_modules/
 .playwright-mcp/
+dev-logs/
