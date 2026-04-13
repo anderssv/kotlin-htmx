@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "2.3.20"
     id("io.ktor.plugin") version "3.4.2"
     id("com.github.ben-manes.versions") version "0.53.0"
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.4.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     application
 }
@@ -80,15 +80,15 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2")
 
     testImplementation("org.assertj:assertj-core:3.27.7")
 
-    // JUnit 5 dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.13.4")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.4")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+    // JUnit 6 dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.3")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
@@ -96,7 +96,7 @@ dependencies {
 
     // Selenium dependencies
     testImplementation("org.seleniumhq.selenium:selenium-java:4.43.0")
-    testImplementation("io.github.bonigarcia:webdrivermanager:6.3.3")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.3.4")
 }
 
 fun isNonStable(version: String): Boolean {

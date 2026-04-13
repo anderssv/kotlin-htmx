@@ -13,7 +13,7 @@ import io.ktor.server.routing.routing
 import org.slf4j.LoggerFactory
 
 private const val IDIOMORPH_SCRIPT =
-    """<script src="https://unpkg.com/idiomorph@0.7.3/dist/idiomorph.min.js"></script>"""
+    """<script src="https://unpkg.com/idiomorph@0.7.4/dist/idiomorph.min.js"></script>"""
 
 private const val LIVE_RELOAD_SCRIPT = """<script>
 (function() {

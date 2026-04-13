@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Install LightningCSS binary (native Rust CSS processor)
 # Downloaded from npm registry - contains pre-built binary, no Node.js needed
-ARG LIGHTNINGCSS_VERSION=1.30.2
+ARG LIGHTNINGCSS_VERSION=1.32.0
 RUN curl -fsSL "https://registry.npmjs.org/lightningcss-cli-linux-x64-gnu/-/lightningcss-cli-linux-x64-gnu-${LIGHTNINGCSS_VERSION}.tgz" \
     | tar -xz -C /usr/local/bin --strip-components=1 package/lightningcss \
     && chmod +x /usr/local/bin/lightningcss

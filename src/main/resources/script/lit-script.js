@@ -1,5 +1,5 @@
 import {html, LitElement} from 'https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit-all.min.js';
-import {Task} from 'https://cdn.jsdelivr.net/npm/@lit/task@1.0.1/+esm';
+import {Task} from 'https://cdn.jsdelivr.net/npm/@lit/task@1.0.3/+esm';
 import {getTodoList, viewDelay} from './common-script.js';
 
 export class MyElement extends LitElement {

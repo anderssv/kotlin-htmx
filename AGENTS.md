@@ -38,6 +38,41 @@ This ensures systematic, incremental progress through planned features.
 ./gradlew test --tests "fully.qualified.TestClassName"
 ```
 
+## Dependencies
+
+Dependencies are managed in multiple places. When upgrading, check all of them:
+
+### Gradle dependencies (build.gradle.kts / gradle.properties)
+
+Use `./gradlew dependencyUpdates` to check for new versions of Gradle-managed dependencies.
+
+### Non-Gradle dependencies
+
+| Tool / Library | Where | How to check latest |
+|---|---|---|
+| Gradle wrapper | `gradle/wrapper/gradle-wrapper.properties` | `./gradlew dependencyUpdates` (shown at bottom of report) |
+| Rust | `.mise.toml` | `mise ls-remote rust \| tail -5` |
+| LightningCSS (cargo) | `.mise.toml` | `mise ls-remote cargo:lightningcss \| tail -5` |
+| LightningCSS (npm binary) | `Dockerfile`, `.github/workflows/main.yml` | `curl -s https://registry.npmjs.org/lightningcss-cli-linux-x64-gnu \| python3 -c "import sys,json; print(json.load(sys.stdin)['dist-tags']['latest'])"` |
+
+### CDN-loaded frontend libraries
+
+These are referenced as CDN URLs in Kotlin templates and JS source files:
+
+| Library | Pinned version | File |
+|---|---|---|
+| htmx.org | exact | `src/main/kotlin/.../pages/PageTemplates.kt` |
+| htmx-ext-json-enc | exact | `src/main/kotlin/.../pages/PageTemplates.kt` |
+| htmx-ext-preload | exact | `src/main/kotlin/.../pages/PageTemplates.kt` |
+| htmx-ext-sse | exact | `src/main/kotlin/.../pages/PageTemplates.kt` |
+| idiomorph | exact | `src/main/kotlin/.../plugins/LiveReload.kt` |
+| @lit/task | exact | `src/main/resources/script/lit-script.js` |
+| @picocss/pico | major only | `src/main/kotlin/.../pages/PageTemplates.kt` |
+| Lit | major only | `src/main/resources/script/lit-script.js` |
+| React / ReactDOM | major only | `src/main/resources/script/react-script.js` |
+
+Check latest versions with: `curl -s "https://registry.npmjs.org/<package>/latest" | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])"`
+
 ## Tools
 
 ```bash
