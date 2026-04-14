@@ -6,6 +6,15 @@
 # Starts the kotlin-htmx development server with auto-recompilation.
 # Ktor auto-reload + LiveReload plugin handle browser refresh automatically.
 #
+# BEHAVIOR:
+#   - Kills ALL existing kotlin-htmx server and watch instances before starting
+#   - Uses a random port (10000-20000) by default to avoid conflicts
+#   - Waits until the server is ready
+#   - Starts continuous recompilation (gradlew -t compileKotlin) in background
+#   - Opens the browser to the server URL
+#   - Blocks until Ctrl+C, then kills all child processes (server + watch)
+#   - Writes a status file to dev-logs/.dev-server.json for stop/status commands
+#
 # USAGE:
 #   ./start-dev-server.sh                # Start (blocking, recommended)
 #   ./start-dev-server.sh stop           # Stop running server and watch
@@ -20,6 +29,10 @@
 #   every change instead of hot-reloading. The correct approach is two separate
 #   processes: "gradlew run" (server) + "gradlew -t compileKotlin" (recompile).
 #   This script handles both automatically.
+#
+# INTELLIJ USERS:
+#   If running the server from IntelliJ, start auto-recompilation separately:
+#     ./gradlew -t compileKotlin -x test
 #
 # =============================================================================
 
@@ -282,6 +295,9 @@ if [ "$READY" = true ]; then
         echo -e "${CYAN}Press Ctrl+C to stop server and watch processes.${NC}"
         echo ""
         wait $SERVER_PID 2>/dev/null || true
+    else
+        # In background mode, remove the cleanup trap so server/watch survive script exit
+        trap - EXIT INT TERM
     fi
     exit 0
 else

@@ -119,7 +119,9 @@ suspend fun Application.module() {
     configureSerialization()
 
     if (developmentMode) {
-        install(LiveReload)
+        install(LiveReload) {
+            watchPaths = listOf("src/main/resources/css")
+        }
     }
 
     // Initialize CSS transformer
