@@ -430,7 +430,92 @@ val largeOrder = Order.valid(numberOfItems = 10)
 
 ---
 
-### 3. Type Safety Throughout
+### 3. Manual Dependency Injection (Context Pattern)
+
+The project uses a **manual DI pattern** with an `AppDependencies` interface, a production `SystemContext`, and a standalone `SystemTestContext`. No DI framework needed.
+
+**Why manual DI?**
+- No annotations, no classpath scanning, no reflection
+- Full IDE support: autocomplete, jump-to-definition, rename refactoring
+- Compile-time safety — missing dependencies fail at compile time, not runtime
+- Easy to debug — step through initialization in the debugger
+
+**AppDependencies interface** defines the contract:
+
+```kotlin
+interface AppDependencies {
+    interface Repositories {
+        val personRepository: PersonRepository
+    }
+    interface Services {
+        val validationService: ValidationService
+    }
+    interface Clients {
+        val lookupClient: LookupClient
+    }
+
+    val repositories: Repositories
+    val services: Services
+    val clients: Clients
+    val numberOfCheckboxes: Int
+}
+```
+
+**SystemContext** wires production dependencies:
+
+```kotlin
+class SystemContext(
+    private val config: ApplicationConfig,
+    override val numberOfCheckboxes: Int,
+) : AppDependencies {
+    override val repositories = object : AppDependencies.Repositories {
+        override val personRepository = PersonRepository()
+    }
+    override val services = object : AppDependencies.Services {
+        override val validationService = ValidationService(
+            Validation.buildDefaultValidatorFactory().validator,
+        )
+    }
+    override val clients = object : AppDependencies.Clients {
+        override val lookupClient = LookupClient(config.lookupApiKey)
+    }
+}
+```
+
+**SystemTestContext** provides test dependencies (standalone — no inheritance from SystemContext):
+
+```kotlin
+class SystemTestContext : AppDependencies {
+    inner class TestRepositories : AppDependencies.Repositories {
+        override val personRepository = PersonRepository()
+    }
+    override val repositories = TestRepositories()
+    // ... services, clients with test-appropriate values
+}
+```
+
+**Usage in tests** — one line replaces repeated boilerplate:
+
+```kotlin
+@Test
+fun `POST person register saves person`() = testApplication {
+    val ctx = SystemTestContext()
+    application {
+        configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
+    }
+    // ... test logic using ctx.repositories.personRepository
+}
+```
+
+**Key design decisions:**
+- **Interface, not open class**: Prevents test contexts from accidentally inheriting production initialization
+- **Standalone test context**: `SystemTestContext` implements `AppDependencies` independently — no `lazy`, no constructor parameter workarounds
+- **Inner classes for groupings**: Enables covariant override inference so tests access concrete types (e.g., fakes) without casting
+- **Fresh context per test**: Each test creates its own `SystemTestContext()` to prevent state leakage between tests
+
+---
+
+### 4. Type Safety Throughout
 
 **Kotlin Type System**
 - Data classes for immutable DTOs
@@ -451,7 +536,7 @@ Person::addresses.at(0, Address::city)
 
 ---
 
-### 4. Configuration Management
+### 5. Configuration Management
 
 **Environment-Based Configuration**
 
@@ -472,7 +557,7 @@ val config = ApplicationConfig.load()
 
 ---
 
-### 5. Auto-Reload in Development
+### 6. Auto-Reload in Development
 
 **Hot Reload with Ktor 3.4+**
 
@@ -545,7 +630,7 @@ The plugin also provides `CallLoggingConfig.excludeDevReloadEndpoint()` to suppr
 
 ---
 
-### 6. Separation of Concerns
+### 7. Separation of Concerns
 
 **Layered Architecture:**
 1. **Routes**: HTTP handling, parameter extraction

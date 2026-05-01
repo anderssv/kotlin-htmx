@@ -8,8 +8,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
-import jakarta.validation.Validation
-import no.mikill.kotlin_htmx.validation.ValidationService
+import no.mikill.kotlin_htmx.context.SystemTestContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,13 +16,9 @@ class PersonRegistrationRoutesTest {
     @Test
     fun `POST person register with valid data saves person and redirects to add address page`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Act
@@ -39,7 +34,7 @@ class PersonRegistrationRoutesTest {
             assertThat(response.headers["Location"]).contains("/address/add")
 
             // Verify person was saved
-            val persons = repository.findAll()
+            val persons = ctx.repositories.personRepository.findAll()
             assertThat(persons).hasSize(1)
             assertThat(persons[0].firstName).isEqualTo("John")
             assertThat(persons[0].lastName).isEqualTo("Doe")
@@ -50,13 +45,9 @@ class PersonRegistrationRoutesTest {
     @Test
     fun `POST person register with invalid data shows violations`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Act - Missing required fields
@@ -73,23 +64,19 @@ class PersonRegistrationRoutesTest {
             assertThat(html).contains("form-error")
 
             // Verify no person was saved
-            assertThat(repository.findAll()).isEmpty()
+            assertThat(ctx.repositories.personRepository.findAll()).isEmpty()
         }
 
     @Test
     fun `POST person id complete with addresses redirects to view person page`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
-            val person = Person.valid(numberOfAddresses = 1) // Has one address for successful completion
-            repository.save(person)
+            val person = Person.valid(numberOfAddresses = 1)
+            ctx.repositories.personRepository.save(person)
 
             // Act
             val response = client.post("/person/${person.id}/complete")
@@ -102,17 +89,13 @@ class PersonRegistrationRoutesTest {
     @Test
     fun `POST person id complete without addresses shows error`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
-            val person = Person.valid() // No addresses - should cause validation error
-            repository.save(person)
+            val person = Person.valid()
+            ctx.repositories.personRepository.save(person)
 
             // Act
             val response = client.post("/person/${person.id}/complete")
@@ -126,17 +109,13 @@ class PersonRegistrationRoutesTest {
     @Test
     fun `GET person id displays complete person`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
-            val person = Person.valid(numberOfAddresses = 1) // Needs address to display
-            repository.save(person)
+            val person = Person.valid(numberOfAddresses = 1)
+            ctx.repositories.personRepository.save(person)
 
             // Act
             val response = client.get("/person/${person.id}")
@@ -154,13 +133,9 @@ class PersonRegistrationRoutesTest {
     @Test
     fun `complete person registration flow from initial form to final view`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Act & Assert - Step 1: Submit person details
@@ -224,7 +199,10 @@ class PersonRegistrationRoutesTest {
             assertThat(viewPersonHtml).contains("WORK: 456 Office Blvd, Metropolis, 67890, USA")
 
             // Verify final state in repository
-            val savedPerson = repository.findAll().first()
+            val savedPerson =
+                ctx.repositories.personRepository
+                    .findAll()
+                    .first()
             assertThat(savedPerson.firstName).isEqualTo("Alice")
             assertThat(savedPerson.lastName).isEqualTo("Johnson")
             assertThat(savedPerson.email).isEqualTo("alice.johnson@example.com")

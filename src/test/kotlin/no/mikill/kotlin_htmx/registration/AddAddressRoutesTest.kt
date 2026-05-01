@@ -8,8 +8,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
-import jakarta.validation.Validation
-import no.mikill.kotlin_htmx.validation.ValidationService
+import no.mikill.kotlin_htmx.context.SystemTestContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -18,17 +17,13 @@ class AddAddressRoutesTest {
     @Test
     fun `POST person id address add with valid address adds address and redirects`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
-            val person = Person.valid() // No addresses by default
-            repository.save(person)
+            val person = Person.valid()
+            ctx.repositories.personRepository.save(person)
 
             // Act
             val response =
@@ -48,7 +43,7 @@ class AddAddressRoutesTest {
             assertThat(response.headers["Location"]).isEqualTo("/person/${person.id}/address/add")
 
             // Verify address was added
-            val updatedPerson = repository.findById(person.id)
+            val updatedPerson = ctx.repositories.personRepository.findById(person.id)
             assertThat(updatedPerson).isNotNull()
             assertThat(updatedPerson!!.addresses).hasSize(1)
             assertThat(updatedPerson.addresses[0].streetAddress).isEqualTo("456 Elm St")
@@ -58,17 +53,13 @@ class AddAddressRoutesTest {
     @Test
     fun `POST person id address add with invalid address shows violations`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
-            val person = Person.valid() // No addresses by default
-            repository.save(person)
+            val person = Person.valid()
+            ctx.repositories.personRepository.save(person)
 
             // Act - Invalid postal code and empty fields
             val response =
@@ -90,20 +81,16 @@ class AddAddressRoutesTest {
             assertThat(html).contains("form-error")
 
             // Verify address was NOT added
-            val updatedPerson = repository.findById(person.id)
+            val updatedPerson = ctx.repositories.personRepository.findById(person.id)
             assertThat(updatedPerson!!.addresses).isEmpty()
         }
 
     @Test
     fun `POST person personId address addressId update with valid data updates existing address and preserves UUID`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Create person with existing address (with UUID)
@@ -118,7 +105,7 @@ class AddAddressRoutesTest {
                     country = "USA",
                 )
             val person = Person.valid().copy(addresses = listOf(existingAddress))
-            repository.save(person)
+            ctx.repositories.personRepository.save(person)
 
             // Act - Update the address with modified data via the UUID-based endpoint
             val response =
@@ -126,11 +113,11 @@ class AddAddressRoutesTest {
                     contentType(ContentType.Application.FormUrlEncoded)
                     setBody(
                         "addressId=$existingAddressId&" +
-                            "addresses[0].type=WORK&" + // Changed from HOME to WORK
-                            "addresses[0].streetAddress=456 Office Blvd&" + // Changed
-                            "addresses[0].city=Metropolis&" + // Changed
-                            "addresses[0].postalCode=54321&" + // Changed
-                            "addresses[0].country=Canada", // Changed
+                            "addresses[0].type=WORK&" +
+                            "addresses[0].streetAddress=456 Office Blvd&" +
+                            "addresses[0].city=Metropolis&" +
+                            "addresses[0].postalCode=54321&" +
+                            "addresses[0].country=Canada",
                     )
                 }
 
@@ -139,12 +126,12 @@ class AddAddressRoutesTest {
             assertThat(response.headers["Location"]).isEqualTo("/person/${person.id}/address/add")
 
             // Verify address was updated and UUID preserved
-            val updatedPerson = repository.findById(person.id)
+            val updatedPerson = ctx.repositories.personRepository.findById(person.id)
             assertThat(updatedPerson).isNotNull()
             assertThat(updatedPerson!!.addresses).hasSize(1)
 
             val updatedAddress = updatedPerson.addresses[0]
-            assertThat(updatedAddress.id).isEqualTo(existingAddressId) // UUID preserved
+            assertThat(updatedAddress.id).isEqualTo(existingAddressId)
             assertThat(updatedAddress.type).isEqualTo(AddressType.WORK)
             assertThat(updatedAddress.streetAddress).isEqualTo("456 Office Blvd")
             assertThat(updatedAddress.city).isEqualTo("Metropolis")
@@ -155,13 +142,9 @@ class AddAddressRoutesTest {
     @Test
     fun `POST person personId address addressId update with invalid data shows validation errors for edited address`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Create person with existing address (with UUID)
@@ -176,7 +159,7 @@ class AddAddressRoutesTest {
                     country = "USA",
                 )
             val person = Person.valid().copy(addresses = listOf(existingAddress))
-            repository.save(person)
+            ctx.repositories.personRepository.save(person)
 
             // Act - Update the address with INVALID data via UUID-based endpoint
             val response =
@@ -185,44 +168,39 @@ class AddAddressRoutesTest {
                     setBody(
                         "addressId=$existingAddressId&" +
                             "addresses[0].type=WORK&" +
-                            "addresses[0].streetAddress=&" + // Invalid: empty
-                            "addresses[0].city=&" + // Invalid: empty
-                            "addresses[0].postalCode=invalid&" + // Invalid: wrong format
-                            "addresses[0].country=", // Invalid: empty
+                            "addresses[0].streetAddress=&" +
+                            "addresses[0].city=&" +
+                            "addresses[0].postalCode=invalid&" +
+                            "addresses[0].country=",
                     )
                 }
 
             // Assert
-            assertThat(response.status).isEqualTo(HttpStatusCode.OK) // Shows form with errors
+            assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val html = response.bodyAsText()
-            assertThat(html).contains("Edit Address for") // On edit page
-            assertThat(html).contains("form-error") // Validation errors present
+            assertThat(html).contains("Edit Address for")
+            assertThat(html).contains("form-error")
 
-            // Verify validation errors are shown for the correct address
-            assertThat(html).contains("addresses[0].streetAddress") // Field path in error
+            assertThat(html).contains("addresses[0].streetAddress")
             assertThat(html).contains("addresses[0].city")
             assertThat(html).contains("addresses[0].postalCode")
             assertThat(html).contains("addresses[0].country")
 
             // Verify address was NOT updated in repository
-            val unchangedPerson = repository.findById(person.id)
+            val unchangedPerson = ctx.repositories.personRepository.findById(person.id)
             assertThat(unchangedPerson).isNotNull()
             assertThat(unchangedPerson!!.addresses).hasSize(1)
             assertThat(unchangedPerson.addresses[0].id).isEqualTo(existingAddressId)
-            assertThat(unchangedPerson.addresses[0].type).isEqualTo(AddressType.HOME) // Unchanged
-            assertThat(unchangedPerson.addresses[0].streetAddress).isEqualTo("123 Main St") // Unchanged
+            assertThat(unchangedPerson.addresses[0].type).isEqualTo(AddressType.HOME)
+            assertThat(unchangedPerson.addresses[0].streetAddress).isEqualTo("123 Main St")
         }
 
     @Test
     fun `GET person personId address addressId edit displays edit form for specific address`() =
         testApplication {
-            // Arrange
-            val repository = PersonRepository()
-            val validatorFactory = Validation.buildDefaultValidatorFactory()
-            val validationService = ValidationService(validatorFactory.validator)
-
+            val ctx = SystemTestContext()
             application {
-                configurePersonRegistrationRoutes(repository, validationService)
+                configurePersonRegistrationRoutes(ctx.repositories.personRepository, ctx.services.validationService)
             }
 
             // Create person with existing address (with UUID)
@@ -237,7 +215,7 @@ class AddAddressRoutesTest {
                     country = "USA",
                 )
             val person = Person.valid().copy(addresses = listOf(existingAddress))
-            repository.save(person)
+            ctx.repositories.personRepository.save(person)
 
             // Act - GET the edit page for this address
             val response = client.get("/person/${person.id}/address/$existingAddressId/edit")

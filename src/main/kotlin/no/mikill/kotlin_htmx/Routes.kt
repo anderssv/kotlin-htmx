@@ -18,7 +18,6 @@ import io.ktor.server.routing.routing
 import io.ktor.server.sse.ServerSSESession
 import io.ktor.server.sse.sse
 import io.ktor.utils.io.ExperimentalKtorApi
-import jakarta.validation.Validation
 import kotlinx.coroutines.delay
 import kotlinx.html.a
 import kotlinx.html.h1
@@ -27,6 +26,7 @@ import kotlinx.html.p
 import kotlinx.html.section
 import kotlinx.html.ul
 import kotlinx.io.IOException
+import no.mikill.kotlin_htmx.context.AppDependencies
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.AdminDemoPage
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
@@ -36,14 +36,12 @@ import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxQuestionsPage
 import no.mikill.kotlin_htmx.pages.htmx.HtmxTodolistDemoPage
-import no.mikill.kotlin_htmx.registration.PersonRepository
 import no.mikill.kotlin_htmx.registration.configurePersonRegistrationRoutes
 import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
 import no.mikill.kotlin_htmx.todo.todoListItems
-import no.mikill.kotlin_htmx.validation.ValidationService
 import org.slf4j.LoggerFactory
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
@@ -57,12 +55,8 @@ private val routesLogger = LoggerFactory.getLogger("no.mikill.kotlin_htmx.Routes
  * @param lookupClient Client for external lookup services
  */
 fun Application.configurePageRoutes(
-    lookupClient: LookupClient,
-    numberOfCheckboxes: Int,
+    deps: AppDependencies,
 ) {
-    val validatorFactory = Validation.buildDefaultValidatorFactory()
-    val validationService = ValidationService(validatorFactory.validator)
-
     routing {
         // Standard routes
         configureStaticRoutes()
@@ -72,11 +66,11 @@ fun Application.configurePageRoutes(
 
         // Feature-specific routes
         route("/select") {
-            configureSelectionRoutes(lookupClient)
+            configureSelectionRoutes(deps.clients.lookupClient)
         }
 
         route("/demo") {
-            configureDemoRoutes(numberOfCheckboxes)
+            configureDemoRoutes(deps.numberOfCheckboxes)
         }
 
         route("/data") {
@@ -85,8 +79,7 @@ fun Application.configurePageRoutes(
     }
 
     // Person registration routes
-    val personRepository = PersonRepository()
-    configurePersonRegistrationRoutes(personRepository, validationService)
+    configurePersonRegistrationRoutes(deps.repositories.personRepository, deps.services.validationService)
 }
 
 /**

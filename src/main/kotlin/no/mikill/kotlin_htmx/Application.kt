@@ -10,8 +10,8 @@ import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.deflate
 import io.ktor.server.plugins.compression.gzip
 import io.ktor.utils.io.ExperimentalKtorApi
+import no.mikill.kotlin_htmx.context.SystemContext
 import no.mikill.kotlin_htmx.css.LightningCssTransformer
-import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.plugins.LiveReload
 import no.mikill.kotlin_htmx.plugins.configureHTTP
 import no.mikill.kotlin_htmx.plugins.configureMonitoring
@@ -139,12 +139,10 @@ suspend fun Application.module() {
         }
     }
 
-    // Manual dependency injection :) Usually smart to find a separate place to do this from KTor
+    // Manual dependency injection via Context Pattern
     val config = ApplicationConfig.load()
+    val context = SystemContext(config, numberOfCheckboxes)
 
     // Configure page routes with dependencies
-    configurePageRoutes(
-        LookupClient(config.lookupApiKey),
-        numberOfCheckboxes,
-    )
+    configurePageRoutes(context)
 }

@@ -3,13 +3,132 @@
 **Status:** Core person registration system is complete. All known bugs fixed. All planned routing utilities implemented.
 
 **✅ RECENTLY COMPLETED:**
-- ✅ **Routing Utilities - UUID Parameter Extensions**: Implemented `Parameters.getUUID()` extension function, updated 8 route handlers, configured StatusPages for global error handling. All 88 tests passing.
+- ✅ **Context Pattern**: Implemented manual DI with AppDependencies interface, SystemContext, and SystemTestContext. Updated Application.module() and migrated route tests. All 95 tests passing.
 
-**Next Priority:** Optional enhancements
-- **Context Pattern** - Dependency injection pattern (structural improvement)
-- Additional features as needed
+**Next Priority:** Additional features as needed
 
 See "Implementation Priority" section at the bottom for full roadmap.
+
+---
+---
+
+# TDD Plan: Context Pattern - Manual Dependency Injection
+
+## Feature Description
+Introduce an `AppDependencies` interface with `SystemContext` (production) and `SystemTestContext` (test) implementations. This centralizes dependency wiring, eliminates repeated test setup boilerplate, and demonstrates the manual DI pattern for the showcase repository.
+
+## Current State
+- Dependencies created inline in `Application.module()` and `Routes.configurePageRoutes()`
+- No interfaces for `PersonRepository`, `ValidationService`, or `LookupClient`
+- Tests repeat `PersonRepository()` + `ValidationService(...)` setup in every test method
+- No shared test context
+
+## Approach
+- Create `AppDependencies` interface with nested grouping interfaces (Repositories, Clients, Services)
+- Create `SystemContext` implementing it for production
+- Create `SystemTestContext` implementing it for tests (standalone, no inheritance)
+- Update `Application.module()` to use `SystemContext`
+- Update route functions to accept `AppDependencies`
+- Update tests to use `SystemTestContext` with `with(SystemTestContext()) { ... }` pattern
+- Use covariant override inference so tests access concrete types without casting
+
+## Benefits
+- Single place to see all application dependencies
+- Test setup reduced to one line: `with(SystemTestContext()) { ... }`
+- Compile-time safety for dependency wiring
+- Demonstrates manual DI pattern (no framework)
+- Foundation for future fakes when repository becomes database-backed
+
+---
+
+## Tests (TDD Order)
+
+### [✅] Test 1: AppDependencies interface exists with repository access
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/context/AppDependenciesTest.kt`
+
+**Test**: `SystemTestContext` implements `AppDependencies` and provides access to `PersonRepository` through `repositories.personRepository`.
+
+**Implementation**:
+- Create `AppDependencies` interface with `Repositories` nested interface
+- `Repositories` has `val personRepository: PersonRepository`
+- Create `SystemTestContext` implementing `AppDependencies`
+
+---
+
+### [✅] Test 2: AppDependencies provides ValidationService
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/context/AppDependenciesTest.kt`
+
+**Test**: `SystemTestContext` provides `services.validationService` that can validate objects.
+
+**Implementation**:
+- Add `Services` nested interface with `val validationService: ValidationService`
+- Wire in `SystemTestContext`
+
+---
+
+### [✅] Test 3: AppDependencies provides LookupClient
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/context/AppDependenciesTest.kt`
+
+**Test**: `SystemTestContext` provides `clients.lookupClient` that can perform lookups.
+
+**Implementation**:
+- Add `Clients` nested interface with `val lookupClient: LookupClient`
+- Wire in `SystemTestContext`
+
+---
+
+### [✅] Test 4: SystemContext wires production dependencies
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/context/SystemContextTest.kt`
+
+**Test**: `SystemContext` created with `ApplicationConfig` provides non-null repositories, services, and clients.
+
+**Implementation**:
+- Create `SystemContext` class implementing `AppDependencies`
+- Takes `ApplicationConfig` and `numberOfCheckboxes` as constructor params
+- Wires real implementations
+
+---
+
+### [✅] Test 5: Update Application.module() to use SystemContext
+**File**: Existing tests (`PersonRegistrationRoutesTest`, etc.)
+
+**Test**: All existing 88 tests still pass after wiring `Application.module()` through `SystemContext`.
+
+**Implementation**:
+- Replace inline dependency creation in `Application.module()` with `SystemContext`
+- Pass `AppDependencies` to `configurePageRoutes()`
+
+---
+
+### [✅] Test 6: Update route tests to use SystemTestContext
+**File**: `src/test/kotlin/no/mikill/kotlin_htmx/registration/PersonRegistrationRoutesTest.kt`
+
+**Test**: Route tests use `SystemTestContext` instead of inline dependency creation. All tests still pass.
+
+**Implementation**:
+- Replace repeated `PersonRepository()` + `ValidationService(...)` with `with(SystemTestContext()) { ... }`
+- Verify tests pass unchanged
+
+---
+
+## Status
+✅ COMPLETED
+
+**What was done:**
+- Created `AppDependencies` interface with nested `Repositories`, `Services`, `Clients` interfaces
+- Created `SystemContext` for production dependency wiring (takes `ApplicationConfig`)
+- Created `SystemTestContext` for test dependency wiring (standalone, no inheritance)
+- Updated `Application.module()` to use `SystemContext`
+- Updated `configurePageRoutes()` to accept `AppDependencies`
+- Migrated `PersonRegistrationRoutesTest` and `AddAddressRoutesTest` to use `SystemTestContext`
+- Removed inline `PersonRepository()` + `ValidationService(...)` boilerplate from 11 test methods
+- All 95 tests passing ✅
+
+## Notes
+- PersonRepository is already in-memory, so no fake needed yet. The context pattern prepares for future database-backed repos.
+- LookupClient currently has hardcoded behavior (no real HTTP calls). A future step could extract an interface.
+- Keep the refactoring incremental — each test adds one piece to the context.
+- This is primarily a structural refactoring; no behavior changes.
 
 ---
 ---
@@ -343,7 +462,7 @@ fun Parameters.getUUID(name: String): UUID {
    - Added unit tests for component HTML generation ✅
    - Added integration tests verifying components in full pages ✅
    - 88 tests passing (85 → 88, +3 tests) ✅
-5. **Context Pattern** - NOT STARTED (Dependency injection pattern for better testability)
+5. **Context Pattern** - ✅ COMPLETED (Manual dependency injection with AppDependencies/SystemContext/SystemTestContext)
 6. **Routing Utilities** - ✅ COMPLETED
    - HtmlRenderUtils already exists and tested via integration tests ✅
    - Parameters.getUUID extension function implemented ✅
