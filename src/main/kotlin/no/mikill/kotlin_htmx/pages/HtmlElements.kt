@@ -22,7 +22,6 @@ import kotlinx.html.consumers.filter
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.html
-import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.li
 import kotlinx.html.p
@@ -33,14 +32,10 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import kotlinx.html.ul
 import kotlinx.html.unsafe
-import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
-import no.mikill.kotlin_htmx.todo.TodoListItem
 import org.intellij.lang.annotations.Language
 import kotlin.time.Duration
 
-object Styles {
-    const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"
-}
+const val BOX_STYLE = "border: 1px solid red; padding: 10px; margin: 10px;"
 
 object HtmlRenderUtils {
     suspend fun ApplicationCall.respondHtmlFragment(
@@ -88,37 +83,6 @@ object HtmlElements {
                     }
                 }
             }
-        }
-    }
-
-    fun FlowContent.htmlTodolistSectionContent(todoListItems: List<TodoListItem>) {
-        section {
-            h1 { +"HTML Element" }
-            div {
-                style = BOX_STYLE
-                todoListHtmlContent("html", todoListItems)
-            }
-        }
-    }
-
-    fun HtmlBlockTag.todoListHtmlContent(
-        blockIdPrefix: String, // Sometimes included twice in a page, so this gives isolation
-        todoListItems: List<TodoListItem>, // The items to display
-    ) {
-        h1 { +"Todo List" }
-        ul {
-            id = "todo-list"
-            todoListItems.forEach {
-                li { +it.title }
-            }
-        }
-        p {
-            span {
-                id = "$blockIdPrefix-date"
-            }
-        }
-        script {
-            unsafe { +"document.getElementById('$blockIdPrefix-date').innerHTML = new Date().toLocaleString();" }
         }
     }
 

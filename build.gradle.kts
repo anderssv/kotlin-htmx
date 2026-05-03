@@ -7,9 +7,10 @@ val logbackVersion: String by project
 plugins {
     kotlin("jvm") version "2.3.20"
     id("io.ktor.plugin") version "3.4.2"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
     id("com.gradleup.shadow") version "9.4.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("no.f12.code-navigator") version "0.1.71"
     application
 }
 
@@ -80,7 +81,7 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.3")
 
     testImplementation("org.assertj:assertj-core:3.27.7")
 

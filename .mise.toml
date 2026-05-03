@@ -1,6 +1,6 @@
 [tools]
 java = "openjdk-21"
-rust = "1.94.1"
+rust = "1.95.0"
 
 [tools."cargo:lightningcss"]
 version = "1.0.0-alpha.71"

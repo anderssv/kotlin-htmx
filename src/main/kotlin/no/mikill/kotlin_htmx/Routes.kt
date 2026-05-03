@@ -30,7 +30,6 @@ import no.mikill.kotlin_htmx.context.AppDependencies
 import no.mikill.kotlin_htmx.integration.LookupClient
 import no.mikill.kotlin_htmx.pages.AdminDemoPage
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
-import no.mikill.kotlin_htmx.pages.HtmlElements.todoListHtmlContent
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
 import no.mikill.kotlin_htmx.pages.htmx.HtmxCheckboxDemoPage
@@ -41,6 +40,7 @@ import no.mikill.kotlin_htmx.selection.pages.SelectMainPage
 import no.mikill.kotlin_htmx.selection.pages.SelectedPage
 import no.mikill.kotlin_htmx.todo.HtmlTodoDemoPage
 import no.mikill.kotlin_htmx.todo.MultiTodoDemoPage
+import no.mikill.kotlin_htmx.todo.todoListHtmlContent
 import no.mikill.kotlin_htmx.todo.todoListItems
 import org.slf4j.LoggerFactory
 import java.util.UUID

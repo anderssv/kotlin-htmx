@@ -1,11 +1,13 @@
 # CURRENT FOCUS ⚡
 
-**Status:** Core person registration system is complete. All known bugs fixed. All planned routing utilities implemented.
+**Status:** Core person registration system is complete. All known bugs fixed. All planned routing utilities implemented. Architecture improvements underway.
 
 **✅ RECENTLY COMPLETED:**
-- ✅ **Context Pattern**: Implemented manual DI with AppDependencies interface, SystemContext, and SystemTestContext. Updated Application.module() and migrated route tests. All 95 tests passing.
+- ✅ **Context Pattern**: Implemented manual DI with AppDependencies interface, SystemContext, and SystemTestContext. Updated Application.module() and migrated route tests.
+- ✅ **Break pages ↔ todo cycle**: Moved `htmlTodolistSectionContent` and `todoListHtmlContent` from `pages.HtmlElements` to `todo.TodoHtmlRendering`. Removed dead `Styles` class and `hiddenField` method. Verified with `cnavDsm`.
+- ✅ **Dependency Updates (May 2026)**: Kotlin 2.3.21, Ktor 3.4.3, Jackson 2.21.3, Rust 1.95.0, htmx.org 2.0.10
 
-**Next Priority:** Additional features as needed
+**Next Priority:** Break context ↔ root package cycle (task #2 in tasks.md)
 
 See "Implementation Priority" section at the bottom for full roadmap.
 

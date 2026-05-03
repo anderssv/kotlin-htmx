@@ -13,11 +13,11 @@ import kotlinx.html.section
 import kotlinx.html.style
 import kotlinx.html.ul
 import kotlinx.html.unsafe
+import no.mikill.kotlin_htmx.pages.BOX_STYLE
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
-import no.mikill.kotlin_htmx.pages.HtmlElements.htmlTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.HtmlElements.htmxTodolistSectionContent
 import no.mikill.kotlin_htmx.pages.MainTemplate
-import no.mikill.kotlin_htmx.pages.Styles.BOX_STYLE
+import no.mikill.kotlin_htmx.todo.htmlTodolistSectionContent
 import kotlin.time.Duration.Companion.seconds
 
 /**
