@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Download shadow jar
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: shadow-jar
           path: build/libs
