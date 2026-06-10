@@ -5,7 +5,7 @@ package no.mikill.kotlin_htmx.selection.pages
 import io.ktor.htmx.HxSwap
 import io.ktor.htmx.html.hx
 import io.ktor.server.html.respondHtmlTemplate
-import io.ktor.server.request.receive
+import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.header
 import io.ktor.server.routing.RoutingContext
 import io.ktor.utils.io.ExperimentalKtorApi
@@ -51,7 +51,6 @@ class SelectMainPage(
                             div {
                                 form {
                                     attributes.hx {
-                                        ext = "json-enc"
                                         post = "/select/search"
                                         swap = HxSwap.outerHtml
                                     }
@@ -85,9 +84,6 @@ class SelectMainPage(
                         }
                         section {
                             id = "choices"
-                            attributes.hx {
-                                ext = "preload"
-                            }
 
                             items.forEach { item ->
                                 selectBox(
@@ -119,7 +115,9 @@ class SelectMainPage(
 
     suspend fun search(context: RoutingContext) {
         with(context) {
-            val search: Search = call.receive()
+            // htmx 4: json-enc 2.x doesn't work with htmx 4 — accept form params instead
+            val lookupValue = call.receiveParameters()["lookupValue"] ?: ""
+            val search = Search(lookupValue)
             call.respondHtmlFragment {
                 when (val lookupResult = lookupClient.lookup(search.lookupValue)) {
                     is LookupResult.Success -> {

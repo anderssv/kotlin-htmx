@@ -18,10 +18,12 @@ import kotlinx.html.h2
 import kotlinx.html.id
 import kotlinx.html.li
 import kotlinx.html.p
+import kotlinx.html.script
 import kotlinx.html.section
 import kotlinx.html.style
 import kotlinx.html.textArea
 import kotlinx.html.ul
+import kotlinx.html.unsafe
 import no.mikill.kotlin_htmx.pages.EmptyTemplate
 import no.mikill.kotlin_htmx.pages.HtmlRenderUtils.respondHtmlFragment
 import no.mikill.kotlin_htmx.pages.MainTemplate
@@ -109,11 +111,6 @@ class HtmxQuestionsPage {
                                 h2 { +"Ask a Question" }
                                 form {
                                     id = "question-form"
-                                    // HTMX event handler to reset the form after successful submission
-                                    // This allows users to submit multiple questions without manually clearing the form
-                                    // NOTE: Using manual attribute due to Ktor bug - on() generates hx-on:after-request
-                                    // but HTMX 2.0 requires hx-on::after-request (double colon) for HTMX events
-                                    attributes["hx-on::after-request"] = "if(event.detail.successful) this.reset()"
 
                                     div {
                                         style = "display: flex; gap: 10px;"
@@ -132,7 +129,7 @@ class HtmxQuestionsPage {
                                             attributes.hx {
                                                 post = "questions/submit"
                                                 target = "#questions-list"
-                                                swap = HxSwap.innerHtml
+                                                swap = "innerHTML" // HxSwap.innerHtml is "innerHtml" (bug) — htmx 4 requires correct casing
                                                 indicator = ".htmx-indicator"
                                             }
                                             +"Submit"
@@ -144,6 +141,21 @@ class HtmxQuestionsPage {
                                         style = "display: none; margin-top: 10px;"
                                         +"Submitting question..."
                                     }
+                                }
+                            }
+                            // htmx 4: detail.successful gone; ctx.response is {raw, status, headers} — check status < 300
+                            script {
+                                unsafe {
+                                    raw(
+                                        """
+                                        document.getElementById('submit-button').addEventListener('htmx:after:request', function(e) {
+                                            var status = e.detail && e.detail.ctx && e.detail.ctx.response && e.detail.ctx.response.status;
+                                            if (status && status >= 200 && status < 300) {
+                                                document.getElementById('question-form').reset();
+                                            }
+                                        });
+                                        """.trimIndent(),
+                                    )
                                 }
                             }
 

@@ -33,10 +33,12 @@ class HtmxCheckboxDemoPageTest {
             page.registerOnCheckBoxNotification(newSession)
 
             // Verify that a client count update was broadcast
+            // htmx 4: events are now unnamed (null), wrapped in <hx-partial id="client-counter">
             assertThat(capturedEvents).isNotEmpty
-            val clientCountEvent = capturedEvents.find { it.second == "update-client-count" }
+            val clientCountEvent = capturedEvents.find { it.first.contains("client-counter") }
             assertThat(clientCountEvent).isNotNull
             assertThat(clientCountEvent!!.first).contains("Connected browsers: 2")
+            assertThat(clientCountEvent.second).isEmpty() // unnamed event
         }
     }
 

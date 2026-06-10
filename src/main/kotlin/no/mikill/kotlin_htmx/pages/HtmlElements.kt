@@ -70,7 +70,7 @@ object HtmlElements {
                         // Click is default
                         trigger = "load delay:${loadDelay.inWholeSeconds}s, click" // Default is click
                     }
-                    swap = HxSwap.innerHtml
+                    swap = "innerHTML" // HxSwap.innerHtml is "innerHtml" (bug) — htmx 4 requires correct casing
                 }
                 style = BOX_STYLE
                 // Would have included HTMX script here, but it is already included in the header as it is used in other pages as well
@@ -100,9 +100,8 @@ object HtmlElements {
     }
 
     private fun A.boostAndPreload() {
-        // Preloading resources (not HTMX, so stays as manual attributes)
-        attributes["preload"] = "mouseover"
-        attributes["preload-images"] = true.toString()
+        // htmx 4: hx-preload replaces preload attribute (extension loaded globally)
+        attributes["hx-preload"] = "mouseover"
 
         // Boosting using HTMX DSL
         attributes.hx {

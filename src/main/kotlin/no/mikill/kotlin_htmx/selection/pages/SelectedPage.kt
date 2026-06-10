@@ -36,9 +36,6 @@ class SelectedPage {
                         }
                         section {
                             id = "choices"
-                            attributes.hx {
-                                ext = "preload"
-                            }
 
                             selectBox(
                                 name = "Yes",

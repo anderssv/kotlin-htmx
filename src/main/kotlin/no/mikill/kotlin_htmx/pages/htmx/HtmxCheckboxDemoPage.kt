@@ -84,7 +84,7 @@ class HtmxCheckboxDemoPage(
             id = "checkbox-counter"
             p {
                 id = "client-counter"
-                attributes["sse-swap"] = "update-client-count"
+                // htmx 4: sse-swap removed — server wraps updates in <hx-partial id="client-counter">
                 span {
                     +"Connected browsers: ${connectedListeners.size}"
                 }
@@ -117,15 +117,7 @@ class HtmxCheckboxDemoPage(
         span {
             id = "batch-$batchNumber"
 
-            /*
-             * The sse-swap attribute tells HTMX to replace this element's content
-             * when an SSE event with the specified name is received.
-             *
-             * Note: Having both SSE updates and PUT responses on the same element
-             * means we'll get two DOM updates (one from the PUT response and one
-             * from the SSE event), but the visual effect is negligible in this case.
-             */
-            attributes["sse-swap"] = "update-$batchNumber"
+            // htmx 4: sse-swap removed — server wraps updates in <hx-partial id="batch-N">
 
             renderBoxesForBatch(batchNumber)
         }
@@ -200,11 +192,12 @@ class HtmxCheckboxDemoPage(
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
+                // htmx 4: wrap in <hx-partial> so the extension targets by id without sse-swap
                 iterator.next().send(
-                    partialHtml {
-                        renderBoxesForBatch(batchNumber)
-                    },
-                    "update-$batchNumber",
+                    "<hx-partial id=\"batch-$batchNumber\">" +
+                        partialHtml { renderBoxesForBatch(batchNumber) } +
+                        "</hx-partial>",
+                    null, // unnamed message → swapped directly by hx-sse extension
                     UUID.randomUUID().toString(),
                 )
             } catch (e: Exception) {
@@ -232,15 +225,16 @@ class HtmxCheckboxDemoPage(
         while (iterator.hasNext()) {
             val session = iterator.next()
             try {
+                // htmx 4: wrap in <hx-partial id="client-counter"> so extension targets by id
                 val html =
-                    partialHtml {
-                        span {
-                            +"Connected browsers: $count"
-                        }
-                    }
+                    "<hx-partial id=\"client-counter\">" +
+                        partialHtml {
+                            span { +"Connected browsers: $count" }
+                        } +
+                        "</hx-partial>"
                 session.send(
                     html,
-                    "update-client-count",
+                    null, // unnamed message → swapped directly
                     UUID.randomUUID().toString(),
                 )
             } catch (e: Exception) {
@@ -297,13 +291,12 @@ class HtmxCheckboxDemoPage(
                     emptyContentWrapper {
                         div {
                             style = "max-width: 40em;"
-                            attributes.hx {
-                                ext = "sse"
-                            }
-                            attributes["sse-connect"] = "checkboxes/events"
+                            // htmx 4: hx-sse:connect replaces hx-ext=sse + sse-connect
+                            attributes["hx-sse:connect"] = "checkboxes/events"
                             section {
                                 attributes.hx {
                                     get = "checkboxes/all"
+                                    // htmx 4: sse:update-all still dispatched as DOM event
                                     trigger = "sse:update-all"
                                 }
 
