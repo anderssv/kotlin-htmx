@@ -5,10 +5,10 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.3.20"
-    id("io.ktor.plugin") version "3.4.2"
+    kotlin("jvm") version "2.4.0"
+    id("io.ktor.plugin") version "3.5.0"
     id("com.github.ben-manes.versions") version "0.54.0"
-    id("com.gradleup.shadow") version "9.4.1"
+    id("com.gradleup.shadow") version "9.4.2"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("no.f12.code-navigator") version "0.1.71"
     application
@@ -81,22 +81,22 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.nfeld.jsonpathkt:jsonpathkt:2.0.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.3")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.0")
 
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // JUnit 6 dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Selenium dependencies
-    testImplementation("org.seleniumhq.selenium:selenium-java:4.43.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.44.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:6.3.4")
 }
 
