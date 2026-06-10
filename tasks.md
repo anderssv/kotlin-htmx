@@ -2,7 +2,13 @@
 
 ## High Priority
 
-1. **Break pages ↔ todo cycle** ✅ COMPLETED
+1. **Bug: SSE batch updates blank unloaded pages**
+   - When a checkbox batch span hasn't loaded yet (lazy-loaded batches not yet visible) and receives an SSE `<hx-partial id="batch-N">` update, the span goes blank
+   - Root cause: `<hx-partial>` targets `#batch-N` and swaps `innerHTML`, replacing the span content with the partial content — but if the span was never loaded it may have no content, or the target doesn't exist yet, causing htmx to create an empty element
+   - Fix: server should check whether the target span exists / has been loaded before broadcasting. Or use `hx-partial` with a guard: only swap if element exists and has content. Simplest: in `broadcastUpdate`, skip broadcasting to clients that haven't loaded the batch yet (track per-client loaded batches, or change partial to `outerHTML` swap style with existence check)
+   - `src/main/kotlin/no/mikill/kotlin_htmx/pages/htmx/HtmxCheckboxDemoPage.kt` — `broadcastUpdate()`
+
+2. **Break pages ↔ todo cycle** ✅ COMPLETED
    - Moved `htmlTodolistSectionContent` and `todoListHtmlContent` from `pages.HtmlElements` to `todo.TodoHtmlRendering`
    - Removed `pages.Styles` class, promoted `BOX_STYLE` to top-level const in `HtmlElements.kt`
    - Removed dead `IndexedFormBuilder.hiddenField` method

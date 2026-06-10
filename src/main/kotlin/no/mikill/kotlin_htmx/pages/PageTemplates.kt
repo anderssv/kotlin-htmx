@@ -150,17 +150,16 @@ class MainTemplate<T : Template<FlowContent>>(
                 footerComponent()
 
                 // HTMX highlight effect for updated elements
+                // htmx 4: event renamed htmx:afterSettle → htmx:after:swap
+                // htmx 4: detail.elt gone — target element is in detail.ctx.target
                 script {
                     unsafe {
                         raw(
                             """
-                            // This script highlights elements that have been updated by HTMX
-                            document.body.addEventListener('htmx:afterSettle', function(evt) {
-                                // The updated element is directly available in evt.detail.elt
-                                const updatedElement = evt.detail.elt;
+                            document.body.addEventListener('htmx:after:swap', function(evt) {
+                                const updatedElement = evt.detail && evt.detail.ctx && evt.detail.ctx.target;
+                                if (!updatedElement) return;
                                 updatedElement.classList.add('htmx-modified');
-
-                                // Remove the class when the animation completes
                                 updatedElement.addEventListener('animationend', function() {
                                     updatedElement.classList.remove('htmx-modified');
                                 }, { once: true });

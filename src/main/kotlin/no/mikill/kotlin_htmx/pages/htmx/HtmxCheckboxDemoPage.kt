@@ -353,9 +353,9 @@ class HtmxCheckboxDemoPage(
                                     // Start observing the document with the configured parameters
                                     observer.observe(document.body, { childList: true, subtree: true });
 
-                                    // Also update when HTMX completes a request (for infinite scrolling)
-                                    document.body.addEventListener('htmx:afterOnLoad', updateCheckboxCounter);
-                                    document.body.addEventListener('htmx:afterSettle', updateCheckboxCounter);
+                                    // htmx 4: htmx:afterOnLoad → htmx:after:init, htmx:afterSettle → htmx:after:swap
+                                    document.body.addEventListener('htmx:after:init', updateCheckboxCounter);
+                                    document.body.addEventListener('htmx:after:swap', updateCheckboxCounter);
                                     """.trimIndent(),
                                 )
                             }
