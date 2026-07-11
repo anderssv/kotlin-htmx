@@ -99,7 +99,27 @@ Multiple implementations of the same feature using different technologies, all i
 - Multi-step wizard flow
 - Search functionality with external API integration
 - HX-Boost for SPA-like navigation
+- Animated navigation via the browser View Transitions API (htmx 4)
 - Server-side rendering with progressive enhancement
+
+**View Transitions (htmx 4) — scope it per-swap, not globally**
+
+The boosted select-box links animate their `#mainContent` swap with the browser View Transitions
+API. The key decision is *where* to enable it. htmx 4 offers two switches:
+
+- `htmx.config.transitions = true` (global) — animates **every** htmx swap. Tempting, but it also
+  wraps high-frequency updates: on the checkbox demo a single toggle fired two view transitions
+  (the `hx-put` response plus the SSE morph broadcast), which reads as jank.
+- `hx-swap="… transition:true"` (per-swap) — opts in a single swap only.
+
+This app uses the per-swap modifier so only the deliberate navigation animates:
+
+```kotlin
+// HtmlElements.boostAndPreload()
+swap = HxSwap.outerHtml + " show:window:top transition:true"
+```
+
+No CSS is required — htmx drives the default cross-fade through `document.startViewTransition`.
 
 ---
 
@@ -332,6 +352,24 @@ propagates across clients.
 - Connection lifecycle management
 - Dead connection detection and cleanup
 - Broadcast to multiple connected clients
+
+**Loading htmx 4 and its extensions (gotchas)**
+
+Three things that bite when serving htmx 4 from a CDN (see `PageTemplates.kt`):
+
+1. **SRI `integrity` is version-specific.** When you bump the pinned version, recompute the hash —
+   a stale hash silently blocks the core script, so htmx never loads and every extension throws
+   `registerExtension is not a function`:
+   ```bash
+   curl -s https://unpkg.com/htmx.org@<version>/dist/htmx.min.js | openssl dgst -sha384 -binary | openssl base64 -A
+   ```
+2. **Extensions are shipped, not bundled.** `hx-sse` / `hx-preload` live in the htmx `dist/ext`
+   folder but are *not* included in `htmx.min.js` — load them as separate `<script>` tags after
+   core. They self-register via `htmx.registerExtension`.
+3. **Config goes in a `<meta>` tag, not a pre-load global.** htmx 4 reads
+   `<meta name="htmx-config" content='{"...":...}'>`. Pre-seeding `htmx = { config: {...} }` before
+   the (deferred) core script is a no-op — `var htmx = ...` overwrites it. This app needs no
+   overrides and runs on defaults (`implicitInheritance: false`, `noSwap: [204, 304]`).
 
 ---
 

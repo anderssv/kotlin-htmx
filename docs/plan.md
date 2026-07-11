@@ -462,17 +462,54 @@ Morphing is now core (no idiomorph dependency needed for htmx swaps).
 Add an optimistic UI demo. The checkbox demo is the textbook case: flip the checkbox instantly,
 let the SSE broadcast confirm/correct it. Bundled in core, no extra script. High-signal teaching demo.
 
-### [ ] 3. Retire htmx-2 compat crutches
+### [✅] 3. Retire htmx-2 compat crutches
 This repo teaches idiomatic htmx, so compat flags undercut the lesson.
-- `PageTemplates.kt:115` — drop `implicitInheritance: true`; use explicit `:inherited` (only real
-  case is SSE-connect on the parent div, `HtmxCheckboxDemoPage.kt:294`).
-- `PageTemplates.kt:127` — `hx-preload.js` ships in core now; remove the separate script if redundant.
-- `PageTemplates.kt:124-125` — remove dead `htmx-ext-json-enc@2.0.3` script (already disabled per
-  `SelectMainPage.kt:118`).
 
-### [ ] 4. View Transitions API (`htmx.config.transitions = true`)
-Animate the `hx-boost` select-box → `#mainContent` navigation (`HtmlElements.kt:104-108`).
-Cheap, visible, good showcase.
+**Status**: ✅ COMPLETED
+
+**What was done:**
+- ✅ Removed the inline `htmx = { config: { implicitInheritance: true, noSwap: [...] } }` pre-seed.
+  It was a **no-op**: the deferred `var htmx = ...` core load overwrote the plain object, so the
+  config never applied. Investigation confirmed the app needs no overrides — every hx-*/SSE
+  endpoint responds **200** and renders errors as fragments, so it runs correctly on htmx 4
+  defaults (`implicitInheritance: false`, `noSwap: [204, 304]`). Verified in-browser.
+- ✅ Removed the dead `htmx-ext-json-enc@2.0.3` script — it threw `htmx.defineExtension is not a
+  function` on **every page load** (json-enc has no htmx 4 build and was already disabled
+  server-side per `SelectMainPage.kt`). Browser console is now exception-free.
+- ✅ Corrected the misleading "bundled in core" comment: `hx-preload`/`hx-sse` ship in the htmx
+  `dist/ext` folder but are **not** bundled into core — they must be loaded as separate scripts
+  and self-register via `htmx.registerExtension` (verified: core has no auto-registration).
+
+**Findings for future reference:**
+- htmx 4 reads config from a `<meta name="htmx-config" content='{...}'>` tag (core merges it). If
+  error-swap suppression (`noSwap: [..., "4xx", "5xx"]`) is ever wanted, add it there — but no
+  designed path currently returns 4xx/5xx (only unhandled exceptions via StatusPages do).
+- The checkbox demo's parent-div `hx-sse:connect` works with `implicitInheritance: false`, so no
+  explicit `:inherited` was needed.
+
+### [✅] 4. View Transitions API
+Animate the `hx-boost` select-box → `#mainContent` navigation (`HtmlElements.kt`).
+
+**Status**: ✅ COMPLETED
+
+**What was done:**
+- ✅ Added the per-swap `transition:true` modifier to the boosted select-box swap:
+  `hx-swap="outerHTML show:window:top transition:true"`. This opts *only* that navigation into the
+  browser View Transitions API.
+- ✅ Deliberately did **not** use the global `htmx.config.transitions` switch. Browser testing
+  showed global config animates **every** swap — a single checkbox toggle fired 2 view transitions
+  (the hx-put response + the SSE morph broadcast), which would make the high-frequency checkbox
+  grid janky. The per-swap modifier keeps the animation scoped to the navigation.
+- ✅ Verified in-browser on the compiled config: boosted select navigation fires the transition
+  (`startViewTransition` called; navigates to `/select/One`), while a checkbox toggle fires **zero**
+  transitions (`htmx.config.transitions` stays `false`).
+
+**Tests added:**
+- `HtmlElementsSelectBoxTest` — structural test asserting the boosted link renders with the
+  `transition:true` swap modifier.
+- `SelectMainPageRoutesTest` — endpoint tests for the previously-untested `search()` handler
+  (Success/HX-Redirect, NotFound, InvalidInput, empty input). The unreachable `Failure` branch is
+  documented and skipped.
 
 ### [ ] 5. `head-support` extension (bundled)
 `hx-boost` navigation doesn't merge `<head>` (title, styles) by default. This extension fixes that,

@@ -106,24 +106,15 @@ class MainTemplate<T : Template<FlowContent>>(
                 }
             }
 
-            // Load HTMX and its extensions
+            // Load HTMX and its extensions.
             if ((System.getenv("ENABLE_HTMX") ?: "true") == "true") {
-                // htmx 4.x compat: restore implicit attribute inheritance and suppress 4xx/5xx swaps
-                script {
-                    unsafe {
-                        raw(
-                            "htmx = { config: { implicitInheritance: true, noSwap: [204, 304, '4xx', '5xx'] } };",
-                        )
-                    }
-                }
                 script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/htmx.min.js") {
                     integrity = "sha384-5dnhUXCt1hXGvYrjAnKwgNX3I8xtIJiW6eIHIbeo7oWyXv2XpWYC/rl+ZiWfuYO5"
                     attributes["crossorigin"] = "anonymous"
                     defer = true
                 }
-                // json-enc: no htmx 4 version yet — keep htmx-ext-json-enc 2.x (hx-ext attribute removed separately)
-                script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.3/json-enc.js") { defer = true }
-                // preload and SSE: now bundled in htmx 4 — load from htmx dist, no hx-ext needed
+                // preload and SSE ship in the htmx dist (dist/ext) but are NOT bundled into core —
+                // they must be loaded as separate scripts and self-register via htmx.registerExtension.
                 script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/ext/hx-preload.js") { defer = true }
                 script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/ext/hx-sse.js") { defer = true }
             }

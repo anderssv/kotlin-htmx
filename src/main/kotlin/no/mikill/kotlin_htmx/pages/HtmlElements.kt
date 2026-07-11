@@ -108,7 +108,10 @@ object HtmlElements {
             boost = true
             select = "#mainContent" // The DIV in the response that is inserted
             target = "#mainContent" // The DIV in the existing page that is replaced
-            swap = HxSwap.outerHtml + " show:window:top" // Makes sure the window scrolls to the top
+            // outerHTML swap, scroll to top, and animate with the browser View Transitions API.
+            // htmx 4: the per-swap `transition:true` modifier opts this navigation in without
+            // enabling transitions globally (which would also animate the checkbox SSE updates).
+            swap = HxSwap.outerHtml + " show:window:top transition:true"
         }
     }
 
