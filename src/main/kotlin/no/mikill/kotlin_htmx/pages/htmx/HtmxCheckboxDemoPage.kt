@@ -184,19 +184,30 @@ class HtmxCheckboxDemoPage(
     }
 
     /**
+     * Renders the SSE payload for a batch update: an `<hx-partial>` targeting the batch by id,
+     * wrapping the freshly rendered checkboxes for that batch.
+     *
+     * htmx 4: the `<hx-partial>` wrapper lets the hx-sse extension target by id without `sse-swap`.
+     * `innerMorph` merges the new checkboxes into the existing batch instead of replacing it wholesale,
+     * so a single toggle only mutates the one changed checkbox and leaves focus/scroll of the rest intact.
+     */
+    internal fun renderBatchPartial(batchNumber: Int): String =
+        "<hx-partial id=\"batch-$batchNumber\" hx-swap=\"innerMorph\">" +
+            partialHtml { renderBoxesForBatch(batchNumber) } +
+            "</hx-partial>"
+
+    /**
      * Broadcasts an update for a specific batch to all connected clients.
      * Also handles cleanup of dead connections.
      */
     private suspend fun broadcastUpdate(batchNumber: Int) {
         var deadConnectionRemoved = false
+        val partial = renderBatchPartial(batchNumber)
         val iterator = connectedListeners.iterator()
         while (iterator.hasNext()) {
             try {
-                // htmx 4: wrap in <hx-partial> so the extension targets by id without sse-swap
                 iterator.next().send(
-                    "<hx-partial id=\"batch-$batchNumber\">" +
-                        partialHtml { renderBoxesForBatch(batchNumber) } +
-                        "</hx-partial>",
+                    partial,
                     null, // unnamed message → swapped directly by hx-sse extension
                     UUID.randomUUID().toString(),
                 )

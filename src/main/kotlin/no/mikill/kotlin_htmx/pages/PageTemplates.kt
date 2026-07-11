@@ -116,16 +116,16 @@ class MainTemplate<T : Template<FlowContent>>(
                         )
                     }
                 }
-                script(src = "https://unpkg.com/htmx.org@4.0.0-beta4/dist/htmx.min.js") {
-                    integrity = "sha384-aWZK1NtOs/aWb/+YZdTM8q2JkWEshlMc9mgZ189numT9bwFhyAyYEoO4nO/2dTXt"
+                script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/htmx.min.js") {
+                    integrity = "sha384-5dnhUXCt1hXGvYrjAnKwgNX3I8xtIJiW6eIHIbeo7oWyXv2XpWYC/rl+ZiWfuYO5"
                     attributes["crossorigin"] = "anonymous"
                     defer = true
                 }
                 // json-enc: no htmx 4 version yet — keep htmx-ext-json-enc 2.x (hx-ext attribute removed separately)
                 script(src = "https://unpkg.com/htmx-ext-json-enc@2.0.3/json-enc.js") { defer = true }
                 // preload and SSE: now bundled in htmx 4 — load from htmx dist, no hx-ext needed
-                script(src = "https://unpkg.com/htmx.org@4.0.0-beta4/dist/ext/hx-preload.js") { defer = true }
-                script(src = "https://unpkg.com/htmx.org@4.0.0-beta4/dist/ext/hx-sse.js") { defer = true }
+                script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/ext/hx-preload.js") { defer = true }
+                script(src = "https://unpkg.com/htmx.org@4.0.0-beta5/dist/ext/hx-sse.js") { defer = true }
             }
         }
         body {

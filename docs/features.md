@@ -278,26 +278,56 @@ val html = partialHtml {
 
 ---
 
-### 6. Server-Sent Events (SSE) with HTMX
+### 6. Server-Sent Events (SSE) with HTMX 4
 
 **Real-Time Updates Without WebSockets**
 
+htmx 4 reworked the SSE extension. `hx-ext="sse"` + `sse-connect` + `sse-swap` are gone;
+you connect with `hx-sse:connect` and let the server address targets with `<hx-partial>`:
+
 ```html
-<!-- Client-side HTMX configuration -->
-<div hx-ext="sse" sse-connect="/events">
-    <span sse-swap="update-message">Initial content</span>
+<!-- Client-side: connect once on a parent, children inherit the connection -->
+<div hx-sse:connect="/events">
+    <span id="update-message">Initial content</span>
 </div>
 ```
 
 ```kotlin
-// Server-side SSE endpoint
+// Server-side SSE endpoint — wrap the payload in <hx-partial> to target by id.
+// An unnamed message is swapped directly by the hx-sse extension.
 sse("events") {
-    send("New data", event = "update-message", id = uuid)
+    send(
+        "<hx-partial id=\"update-message\">New data</hx-partial>",
+        null,
+        id = uuid,
+    )
 }
 ```
 
+**Morph swaps for surgical updates (htmx 4)**
+
+Morphing is now built into htmx core (no idiomorph dependency for swaps). Adding
+`hx-swap="innerMorph"` to an `<hx-partial>` merges new content into the existing DOM instead
+of replacing it wholesale. In the checkbox demo, an SSE broadcast re-renders a whole *batch* of
+checkboxes whenever any one of them changes — with `innerMorph`, only the single changed checkbox
+is mutated, so focus, scroll position, and DOM identity of the other checkboxes are preserved:
+
+```kotlin
+// HtmxCheckboxDemoPage.renderBatchPartial()
+"<hx-partial id=\"batch-$batchNumber\" hx-swap=\"innerMorph\">" +
+    partialHtml { renderBoxesForBatch(batchNumber) } +
+    "</hx-partial>"
+```
+
+Note the checkbox gotcha: morphing must sync the `checked` *property*, not just re-render the
+attribute. htmx 4's morph handles this correctly — verified by the two-browser Selenium sync test
+(`HtmxCheckboxPageTest.testHtmxCheckboxPage`), which toggles random checkboxes and asserts state
+propagates across clients.
+
 **Features:**
 - Automatic reconnection with Last-Event-ID
+- `<hx-partial>` targeting by id — no `sse-swap` attribute needed
+- `innerMorph` / `outerMorph` swaps preserve element state during updates
 - Bidirectional updates (SSE + HTMX requests)
 - Connection lifecycle management
 - Dead connection detection and cleanup

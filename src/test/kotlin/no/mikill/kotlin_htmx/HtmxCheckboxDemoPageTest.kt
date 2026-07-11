@@ -43,6 +43,19 @@ class HtmxCheckboxDemoPageTest {
     }
 
     @Test
+    fun `batch broadcast partial uses innerMorph swap`() {
+        val page = HtmxCheckboxDemoPage(numberOfBoxes = 100)
+
+        val partial = page.renderBatchPartial(0)
+
+        // htmx 4: morph merges new content into the existing DOM instead of replacing it wholesale,
+        // so toggling one checkbox no longer disturbs focus/scroll of the others in the batch.
+        assertThat(partial).contains("hx-swap=\"innerMorph\"")
+        assertThat(partial).contains("id=\"batch-0\"")
+        assertThat(partial).contains("type=\"checkbox\"")
+    }
+
+    @Test
     fun `should calculate numberOfBatches correctly for non-evenly-divisible numberOfBoxes`() {
         // This test verifies the bug: when numberOfBoxes is not evenly divisible by batchSize,
         // the last partial batch should still be counted

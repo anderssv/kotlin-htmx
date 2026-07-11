@@ -432,6 +432,68 @@ fun Parameters.getUUID(name: String): UUID {
 ---
 ---
 
+# TDD Plan: Adopt HTMX 4 Features
+
+## Feature Description
+The app is on htmx `4.0.0-beta5` but still leans on htmx-2 compat crutches and hand-rolls
+patterns that htmx 4 now provides natively. Adopt the new features that both simplify the
+code and make good teaching demos for the showcase repository. Reference: https://four.htmx.org/
+
+## Candidate Features (priority order)
+
+### [✅] 1. Built-in morph swaps (`innerMorph` / `outerMorph`)
+Morphing is now core (no idiomorph dependency needed for htmx swaps).
+- ✅ SSE batch broadcast now sends `<hx-partial id="batch-N" hx-swap="innerMorph">` so a single
+  checkbox toggle morphs only the changed box into the existing batch instead of replacing the
+  whole batch span, preserving DOM identity/focus/scroll of the other checkboxes.
+- ✅ Extracted testable `renderBatchPartial()` seam; added unit test asserting the morph swap.
+- ✅ Verified end-to-end: full suite green, including the two-browser Selenium sync test
+  (`HtmxCheckboxPageTest.testHtmxCheckboxPage`) — confirms morph correctly propagates the
+  `checked` state across clients (the classic checkbox-morph gotcha).
+
+**Status**: ✅ COMPLETED
+
+**Not done (deferred, optional):**
+- The `MutationObserver` counter hack (`HtmxCheckboxDemoPage.kt`) still counts loaded checkboxes
+  as infinite-scroll batches arrive — morph doesn't remove that need, so it was left as-is.
+- `LiveReload.kt` idiomorph usage untouched (dev-only, not htmx-request-driven — bigger refactor).
+
+### [ ] 2. `optimistic` extension (now bundled)
+Add an optimistic UI demo. The checkbox demo is the textbook case: flip the checkbox instantly,
+let the SSE broadcast confirm/correct it. Bundled in core, no extra script. High-signal teaching demo.
+
+### [ ] 3. Retire htmx-2 compat crutches
+This repo teaches idiomatic htmx, so compat flags undercut the lesson.
+- `PageTemplates.kt:115` — drop `implicitInheritance: true`; use explicit `:inherited` (only real
+  case is SSE-connect on the parent div, `HtmxCheckboxDemoPage.kt:294`).
+- `PageTemplates.kt:127` — `hx-preload.js` ships in core now; remove the separate script if redundant.
+- `PageTemplates.kt:124-125` — remove dead `htmx-ext-json-enc@2.0.3` script (already disabled per
+  `SelectMainPage.kt:118`).
+
+### [ ] 4. View Transitions API (`htmx.config.transitions = true`)
+Animate the `hx-boost` select-box → `#mainContent` navigation (`HtmlElements.kt:104-108`).
+Cheap, visible, good showcase.
+
+### [ ] 5. `head-support` extension (bundled)
+`hx-boost` navigation doesn't merge `<head>` (title, styles) by default. This extension fixes that,
+relevant since boosted nav swaps into `#mainContent` while page chrome stays.
+
+### [ ] 6. `hx-status:XXX` / status-conditional swaps
+`SelectMainPage.kt:127-155` hand-renders NotFound/InvalidInput/Failure fragments and uses
+`HX-Redirect` on success. Per-status swap config may let this branching be declarative.
+
+## Notes
+- On a **beta** — verify each feature is wired up in the current beta specifically before committing,
+  and that the bundled extensions are present in the dist being pulled.
+- **CDN SRI gotcha:** when bumping the pinned htmx version, recompute the `integrity` hash in
+  `PageTemplates.kt` (`curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A`). A stale
+  hash silently blocks the core script (htmx never loads, extensions throw `registerExtension is not
+  a function`). Bit us on the beta4 → beta5 bump.
+- Update `docs/features.md` for each feature completed (features.md teaches techniques).
+
+---
+---
+
 # Implementation Priority
 
 **✅ COMPLETED FEATURES** (removed from plan above):
